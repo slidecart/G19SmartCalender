@@ -7,13 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ActivityService {
-    private List<Activity> activities;
 
     private final ActivityRepository activityRepository;
 
@@ -23,15 +23,18 @@ public class ActivityService {
     }
 
     public Activity createActivity(Activity activity) {
-        //List<Activity> existingActivities = activityRepository.findById(activity.getId());
-        //Couldn't really piece this together.
-
+        if (activityRepository.findByNameAndDate(activity.getName(), activity.getDate()).isPresent()) {
+            throw new IllegalArgumentException("Activity already exists");
+        }
         return activityRepository.save(activity);
     }
 
-    public ResponseEntity<Boolean> deleteActivity(Activity activity) {
-        activityRepository.delete(activity);
-        return new ResponseEntity<>(true, HttpStatus.OK); //TODO - return-message should be based on if the database was successful or not
+    public ResponseEntity<Boolean> deleteActivity(Long id) {
+        if (activityRepository.existsById(id)) {
+            activityRepository.deleteById(id);
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
 
     public ResponseEntity<Activity> editActivity(Activity activity) {
@@ -46,7 +49,7 @@ public class ActivityService {
             activityRepository.save(activityToEdit);
             return new ResponseEntity<>(activity, HttpStatus.OK);
         }
-        return null;
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     public Optional<Activity> getActivity(long id) {
@@ -54,8 +57,6 @@ public class ActivityService {
     }
 
     public List<Activity> getOngoingActivities() {
-        return activityRepository.findAll().stream()
-                .filter(Activity::isOnGoing)
-                .collect(Collectors.toList());
+        return activityRepository.findOngoingActivities(LocalTime.now());
     }
 }

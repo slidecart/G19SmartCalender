@@ -1,6 +1,7 @@
 package com.smartcalender.app.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Duration;
@@ -32,6 +33,10 @@ public class Activity {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Activity() {
     }
 
@@ -43,7 +48,6 @@ public class Activity {
         this.endTime = endTime;
         this.location = location; //Can be null
         this.category = category; //Can be default
-        //TODO - Add attribute foreign key USERID
     }
 
     public boolean isOnGoing() {
@@ -51,8 +55,8 @@ public class Activity {
         return now.isAfter(startTime) && now.isBefore(endTime);
     }
 
-    public boolean isFuture(){
-        return LocalDate.now().isAfter(date) && LocalDateTime.now().isBefore(ChronoLocalDateTime.from(startTime));
+    public boolean isFuture() {
+        return LocalDateTime.now().isBefore(LocalDateTime.of(date, startTime));
     }
 
     public long getDuration() {
@@ -60,11 +64,28 @@ public class Activity {
     }
 
     public boolean overlaps(Activity otherActivity) {
-        return this.date.equals(otherActivity.date) && (this.endTime.equals(otherActivity.endTime) && this.startTime.equals(otherActivity.startTime));
+        if (!this.date.equals(otherActivity.date)) {
+            return false;
+        }
+        return this.startTime.isBefore(otherActivity.endTime) &&
+                this.endTime.isAfter(otherActivity.startTime);
+    }
+
+    @AssertTrue(message = "Start time must be before end time")
+    public boolean isValidTimeRange() {
+        return startTime.isBefore(endTime);
     }
 
     public Long getId() {
         return id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getName() {
