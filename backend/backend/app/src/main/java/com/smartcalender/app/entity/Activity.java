@@ -3,6 +3,7 @@ package com.smartcalender.app.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -29,4 +30,22 @@ public class Activity {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    public Activity() {
+    }
+
+    public Activity(String name, String description, LocalDate date, LocalTime startTime, LocalTime endTime, String location, Category category) {
+    }
+
+    public boolean isOnGoing() {
+        LocalTime now = LocalTime.now();
+        return now.isAfter(startTime) && now.isBefore(endTime);
+    }
+
+    public long getDuration() {
+        return Duration.between(startTime, endTime).toMinutes();
+    }
+
+    public boolean overlaps(Activity otherActivity) {
+        return this.date.equals(otherActivity.date) && (this.endTime.equals(otherActivity.endTime) && this.startTime.equals(otherActivity.startTime));
+    }
 }
