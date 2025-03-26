@@ -55,4 +55,11 @@ public class Task {
         }
         return new Activity(this.name, this.description, this.date, startTime, endTime, this.location, this.category);
     }
+
+    //Hjälpmetod
+    public boolean isValid() {
+        return name != null && !name.trim().isEmpty() && date != null;
+    }
+
+
 }

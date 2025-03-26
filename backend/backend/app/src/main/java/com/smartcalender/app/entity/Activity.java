@@ -48,4 +48,8 @@ public class Activity {
     public boolean overlaps(Activity otherActivity) {
         return this.date.equals(otherActivity.date) && (this.endTime.equals(otherActivity.endTime) && this.startTime.equals(otherActivity.startTime));
     }
+
+    public Long getId() {
+        return id;
+    }
 }
