@@ -28,14 +28,13 @@ public class Task {
     public Task() {
     }
 
-    public Task(Long id, String name, String description, LocalDate date, String location, Category category) {
-        this.id = id;
+    public Task(String name, String description, LocalDate date, String location, Category category) {
         this.name = name;
-        this.description = description;
+        this.description = description; // Can be null
         this.date = date; //Can be null
         this.location = location; //Can be null
         this.completed = false;
-        this.category = category;
+        this.category = category; //Can be default
     }
 
 
@@ -45,12 +44,12 @@ public class Task {
 
     public Activity convertToActivity(LocalDate date, LocalTime startTime, LocalTime endTime) {
         if (startTime == null || endTime == null) {
-            return null;
+            return null; // Exception-throw?
         }
         if (startTime.isBefore(endTime)) {
-            return null;
+            return null; // Exception-throw?
         }
-        if (date == null) {
+        if (date == null) { //
             this.date = date;
         }
         return new Activity(this.name, this.description, this.date, startTime, endTime, this.location, this.category);

@@ -34,6 +34,13 @@ public class Activity {
     }
 
     public Activity(String name, String description, LocalDate date, LocalTime startTime, LocalTime endTime, String location, Category category) {
+        this.name = name;
+        this.description = description; //Can be null
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.location = location; //Can be null
+        this.category = category; //Can be default
     }
 
     public boolean isOnGoing() {
