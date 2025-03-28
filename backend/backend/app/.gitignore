@@ -31,6 +31,3 @@ build/
 
 ### VS Code ###
 .vscode/
-
-#Application properties (Individual user settings)
-/backend/backend/app/src/main/resources/application.properties
