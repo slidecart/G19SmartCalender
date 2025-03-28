@@ -39,7 +39,7 @@ public class ActivityService {
             activityRepository.deleteById(id);
             return new ResponseEntity<>(true, HttpStatus.OK);
         }
-        throw new ActivityNotFoundException();
+        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
 
     public ResponseEntity<Activity> editActivity(Activity activity) {
