@@ -1,6 +1,8 @@
 package com.smartcalender.app.service;
 
+import com.smartcalender.app.ErrorResponse;
 import com.smartcalender.app.entity.Activity;
+import com.smartcalender.app.exceptions.ActivityNotFoundException;
 import com.smartcalender.app.repository.ActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,9 +19,12 @@ public class ActivityService {
 
     private final ActivityRepository activityRepository;
 
-    @Autowired
     public ActivityService(ActivityRepository activityRepository) {
         this.activityRepository = activityRepository;
+    }
+
+    public List<Activity> getAllActivities() {
+        return activityRepository.findAll();
     }
 
     public Activity createActivity(Activity activity) {
@@ -34,7 +39,7 @@ public class ActivityService {
             activityRepository.deleteById(id);
             return new ResponseEntity<>(true, HttpStatus.OK);
         }
-        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        throw new ActivityNotFoundException();
     }
 
     public ResponseEntity<Activity> editActivity(Activity activity) {
@@ -58,5 +63,10 @@ public class ActivityService {
 
     public List<Activity> getOngoingActivities() {
         return activityRepository.findOngoingActivities(LocalTime.now());
+    }
+
+    public List<Activity> getFutureActivities() {
+        //Change code below to get only future activities
+        return activityRepository.findAll();
     }
 }
