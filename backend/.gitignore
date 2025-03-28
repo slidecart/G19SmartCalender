@@ -218,5 +218,6 @@ $RECYCLE.BIN/
 *.lnk
 
 #Application properties (Individual user settings)
-backend/app/src/main/resources/application.properties
+/backend/backend/app/src/main/resources/application.properties
+
 # End of https://www.toptal.com/developers/gitignore/api/windows,macos,visualstudiocode,intellij+all,java,react
