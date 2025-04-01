@@ -1,0 +1,26 @@
+
+#header{
+    display: flex;
+    flex-direction: row;
+    padding-left: 10px;
+    background-color: #0077ff7e;
+
+}
+
+nav > ul, li {
+    display:flex;
+    flex-direction: row;
+    padding: 10px 15px 0 15px;
+}
+
+nav > ul > li >a{
+    color: black;
+    text-decoration: none;
+    transition: all 0.5s;
+}
+
+nav > ul > li > a:hover{
+    color: rgb(73, 73, 73);
+    transition: all 0.5s;
+    font-size: 18px;
+}
