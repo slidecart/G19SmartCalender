@@ -1,9 +1,14 @@
 package com.smartcalender.app.controller;
 
+import com.smartcalender.app.auth.SecurityUtils;
+import com.smartcalender.app.config.JwtUtil;
+import com.smartcalender.app.dto.CreateActivityRequest;
 import com.smartcalender.app.entity.Activity;
+import com.smartcalender.app.entity.User;
 import com.smartcalender.app.service.ActivityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +24,9 @@ public class ActivityController {
     }
 
     @PostMapping
-    public ResponseEntity<Activity> createActivity(@RequestBody Activity activity) {
-        Activity created = activityService.createActivity(activity);
+    public ResponseEntity<Activity> createActivity(@RequestBody CreateActivityRequest activity) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        Activity created = activityService.createActivity(activity, currentUser);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
