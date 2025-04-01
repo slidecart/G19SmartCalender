@@ -1,6 +1,6 @@
 package com.smartcalender.app.config;
 
-import com.smartcalender.app.service.CustomUserDetailsService;
+import com.smartcalender.app.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private AuthService authService;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
