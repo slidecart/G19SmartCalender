@@ -2,7 +2,7 @@ import header from './header.css'
 function Header(){
     return(
         <>
-            <box id="header">
+            <div id="header">
                 <header>
                     <h1>
                         Smartcalendar
@@ -16,7 +16,7 @@ function Header(){
                         <li><a href="">Inställningar</a></li>
                     </ul>
                 </nav>
-            </box>
+            </div>
         </>
     )
 }
