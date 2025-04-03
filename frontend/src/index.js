@@ -21,6 +21,22 @@ const theme = createTheme({
       fontWeight: "bold",
       padding: "10px"
     }
+  },
+  components: {
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          margin: "4px 0 4px 0",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          margin: "4px 0 4px 0",
+        }
+      }
+    }
   }
 });
 

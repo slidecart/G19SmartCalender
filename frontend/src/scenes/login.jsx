@@ -1,11 +1,11 @@
-import { Box, Container, TextField, Typography } from "@mui/material";
+import { Box, Container, TextField, Typography, Button } from "@mui/material";
 
 function LogIn() {
 
     return(
-        <Container sx={{display: "flex", alignItems:"center", justifyContent:"center", height:"80vh"}}>
-            <Box sx={{display: "flex", flexDirection:"column"}}>
-                <Typography variant="h1">
+        <Container sx={{display: "flex", alignItems:"center", justifyContent:"center", height:"80vh", flexDirection:"column"}}>
+            <Box sx={{display: "flex", flexDirection:"column", maxWidth:"350px", width:"100%"}}>
+                <Typography variant="h1" sx={{textAlign:"center"}}>
                     Välkommen!
                 </Typography>
                 <TextField
@@ -22,6 +22,25 @@ function LogIn() {
                     fullWidth
 
                 />
+                <Button 
+                    variant ="outlined"
+                    color="primary"
+                >
+                    Logga in
+                </Button>
+                
+            </Box>
+            <Box sx={{display:"flex", flexDirection:"column", my: 3, justifyContent:"center", alignItems:"center", maxWidth:"350px", width:"100%"}}>
+                <Typography variant="p" sx={{my: 1, textDecoration:"underline", fontWeight:"600", fontSize:"18px"}}>
+                    Inte registrerat dig än?
+                </Typography>
+                <Button
+                    variant="contained"
+                    backgroundColor="secondary.main"
+                    fullWidth
+                >
+                    Registrera dig idag!
+                </Button>
             </Box>
         </Container>
     )
