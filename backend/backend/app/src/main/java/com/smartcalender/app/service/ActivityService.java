@@ -2,9 +2,12 @@ package com.smartcalender.app.service;
 
 import com.smartcalender.app.dto.CreateActivityRequest;
 import com.smartcalender.app.entity.Activity;
+import com.smartcalender.app.entity.Category;
 import com.smartcalender.app.entity.User;
 import com.smartcalender.app.repository.ActivityRepository;
+import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,11 +21,13 @@ import java.util.Optional;
 public class ActivityService {
 
     private final ActivityRepository activityRepository;
+    private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
 
 
-    public ActivityService(ActivityRepository activityRepository, UserRepository userRepository) {
+    public ActivityService(ActivityRepository activityRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
         this.activityRepository = activityRepository;
+        this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
     }
 
@@ -41,15 +46,24 @@ public class ActivityService {
         activity.setStartTime(request.getStartTime());
         activity.setEndTime(request.getEndTime());
         activity.setLocation(request.getLocation());
+
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+            activity.setCategory(category);
+        }
+
         User user = userRepository.findByUsername(currentUser.getUsername()).get();
         activity.setUser(user);
 
         return activityRepository.save(activity);
     }
 
+    @Transactional
     public ResponseEntity<Boolean> deleteActivity(Long id) {
-        if (activityRepository.existsById(id)) {
-            activityRepository.deleteById(id);
+        Optional<Activity> activity = activityRepository.findById(id);
+        if (activity.isPresent()) {
+            activityRepository.delete(activity.get());
             return new ResponseEntity<>(true, HttpStatus.OK);
         }
         return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);

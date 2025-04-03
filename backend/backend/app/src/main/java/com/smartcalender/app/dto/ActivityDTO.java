@@ -1,0 +1,128 @@
+package com.smartcalender.app.dto;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+public class ActivityDTO {
+    private Long id;
+    private String name;
+    private String description;
+    private String location;
+    private LocalDate date;
+    private LocalTime startTime;
+    private LocalTime endTime;
+    private Long categoryId;
+    private Long userId;
+    private Long duration;
+    private Boolean onGoing;
+    private Boolean future;
+    private Boolean validTimeRange;
+
+
+    public ActivityDTO() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public LocalTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public Long getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Long duration) {
+        this.duration = duration;
+    }
+
+    public Boolean getOnGoing() {
+        return onGoing;
+    }
+
+    public void setOnGoing(Boolean onGoing) {
+        this.onGoing = onGoing;
+    }
+
+    public Boolean getFuture() {
+        return future;
+    }
+
+    public void setFuture(Boolean future) {
+        this.future = future;
+    }
+
+    public Boolean getValidTimeRange() {
+        return validTimeRange;
+    }
+
+    public void setValidTimeRange(Boolean validTimeRange) {
+        this.validTimeRange = validTimeRange;
+    }
+}

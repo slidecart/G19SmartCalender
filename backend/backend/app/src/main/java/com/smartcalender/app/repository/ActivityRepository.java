@@ -17,7 +17,7 @@ import java.util.Optional;
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
     Optional<Activity> findByNameAndDate(String name, LocalDate date);
-    boolean existsById(Long id);
+
     @Query("SELECT a FROM Activity a WHERE a.date = :currentDate AND :currentTime BETWEEN a.startTime AND a.endTime")
     List<Activity> findOngoingActivities(@Param("currentTime") LocalTime currentTime);
 }
