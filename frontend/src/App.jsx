@@ -1,4 +1,4 @@
-import Header from "./components/header";
+import Header from "./components/containers/header";
 import LogIn from "./scenes/login";
 
 function App() {
