@@ -1,0 +1,1 @@
+{/*Fixa en footer som ska tilläggas till alla sidor*/}

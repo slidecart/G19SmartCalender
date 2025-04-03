@@ -1,0 +1,1 @@
+{/*Upplägget av hur settings ska se ut*/}
