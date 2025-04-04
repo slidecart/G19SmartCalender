@@ -1,9 +1,11 @@
 package com.smartcalender.app.service;
 
+import com.smartcalender.app.dto.ActivityDTO;
 import com.smartcalender.app.dto.CreateActivityRequest;
 import com.smartcalender.app.entity.Activity;
 import com.smartcalender.app.entity.Category;
 import com.smartcalender.app.entity.User;
+import com.smartcalender.app.mapper.ActivityMapper;
 import com.smartcalender.app.repository.ActivityRepository;
 import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.UserRepository;
@@ -13,9 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ActivityService {
@@ -23,19 +27,24 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final ActivityMapper activityMapper;
 
 
-    public ActivityService(ActivityRepository activityRepository, CategoryRepository categoryRepository, UserRepository userRepository) {
+    public ActivityService(ActivityRepository activityRepository, CategoryRepository categoryRepository, UserRepository userRepository, ActivityMapper activityMapper) {
         this.activityRepository = activityRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
+        this.activityMapper = activityMapper;
     }
 
-    public List<Activity> getAllActivities() {
-        return activityRepository.findAll();
+    public List<ActivityDTO> getAllActivities() {
+        return activityRepository.findAll()
+                .stream()
+                .map(activityMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public Activity createActivity(CreateActivityRequest request, UserDetails currentUser) {
+    public ActivityDTO createActivity(CreateActivityRequest request, UserDetails currentUser) {
         if (activityRepository.findByNameAndDate(request.getName(), request.getDate()).isPresent()) {
             throw new IllegalArgumentException("Activity already exists");
         }
@@ -53,10 +62,13 @@ public class ActivityService {
             activity.setCategory(category);
         }
 
-        User user = userRepository.findByUsername(currentUser.getUsername()).get();
+        User user = userRepository.findByUsername(currentUser.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         activity.setUser(user);
 
-        return activityRepository.save(activity);
+        Activity savedActivity = activityRepository.save(activity);
+
+        return activityMapper.toDto(savedActivity);
     }
 
     @Transactional
@@ -69,28 +81,50 @@ public class ActivityService {
         return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
 
-    public ResponseEntity<Activity> editActivity(Activity activity) {
-        Optional<Activity> activityOptional = activityRepository.findById(activity.getId());
+    public Optional<ActivityDTO> editActivity(Long id, ActivityDTO activityDTO) {
+        Optional<Activity> activityOptional = activityRepository.findById(id);
         if (activityOptional.isPresent()) {
             Activity activityToEdit = activityOptional.get();
 
-            activityToEdit.setName(activity.getName());
-            activityToEdit.setDescription(activity.getDescription());
-            activityToEdit.setStartTime(activity.getStartTime());
-            activityToEdit.setEndTime(activity.getEndTime());
-            activityRepository.save(activityToEdit);
-            return new ResponseEntity<>(activity, HttpStatus.OK);
+            activityToEdit.setName(activityDTO.getName());
+            activityToEdit.setDescription(activityDTO.getDescription());
+            activityToEdit.setDate(activityDTO.getDate());
+            activityToEdit.setStartTime(activityDTO.getStartTime());
+            activityToEdit.setEndTime(activityDTO.getEndTime());
+            activityToEdit.setLocation(activityDTO.getLocation());
+
+            if (activityDTO.getCategoryId() != null) {
+                Category category = categoryRepository.findById(activityDTO.getCategoryId())
+                        .orElseThrow(() -> new RuntimeException("Category not found with ID: " + activityDTO.getCategoryId()));
+                activityToEdit.setCategory(category);
+            }
+
+            if (activityDTO.getUserId() != null) {
+                User user = userRepository.findById(activityDTO.getUserId())
+                        .orElseThrow(() -> new RuntimeException("User not found with ID: " + activityDTO.getUserId()));
+                activityToEdit.setUser(user);
+            }
+
+            Activity savedActivity = activityRepository.save(activityToEdit);
+            return Optional.of(activityMapper.toDto(savedActivity));
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return Optional.empty();
     }
 
-    public Optional<Activity> getActivity(long id) {
-        return activityRepository.findById(id);
+    public Optional<ActivityDTO> getActivity(long id) {
+        return activityRepository.findById(id)
+                .map(activityMapper::toDto);
     }
 
-    public List<Activity> getOngoingActivities() {
-        return activityRepository.findOngoingActivities(LocalTime.now());
+    public List<ActivityDTO> getOngoingActivities() {
+        LocalDate currentDate = LocalDate.now();
+        LocalTime currentTime = LocalTime.now();
+        List<Activity> ongoingActivities = activityRepository.findOngoingActivities(currentDate, currentTime);
+        return ongoingActivities.stream()
+                .map(activityMapper::toDto)
+                .collect(Collectors.toList());
     }
+
 
     public List<Activity> getFutureActivities() {
         //Change code below to get only future activities

@@ -31,52 +31,33 @@ public class ActivityController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Activity> createActivity(@RequestBody CreateActivityRequest activity) {
+    public ResponseEntity<ActivityDTO> createActivity(@RequestBody CreateActivityRequest activity) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
-        Activity created = activityService.createActivity(activity, currentUser);
+        ActivityDTO created = activityService.createActivity(activity, currentUser);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Activity>> getAllActivities() {
-        List<Activity> activities = activityService.getAllActivities();
+    public ResponseEntity<List<ActivityDTO>> getAllActivities() {
+        List<ActivityDTO> activities = activityService.getAllActivities();
         return new ResponseEntity<>(activities, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Activity> getActivity(@PathVariable Long id) {
+    public ResponseEntity<ActivityDTO> getActivity(@PathVariable Long id) {
         return activityService.getActivity(id)
                 .map(activity -> new ResponseEntity<>(activity, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Activity> editActivity(@PathVariable Long id, @RequestBody ActivityDTO activityDTO) {
-        Optional<Activity> existingActivity = activityService.getActivity(id);
-        if (existingActivity.isPresent()) {
-            Activity activityToUpdate = existingActivity.get();
-            activityToUpdate.setName(activityDTO.getName());
-            activityToUpdate.setDescription(activityDTO.getDescription());
-            activityToUpdate.setDate(activityDTO.getDate());
-            activityToUpdate.setStartTime(activityDTO.getStartTime());
-            activityToUpdate.setEndTime(activityDTO.getEndTime());
-            activityToUpdate.setLocation(activityDTO.getLocation());
-
-            if (activityDTO.getCategoryId() != null) {
-                Category category = categoryRepository.findById(activityDTO.getCategoryId())
-                        .orElseThrow(() -> new RuntimeException("Category not found with ID: " + activityDTO.getCategoryId()));
-                activityToUpdate.setCategory(category);
-            }
-
-            if (activityDTO.getUserId() != null) {
-                User user = userRepository.findById(activityDTO.getUserId())
-                        .orElseThrow(() -> new RuntimeException("User not found with ID: " + activityDTO.getUserId()));
-                activityToUpdate.setUser(user);
-            }
-            return activityService.editActivity(activityToUpdate);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<ActivityDTO> editActivity(@PathVariable Long id, @RequestBody ActivityDTO activityDTO) {
+        Optional<ActivityDTO> updatedActivity = activityService.editActivity(id, activityDTO);
+        return updatedActivity
+                .map(activity -> new ResponseEntity<>(activity, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteActivity(@PathVariable Long id) {
@@ -84,8 +65,8 @@ public class ActivityController {
     }
 
     @GetMapping("/ongoing")
-    public ResponseEntity<List<Activity>> getOngoingActivities() {
-        List<Activity> ongoing = activityService.getOngoingActivities();
+    public ResponseEntity<List<ActivityDTO>> getOngoingActivities() {
+        List<ActivityDTO> ongoing = activityService.getOngoingActivities();
         return new ResponseEntity<>(ongoing, HttpStatus.OK);
     }
 }
