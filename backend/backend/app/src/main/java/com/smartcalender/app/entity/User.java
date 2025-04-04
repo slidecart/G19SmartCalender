@@ -38,6 +38,10 @@ public class User {
         this.password = password;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public boolean checkPasswordComplexity(String password) {
         if(password.equals(this.password)) { // utvärdera om lösenordet har en bra nivå av komplexitet
             return true;
