@@ -7,16 +7,29 @@ import dayjs from "dayjs";
 
 function WeeklyCalendar() {
 
-    const weekdays = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag", "Söndag"];
+    const today = dayjs();
+    const currentYear = today.year();
+
+    const startOfWeek = today.startOf("week");
+
+    const weekdays = Array.from ({ length: 7 }, (_, i) => ({
+        name: ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag", "Söndag"][i],
+        date: startOfWeek.add(i, "day").format("DD/MM") 
+    }));
 
     return(
         <Container sx={{my:5}}>
+            <Typography variant="h4" sx={{textAlign:"center", mb: 3}}>
+                Veckokalender - {currentYear}
+            </Typography>
             <TableContainer component ={Paper}>
                 <Table>
                     <TableHead>
                         <TableRow>
                             {weekdays.map((day) => (
-                                <TableCell key={day} align="center" sx={{ fontWeight:"bold"}}>{day}</TableCell>
+                                <TableCell key={day.name} align="center" sx={{ fontWeight:"bold"}}>
+                                    {day.name} {day.date}
+                                </TableCell>
                             ))}
                         </TableRow>
                     </TableHead>
