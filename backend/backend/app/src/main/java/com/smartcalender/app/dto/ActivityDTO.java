@@ -30,7 +30,7 @@ public class ActivityDTO {
         this.date = activity.getDate();
         this.startTime = activity.getStartTime();
         this.endTime = activity.getEndTime();
-        //this.categoryId = activity.getCategory(); //TODO - Does not match
+        this.categoryId = activity.getCategory().getId();
         this.userId = activity.getUser().getId();
         this.duration = activity.getDuration();
         this.onGoing = activity.isOnGoing();
