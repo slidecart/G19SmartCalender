@@ -5,7 +5,7 @@ function LogIn() {
     {/*Här måste läggas till funktioner kopplat till backend för att få möjlighet att logga in*/}
 
     return(
-        <Container sx={{display: "flex", alignItems:"center", justifyContent:"center", height:"80vh", flexDirection:"column"}}>
+        <Container sx={{display: "flex", alignItems:"center", justifyContent:"center", flexDirection:"column"}}>
             <Box sx={{display: "flex", flexDirection:"column", maxWidth:"350px", width:"100%"}}>
                 <Typography variant="h1" sx={{textAlign:"center"}}>
                     Välkommen!
