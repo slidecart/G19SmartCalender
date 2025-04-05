@@ -29,4 +29,5 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     List<Activity> findUpcomingActivities(@Param("userId") Long userId,
                                           @Param("currentDate") LocalDate currentDate);
 
+    List<Activity> findByUser(User user);
 }

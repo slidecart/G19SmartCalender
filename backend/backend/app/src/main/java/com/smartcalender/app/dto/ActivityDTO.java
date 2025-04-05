@@ -1,10 +1,11 @@
 package com.smartcalender.app.dto;
 
+import com.smartcalender.app.entity.Activity;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class ActivityDTO {
-    private Long id;
     private String name;
     private String description;
     private String location;
@@ -25,12 +26,19 @@ public class ActivityDTO {
     public ActivityDTO() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public ActivityDTO(Activity activity) {
+        this.name = activity.getName();
+        this.description = activity.getDescription();
+        this.location = activity.getLocation();
+        this.date = activity.getDate();
+        this.startTime = activity.getStartTime();
+        this.endTime = activity.getEndTime();
+        this.categoryId = activity.getCategory().getId();
+        this.userId = activity.getUser().getId();
+        this.duration = activity.getDuration();
+        this.onGoing = activity.isOnGoing();
+        this.future = activity.isFuture();
+        this.validTimeRange = activity.isValidTimeRange();
     }
 
     public String getName() {
