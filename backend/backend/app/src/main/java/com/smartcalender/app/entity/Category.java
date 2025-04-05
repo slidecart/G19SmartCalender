@@ -44,8 +44,4 @@ public class Category {
     public void setColor(String color) {
         this.color = color;
     }
-
-    public Long getId() {
-        return id;
-    }
 }
