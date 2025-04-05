@@ -3,9 +3,6 @@ package com.smartcalender.app.controller;
 import com.smartcalender.app.auth.SecurityUtils;
 import com.smartcalender.app.dto.ActivityDTO;
 import com.smartcalender.app.dto.CreateActivityRequest;
-import com.smartcalender.app.entity.Activity;
-import com.smartcalender.app.entity.Category;
-import com.smartcalender.app.entity.User;
 import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.UserRepository;
 import com.smartcalender.app.service.ActivityService;
@@ -18,16 +15,12 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/activities")
+@RequestMapping("/api/activity")
 public class ActivityController {
     private final ActivityService activityService;
-    private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
 
     public ActivityController(ActivityService activityService, CategoryRepository categoryRepository, UserRepository userRepository) {
         this.activityService = activityService;
-        this.categoryRepository = categoryRepository;
-        this.userRepository = userRepository;
     }
 
     @PostMapping("/create")
@@ -39,20 +32,23 @@ public class ActivityController {
 
     @GetMapping("/all")
     public ResponseEntity<List<ActivityDTO>> getAllActivities() {
-        List<ActivityDTO> activities = activityService.getAllActivities();
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        List<ActivityDTO> activities = activityService.getAllActivities(currentUser);
         return new ResponseEntity<>(activities, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ActivityDTO> getActivity(@PathVariable Long id) {
-        return activityService.getActivity(id)
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        return activityService.getActivity(id, currentUser)
                 .map(activity -> new ResponseEntity<>(activity, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ActivityDTO> editActivity(@PathVariable Long id, @RequestBody ActivityDTO activityDTO) {
-        Optional<ActivityDTO> updatedActivity = activityService.editActivity(id, activityDTO);
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        Optional<ActivityDTO> updatedActivity = activityService.editActivity(currentUser, id, activityDTO);
         return updatedActivity
                 .map(activity -> new ResponseEntity<>(activity, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -61,12 +57,21 @@ public class ActivityController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Boolean> deleteActivity(@PathVariable Long id) {
-        return activityService.deleteActivity(id);
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        return activityService.deleteActivity(currentUser, id);
     }
 
     @GetMapping("/ongoing")
     public ResponseEntity<List<ActivityDTO>> getOngoingActivities() {
-        List<ActivityDTO> ongoing = activityService.getOngoingActivities();
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        List<ActivityDTO> ongoing = activityService.getOngoingActivities(currentUser);
+        return new ResponseEntity<>(ongoing, HttpStatus.OK);
+    }
+
+    @GetMapping("/future")
+    public ResponseEntity<List<ActivityDTO>> getFutureActivities() {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        List<ActivityDTO> ongoing = activityService.getFutureActivities(currentUser);
         return new ResponseEntity<>(ongoing, HttpStatus.OK);
     }
 }
