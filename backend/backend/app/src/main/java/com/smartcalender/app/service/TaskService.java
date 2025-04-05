@@ -3,9 +3,11 @@ package com.smartcalender.app.service;
 import com.smartcalender.app.dto.ConvertTaskRequest;
 import com.smartcalender.app.dto.TaskDTO;
 import com.smartcalender.app.entity.Activity;
+import com.smartcalender.app.entity.Category;
 import com.smartcalender.app.entity.Task;
 import com.smartcalender.app.entity.User;
 import com.smartcalender.app.repository.ActivityRepository;
+import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.TaskRepository;
 import com.smartcalender.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +23,14 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final ActivityRepository activityRepository;
+    private final CategoryRepository categoryRepository;
 
 
-    public TaskService(TaskRepository taskRepository, UserRepository userRepository, ActivityRepository activityRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository, ActivityRepository activityRepository, CategoryRepository categoryRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.activityRepository = activityRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public TaskDTO createTask(TaskDTO newTask, String username) {
@@ -114,7 +118,8 @@ public class TaskService {
 
     public List<TaskDTO> getTasksByCategory(String categoryName, String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-        List<Task> tasks = taskRepository.findByUserAndCategory(user, categoryName);
+        Category category = categoryRepository.findByName(categoryName).orElseThrow(() -> new RuntimeException("Category not found"));
+        List<Task> tasks = taskRepository.findByUserAndCategory(user, category);
         return tasks.stream().map(TaskDTO::new).collect(Collectors.toList());
     }
 }
