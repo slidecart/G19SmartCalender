@@ -1,6 +1,7 @@
 package com.smartcalender.app.repository;
 
 import com.smartcalender.app.entity.Activity;
+import com.smartcalender.app.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +21,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
     @Query("SELECT a FROM Activity a WHERE a.date = :currentDate AND :currentTime BETWEEN a.startTime AND a.endTime")
     List<Activity> findOngoingActivities(@Param("currentTime") LocalTime currentTime);
+
+    List<Activity> findByUser(User user);
 }
