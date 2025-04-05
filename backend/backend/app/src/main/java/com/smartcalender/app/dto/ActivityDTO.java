@@ -13,7 +13,10 @@ public class ActivityDTO {
     private LocalTime startTime;
     private LocalTime endTime;
     private Long categoryId;
+    private String categoryName;
+    private String categoryColor;
     private Long userId;
+    private String userName;
     private Long duration;
     private Boolean onGoing;
     private Boolean future;
@@ -94,12 +97,36 @@ public class ActivityDTO {
         this.categoryId = categoryId;
     }
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getCategoryColor() {
+        return categoryColor;
+    }
+
+    public void setCategoryColor(String categoryColor) {
+        this.categoryColor = categoryColor;
+    }
+
     public Long getUserId() {
         return userId;
     }
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Long getDuration() {

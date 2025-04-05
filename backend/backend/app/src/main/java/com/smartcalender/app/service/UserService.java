@@ -8,6 +8,10 @@ import com.smartcalender.app.entity.User;
 import com.smartcalender.app.repository.ActivityRepository;
 import com.smartcalender.app.repository.TaskRepository;
 import com.smartcalender.app.repository.UserRepository;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.User.UserBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +22,10 @@ import java.time.YearMonth;
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
-   private final UserRepository userRepository;
-   private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final TaskRepository taskRepository;
     private final ActivityRepository activityRepository;
 
@@ -37,7 +41,19 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public TaskStatsDTO getTaskStats(String username) {
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(user.getUsername());
+        builder.password(user.getPassword());
+        builder.authorities("USER");
+
+        return builder.build();
+    }
+
+  public TaskStatsDTO getTaskStats(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         List<Task> tasks = taskRepository.findByUser(user);
 
@@ -46,10 +62,9 @@ public class UserService {
         int active = total - completed;
 
         return new TaskStatsDTO(total, completed, active);
-
-    }
-
-    public ActivityStatsDTO getActivityStats(String username) {
+  }
+  
+  public ActivityStatsDTO getActivityStats(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         List<Activity> activities = activityRepository.findByUser(user);
         LocalDate today = LocalDate.now();
@@ -59,5 +74,5 @@ public class UserService {
 
         //TODO - Fastnade helt här i att detta var fucking svårt att dra ut. wow.
         return new ActivityStatsDTO(1, 1, 1);//TODO - placeholders
-    }
+  }
 }
