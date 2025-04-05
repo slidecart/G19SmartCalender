@@ -23,13 +23,13 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         LoginResponseDTO response = authService.authenticateUser(loginRequest);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<LoginResponseDTO> refreshToken(
+    public ResponseEntity<?> refreshToken(
             @RequestBody Map<String, UUID> requestBody
     ) {
         UUID refreshToken = requestBody.get("refreshToken");
@@ -39,7 +39,7 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Void> revokeToken(@RequestBody Map<String, UUID> requestBody) {
+    public ResponseEntity<?> revokeToken(@RequestBody Map<String, UUID> requestBody) {
         UUID refreshToken = requestBody.get("refreshToken");
         authService.revokeRefreshToken(refreshToken);
         return ResponseEntity.noContent().build();
@@ -47,7 +47,7 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         User user = authService.registerUser(registerRequest);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
