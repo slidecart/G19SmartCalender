@@ -10,6 +10,7 @@ import com.smartcalender.app.repository.UserRepository;
 import com.smartcalender.app.config.JwtUtil;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,17 +26,25 @@ import java.util.UUID;
 @Service
 public class AuthService {
 
+    @Value("${email-verification.required}")
+    private boolean emailVerificationRequired;
+
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
+    private final OtpService otpService;
+    private final EmailService emailService;
+
 
     public AuthService(UserRepository userRepository, RefreshTokenRepository refreshTokenRepository,
-                       AuthenticationManager authenticationManager, JwtUtil jwtUtil) {
+                       AuthenticationManager authenticationManager, JwtUtil jwtUtil, OtpService otpService, EmailService emailService) {
         this.userRepository = userRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.otpService = otpService;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -94,9 +103,46 @@ public class AuthService {
 
         User user = new User();
         user.setUsername(request.getUsername());
+        user.setEmail(request.getEmailAddress());
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        User savedUser = userRepository.save(user);
 
-        return userRepository.save(user);
+        if (emailVerificationRequired) {
+            String otp = otpService.generateAndStoreOtp(savedUser.getId());
+            String verificationUrl = "http://localhost:8080/api/auth/verify?uid=" + savedUser.getId() + "&otp=" + otp;
+            emailService.sendVerificationEmail(savedUser.getEmailAddress(), "Verify Your Email",
+                    "Click here to verify: " + verificationUrl);
+        }
+
+        return savedUser;
     }
+
+    public void verifyEmail(Long userId, String otp) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (otpService.isOtpValid(userId, otp)) {
+            user.setEmailVerified(true);
+            userRepository.save(user);
+            otpService.deleteOtp(userId);
+        } else {
+            throw new RuntimeException("Invalid or expired OTP");
+        }
+    }
+
+    public void resendVerification(String emailAddress) {
+        User user = userRepository.findByEmailAddress(emailAddress)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isEmailVerified()) {
+            String otp = otpService.generateAndStoreOtp(user.getId());
+            String verificationUrl = "http://localhost:8080/api/auth/verify?uid=" + user.getId() + "&otp=" + otp;
+            emailService.sendVerificationEmail(user.getEmailAddress(), "Verify Your Email",
+                    "Click here to verify: " + verificationUrl);
+        } else {
+            throw new RuntimeException("Email already verified");
+        }
+    }
+
 }

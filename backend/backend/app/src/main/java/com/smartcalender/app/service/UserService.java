@@ -8,6 +8,7 @@ import com.smartcalender.app.entity.User;
 import com.smartcalender.app.repository.ActivityRepository;
 import com.smartcalender.app.repository.TaskRepository;
 import com.smartcalender.app.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -25,26 +25,27 @@ import java.util.List;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final TaskRepository taskRepository;
     private final ActivityRepository activityRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, TaskRepository taskRepository, ActivityRepository activityRepository) {
+    @Value("${email-verification.required}")
+    private boolean emailVerificationRequired;
+
+    public UserService(UserRepository userRepository, TaskRepository taskRepository, ActivityRepository activityRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
         this.taskRepository = taskRepository;
         this.activityRepository = activityRepository;
     }
 
-    public void save(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        if (emailVerificationRequired && !user.isEmailVerified()) {
+            throw new RuntimeException("Email not verified");
+        }
 
         UserBuilder builder = org.springframework.security.core.userdetails.User.withUsername(user.getUsername());
         builder.password(user.getPassword());
