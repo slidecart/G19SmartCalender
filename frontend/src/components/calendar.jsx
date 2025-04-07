@@ -1,1 +1,0 @@
-{/*Komponent för kalendern. Ska även finnas funktioner till backend som ska lägga till, redigera och ta bort aktiviteter*/}

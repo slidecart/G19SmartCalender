@@ -1,4 +1,7 @@
-import {Box, Container, TextField, Typography, Button, FormControl} from "@mui/material";
+
+import { Box, Container, TextField, Typography, Button } from "@mui/material";
+import Body from "../components/containers/body";
+
 
 function LogIn(key, value) {
 
@@ -44,58 +47,53 @@ function LogIn(key, value) {
     };
 
     return(
-        <Container sx={{display: "flex", alignItems:"center", justifyContent:"center", height:"80vh", flexDirection:"column"}}>
-            <Box
-                component="form"
-                onSubmit={handleSubmit}
-                sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    maxWidth: "350px",
-                    width: "100%"
-                }}
-            >
-                <Typography variant="h1" sx={{ textAlign: "center" }}>
-                    Välkommen!
-                </Typography>
-                <FormControl sx={{ my: 1 }}>
+
+        <Body>
+            <Container sx={{display: "flex", alignItems:"center", justifyContent:"center", flexDirection:"column"}}>
+                <Box sx={{display: "flex", flexDirection:"column", maxWidth:"350px", width:"100%"}}>
+                    <Typography variant="h1" sx={{textAlign:"center"}}>
+                        Välkommen!
+                    </Typography>
+
                     <TextField
                         label="Användarnamn"
                         name="username"
                         variant="outlined"
                         fullWidth
-                    />
-                </FormControl>
-                <TextField
-                    label="Lösenord"
-                    name="password"
-                    type="password"
-                    variant="outlined"
-                    fullWidth
-                    sx={{ my: 1 }}
-                />
-                <Button
-                    variant="outlined"
-                    color="primary"
-                    type="submit"
-                >
-                    Logga in
-                </Button>
-            </Box>
 
-            <Box sx={{display:"flex", flexDirection:"column", my: 3, justifyContent:"center", alignItems:"center", maxWidth:"350px", width:"100%"}}>
-                <Typography variant="p" sx={{my: 1, textDecoration:"underline", fontWeight:"600", fontSize:"18px"}}>
-                    Inte registrerat dig än?
-                </Typography>
-                <Button
-                    variant="contained"
-                    backgroundColor="secondary.main"
-                    fullWidth
-                >
-                    Registrera dig idag!
-                </Button>
-            </Box>
-        </Container>
+                        
+                    />
+                    <TextField  
+                        label="Lösenord"
+                        name="password"
+                        variant="outlined"
+                        fullWidth
+
+                    />
+                    <Button 
+                        variant ="outlined"
+                        color="primary"
+                    >
+                        Logga in
+                    </Button>
+                    
+                </Box>
+                <Box sx={{display:"flex", flexDirection:"column", my: 3, justifyContent:"center", alignItems:"center", maxWidth:"350px", width:"100%"}}>
+                    <Typography variant="p" sx={{my: 1, textDecoration:"underline", fontWeight:"600", fontSize:"18px"}}>
+                        Inte registrerat dig än?
+                    </Typography>
+                    <Button
+                        variant="contained"
+                        backgroundColor="secondary.main"
+                        fullWidth
+                    >
+                        Registrera dig idag!
+                    </Button>
+                </Box>
+            </Container>
+        </Body>
+        
+
     )
 }
 
