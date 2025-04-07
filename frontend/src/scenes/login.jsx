@@ -1,5 +1,5 @@
 
-import { Box, Container, TextField, Typography, Button } from "@mui/material";
+import { Box, Container, TextField, Typography, Button, FormControl } from "@mui/material";
 import Body from "../components/containers/body";
 
 
@@ -55,21 +55,25 @@ function LogIn(key, value) {
                         Välkommen!
                     </Typography>
 
-                    <TextField
-                        label="Användarnamn"
-                        name="username"
-                        variant="outlined"
-                        fullWidth
+                    <FormControl sx={{ my: 1 }}>
+                        <TextField
+                            label="Användarnamn"
+                            name="username"
+                            variant="outlined"
+                            fullWidth
 
-                        
-                    />
-                    <TextField  
-                        label="Lösenord"
-                        name="password"
-                        variant="outlined"
-                        fullWidth
 
-                    />
+                        />
+                    </FormControl>
+                    <FormControl sx={{ my: 1 }}>
+                        <TextField
+                            label="Lösenord"
+                            name="password"
+                            variant="outlined"
+                            fullWidth
+
+                        />
+                    </FormControl>
                     <Button 
                         variant ="outlined"
                         color="primary"
