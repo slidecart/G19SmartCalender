@@ -47,6 +47,7 @@ public class ActivityService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public ActivityDTO createActivity(CreateActivityRequest request, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
@@ -86,6 +87,7 @@ public class ActivityService {
         return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
 
+    @Transactional
     public Optional<ActivityDTO> editActivity(UserDetails currentUser, Long id, ActivityDTO activityDTO) {
         User user = userRepository.findByUsername(currentUser.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));

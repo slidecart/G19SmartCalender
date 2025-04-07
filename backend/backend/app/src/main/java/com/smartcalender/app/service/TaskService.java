@@ -11,6 +11,7 @@ import com.smartcalender.app.repository.ActivityRepository;
 import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.TaskRepository;
 import com.smartcalender.app.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 
@@ -32,6 +33,7 @@ public class TaskService {
         this.categoryRepository = categoryRepository;
     }
 
+    @Transactional
     public TaskDTO createTask(TaskDTO newTask, String username) {
         User user = getUser(username);
 
@@ -47,6 +49,7 @@ public class TaskService {
         return new TaskDTO(savedTask);
     }
 
+    @Transactional
     public TaskDTO editTask(Long id, TaskDTO newTask, String username) {
         User user = getUser(username);
         Task task = taskRepository.findByIdAndUser(id, user).orElseThrow(( ) -> new RuntimeException("Task not found"));
@@ -61,6 +64,7 @@ public class TaskService {
         return new TaskDTO(updatedTask);
     }
 
+    @Transactional
     public void deleteTask(Long id, String username) {
         User user = getUser(username);
         Task task = taskRepository.findByIdAndUser(id, user).orElseThrow(( ) -> new RuntimeException("Task not found"));
