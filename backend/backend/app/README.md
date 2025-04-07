@@ -33,7 +33,7 @@ We use Docker to run Redis and Mailhog locally. PostgreSQL is external, so it do
 
 Run the following command in `backend/backend/app` folder to start Redis and Mailhog:
 ```bash
-docker-compose up -d
+docker-compose up
 ```
 
 Stop Docker Services (When Done) in the same folder:
