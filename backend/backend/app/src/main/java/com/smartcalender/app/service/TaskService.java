@@ -6,6 +6,7 @@ import com.smartcalender.app.entity.Activity;
 import com.smartcalender.app.entity.Category;
 import com.smartcalender.app.entity.Task;
 import com.smartcalender.app.entity.User;
+import com.smartcalender.app.exception.UserNotFoundException;
 import com.smartcalender.app.repository.ActivityRepository;
 import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.TaskRepository;
@@ -121,6 +122,6 @@ public class TaskService {
     }
 
     private User getUser(String username) {
-        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 }
