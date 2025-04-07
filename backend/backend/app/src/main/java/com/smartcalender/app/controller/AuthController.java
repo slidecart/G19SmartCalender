@@ -18,8 +18,10 @@ public class AuthController {
 
     private final AuthService authService;
 
+
     public AuthController(AuthService authService) {
         this.authService = authService;
+
     }
 
     @PostMapping("/login")
@@ -50,5 +52,25 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         User user = authService.registerUser(registerRequest);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/verify")
+    public ResponseEntity<?> verifyEmail(@RequestParam("uid") Long userId, @RequestParam("otp") String otp) {
+        try {
+            authService.verifyEmail(userId, otp);
+            return ResponseEntity.ok("Email verified successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend-verification")
+    public ResponseEntity<?> resendVerification(@RequestParam("email") String email) {
+        try {
+            authService.resendVerification(email);
+            return ResponseEntity.ok("Verification email resent");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 }

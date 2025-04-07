@@ -16,8 +16,14 @@ public class User {
     @Column(unique = true)
     private String username;
 
+    @Column(name = "email_address", unique = true)
+    private String emailAddress;
+
     @JsonIgnore
     private String password;
+
+    @Column(name = "email_verified")
+    private boolean emailVerified;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -56,6 +62,21 @@ public class User {
         this.password = password;
     }
 
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmail(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
 
     public List<RefreshToken> getRefreshTokens() {
         return refreshTokens;
