@@ -10,11 +10,9 @@ import com.smartcalender.app.repository.ActivityRepository;
 import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.TaskRepository;
 import com.smartcalender.app.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,8 +32,7 @@ public class TaskService {
     }
 
     public TaskDTO createTask(TaskDTO newTask, String username) {
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getUser(username);
 
         Task task = new Task();
         task.setName(newTask.getName());
@@ -50,7 +47,7 @@ public class TaskService {
     }
 
     public TaskDTO editTask(Long id, TaskDTO newTask, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(( ) -> new RuntimeException("User not found"));
+        User user = getUser(username);
         Task task = taskRepository.findByIdAndUser(id, user).orElseThrow(( ) -> new RuntimeException("Task not found"));
 
         task.setName(newTask.getName());
@@ -64,14 +61,14 @@ public class TaskService {
     }
 
     public void deleteTask(Long id, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(( ) -> new RuntimeException("User not found"));
+        User user = getUser(username);
         Task task = taskRepository.findByIdAndUser(id, user).orElseThrow(( ) -> new RuntimeException("Task not found"));
 
         taskRepository.delete(task);
     }
 
     public void toggleTaskCompletion(Long taskId, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(( ) -> new RuntimeException("User not found"));
+        User user = getUser(username);
 
         Task task = taskRepository.findByIdAndUser(taskId, user)
                 .orElseThrow(() -> new RuntimeException("Task not found"));
@@ -81,7 +78,7 @@ public class TaskService {
 
 
     public Activity convertTaskToActivity(Long taskId, ConvertTaskRequest taskRequest, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(( ) -> new RuntimeException("User not found"));
+        User user = getUser(username);
         Task task = taskRepository.findByIdAndUser(taskId, user).orElseThrow(( ) -> new RuntimeException("Task not found"));
 
         Activity activity = new Activity();
@@ -101,7 +98,7 @@ public class TaskService {
     }
 
     public List<TaskDTO> getTasksForUser(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found")); //TODO - exception till user not found
+        User user = getUser(username);
 
         return taskRepository.findByUser(user).stream()
                 .map(TaskDTO::new)
@@ -109,7 +106,7 @@ public class TaskService {
     }
 
     public TaskDTO getUserTaskById(Long id, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getUser(username);
 
         Task task = taskRepository.findByIdAndUser(id, user).orElseThrow(() -> new RuntimeException("Task not found"));
 
@@ -117,9 +114,13 @@ public class TaskService {
     }
 
     public List<TaskDTO> getTasksByCategory(String categoryName, String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getUser(username);
         Category category = categoryRepository.findByName(categoryName).orElseThrow(() -> new RuntimeException("Category not found"));
         List<Task> tasks = taskRepository.findByUserAndCategory(user, category);
         return tasks.stream().map(TaskDTO::new).collect(Collectors.toList());
+    }
+
+    private User getUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
     }
 }
