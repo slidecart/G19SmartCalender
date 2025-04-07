@@ -1,43 +1,131 @@
 package com.smartcalender.app.service;
 
+import com.smartcalender.app.dto.ConvertTaskRequest;
+import com.smartcalender.app.dto.TaskDTO;
 import com.smartcalender.app.entity.Activity;
+import com.smartcalender.app.entity.Category;
 import com.smartcalender.app.entity.Task;
+import com.smartcalender.app.entity.User;
+import com.smartcalender.app.exception.UserNotFoundException;
+import com.smartcalender.app.repository.ActivityRepository;
+import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.TaskRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.smartcalender.app.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskService {
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
+    private final ActivityRepository activityRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Autowired // Är också LIIITE oklar på vad denna annoteringen gör men w/e
-    public TaskService(TaskRepository taskRepository) {
+
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository, ActivityRepository activityRepository, CategoryRepository categoryRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
+        this.activityRepository = activityRepository;
+        this.categoryRepository = categoryRepository;
     }
 
-    public Task createTask(Task task) {
-        if (!task.isValid()) {
-            return null; //TODO - Exception-throw instead?
-        }
-        return taskRepository.save(task);
+    @Transactional
+    public TaskDTO createTask(TaskDTO newTask, String username) {
+        User user = getUser(username);
+
+        Task task = new Task();
+        task.setName(newTask.getName());
+        task.setDescription(newTask.getDescription());
+        task.setDate(newTask.getDate());
+        task.setLocation(newTask.getLocation());
+        task.setCompleted(newTask.isCompleted());
+        task.setUser(user); // 🔐 Link to logged-in user
+
+        Task savedTask = taskRepository.save(task);
+        return new TaskDTO(savedTask);
     }
 
-    public void toggleTaskCompletion(Long taskId) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found")); //Förstår ej riktigt denna, intelliJ autofyllde en del
+    @Transactional
+    public TaskDTO editTask(Long id, TaskDTO newTask, String username) {
+        User user = getUser(username);
+        Task task = taskRepository.findByIdAndUser(id, user).orElseThrow(( ) -> new RuntimeException("Task not found"));
+
+        task.setName(newTask.getName());
+        task.setDescription(newTask.getDescription());
+        task.setDate(newTask.getDate());
+        task.setLocation(newTask.getLocation());
+        task.setCompleted(newTask.isCompleted());
+
+        Task updatedTask = taskRepository.save(task);
+        return new TaskDTO(updatedTask);
+    }
+
+    @Transactional
+    public void deleteTask(Long id, String username) {
+        User user = getUser(username);
+        Task task = taskRepository.findByIdAndUser(id, user).orElseThrow(( ) -> new RuntimeException("Task not found"));
+
+        taskRepository.delete(task);
+    }
+
+    public void toggleTaskCompletion(Long taskId, String username) {
+        User user = getUser(username);
+
+        Task task = taskRepository.findByIdAndUser(taskId, user)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
         task.toggleCompleted();
         taskRepository.save(task);
     }
 
 
-    public Activity convertTaskToActivity(Long taskId, LocalDate date, LocalTime startTime, LocalTime endTime) {
-        Task task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new RuntimeException("Task not found")); //Samma här som ovan
+    public Activity convertTaskToActivity(Long taskId, ConvertTaskRequest taskRequest, String username) {
+        User user = getUser(username);
+        Task task = taskRepository.findByIdAndUser(taskId, user).orElseThrow(( ) -> new RuntimeException("Task not found"));
 
-        Activity activity = task.convertToActivity(date, startTime, endTime);
+        Activity activity = new Activity();
+        activity.setName(task.getName());
+        activity.setDescription(task.getDescription());
+        activity.setDate(task.getDate());
+        activity.setLocation(task.getLocation());
+        activity.setDate(taskRequest.getDate());
+        activity.setStartTime(taskRequest.getStartTime());
+        activity.setEndTime(taskRequest.getEndTime());
+        activity.setUser(user);
+
+        activityRepository.save(activity);
+        taskRepository.delete(task);
+
         return activity;
+    }
+
+    public List<TaskDTO> getTasksForUser(String username) {
+        User user = getUser(username);
+
+        return taskRepository.findByUser(user).stream()
+                .map(TaskDTO::new)
+                .collect(Collectors.toList());
+    }
+
+    public TaskDTO getUserTaskById(Long id, String username) {
+        User user = getUser(username);
+
+        Task task = taskRepository.findByIdAndUser(id, user).orElseThrow(() -> new RuntimeException("Task not found"));
+
+        return new TaskDTO(task);
+    }
+
+    public List<TaskDTO> getTasksByCategory(String categoryName, String username) {
+        User user = getUser(username);
+        Category category = categoryRepository.findByName(categoryName).orElseThrow(() -> new RuntimeException("Category not found"));
+        List<Task> tasks = taskRepository.findByUserAndCategory(user, category);
+        return tasks.stream().map(TaskDTO::new).collect(Collectors.toList());
+    }
+
+    private User getUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 }
