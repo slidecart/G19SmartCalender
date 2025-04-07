@@ -21,22 +21,28 @@ Backend är en Spring Boot-applikation byggd med Maven och startas via klassen A
 
 - Java 17 (eller den version som anges i pom.xml).
 - Maven (installerat på din dator eller via din IDE:s inbyggda stöd).
+- Docker (installerat på din dator). Det går att starta programmet utan docker men det kommer uppstå 2 errors och vissa funktioner kommer inte fungera. Se README.md filen i backend/backend/app för mer information om detta.
+
 
 **Steg i IntelliJ IDEA**
 1. Öppna projektet i IntelliJ IDEA genom att välja den extraherade mappen.
 2. Vänta tills IntelliJ har indexerat projektet och laddat ner Maven-beroenden (detta sker automatiskt om Maven är aktiverat).
-3. Hitta filen `AppApplication.java` i backend/backend/app/src/main/java/com.smartcalender.app/AppApplication.java
-4. Högerklicka på `AppApplication.java` och välj "Run 'AppApplication.main()'".
-5. Backend startar och körs på port 8080 ifall man vill testa detta på webbläsaren eller i exempelvis programmet Postman.
+3. Starta Docker och kör följande kommando i backend/backend/app i IntelliJ IDEA terminalen eller utanför för att starta email-servern:
+   `docker-compose up`
+4. Hitta filen `AppApplication.java` i backend/backend/app/src/main/java/com.smartcalender.app/AppApplication.java
+5. Högerklicka på `AppApplication.java` och välj "Run 'AppApplication.main()'".
+6. Backend startar och körs på port 8080 ifall man vill testa detta på webbläsaren eller i exempelvis programmet Postman.
 
 **Steg i VS Code**
 1. Öppna projektet i VS Code genom att välja den extraherade mappen.
 2. Installera rekommenderade tillägg som "Java Extension Pack" och "Spring Boot Extension Pack" om du inte redan har dem.
-3. Öppna en terminal i VS Code (Terminal > New Terminal).
-4. Navigera till rotmappen (om du inte redan är där) och kör:
+3. Starta Docker och kör följande kommando i backend/backend/app i VS Code terminalen eller utanför för att starta email-servern:
+   `docker-compose up`
+4. Öppna en terminal i VS Code (Terminal > New Terminal).
+5. Navigera till rotmappen (om du inte redan är där) och kör:
   `mvn clean install`
   `mvn spring-boot:run`
-5. Backend startar och körs på port 8080.
+6. Backend startar och körs på port 8080.
 
 **Frontend**
 Frontend är byggd med Create React App, en verktygslåda för React-applikationer som använder Node.js och npm. För att köra den krävs:
