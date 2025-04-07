@@ -10,13 +10,13 @@ Before you begin, ensure you have the following installed:
 - **Docker** (for running Redis and Mailhog)
 - **Postman** (optional, for GUI-based testing)
 - **cURL** (optional, for terminal-based testing)
-- Access to the PostgreSQL server at `pgserver.mau.se` (credentials in `application.properties`)
+- Access to the PostgreSQL server at `pgserver.mau.se`
 
 ## Project Setup
 
 ### Configuration Overview
 
-- **Database**: PostgreSQL is hosted externally at `pgserver.mau.se:5432/g19smartcalender`. Credentials are in `application.properties`.
+- **Database**: PostgreSQL is hosted externally at `pgserver.mau.se:5432/g19smartcalender`. 
 - **Redis**: Used for storing OTPs (one-time passwords) for email verification. Runs locally via Docker.
 - **Mailhog**: A local SMTP server for capturing emails during development. Runs via Docker.
 - **Spring Boot**: The backend application, configured via `application.properties`.
