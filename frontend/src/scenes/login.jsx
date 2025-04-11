@@ -1,12 +1,11 @@
 import { Box, Container, TextField, Typography, Button } from "@mui/material";
-import Body from "../components/containers/body";
 
 function LogIn() {
 
     {/*Här måste läggas till funktioner kopplat till backend för att få möjlighet att logga in*/}
 
     return(
-        <Body>
+        <Box sx={{display:"flex", justifyContent:"center", alignItems:"center", minHeight:"100vh"}}>
             <Container sx={{display: "flex", alignItems:"center", justifyContent:"center", flexDirection:"column"}}>
                 <Box sx={{display: "flex", flexDirection:"column", maxWidth:"350px", width:"100%"}}>
                     <Typography variant="h1" sx={{textAlign:"center"}}>
@@ -47,7 +46,7 @@ function LogIn() {
                     </Button>
                 </Box>
             </Container>
-        </Body>
+        </Box>
         
     )
 }

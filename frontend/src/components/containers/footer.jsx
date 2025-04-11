@@ -9,16 +9,13 @@ function Footer() {
 
   return (
     <Box
-      sx={{ backgroundColor: "#0077ff7e", color: "black", py: 1, display: "flex", flexDirection: "column", minHeight: "10vh",textAlign: "left" }}
-    >
+      sx={{ backgroundColor: "#0077ff7e", color: "black", py: 1, display: "flex", flexDirection: "column", minHeight: "10vh",textAlign: "left" }}>
       <List sx={{ display: "flex", gap: 3, padding: 0 }}>
         {footerlinks.map((item, index) => (
           <ListItem
             key={index}
-            disableGutters
             sx={{ display: "flex", justifyContent: "center", transition: "none", "&:hover": {backgroundColor: "transparent"}
-            }}
-          >
+            }}>
             <Box
               component="a"
               href={item.link}
@@ -32,7 +29,7 @@ function Footer() {
       </List>
 
       <Typography variant="body1" sx={{ mt: "auto", padding: 1 }}>
-        Copyright © 2025 SmartCalendar. All rights reserved.
+        Copyright © 2025 SmartCalendar. All rights reserved.{/*Använda global "span" för trademark för användartillgänglighet i flera webbläsare*/}
       </Typography>
     </Box>
   );

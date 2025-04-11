@@ -6,7 +6,14 @@ function TodaysAgenda(){
 
     return(
         <Body>
-            <WeeklyCalendar/>
+            <Container sx={{display:"flex", flexDirection:"row"}}>
+                <Box>
+                    {/*Här ska todos eller what not finnas*/}
+                </Box>
+                <Box>
+                    <WeeklyCalendar/>
+                </Box>
+            </Container>
         </Body>
     )
 }
