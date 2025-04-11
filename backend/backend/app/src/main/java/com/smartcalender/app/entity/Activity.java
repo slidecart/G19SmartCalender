@@ -34,6 +34,7 @@ public class Activity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @NotNull
     private User user;
 
     public Activity() {
