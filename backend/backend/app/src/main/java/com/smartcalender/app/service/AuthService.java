@@ -12,6 +12,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -94,6 +96,12 @@ public class AuthService {
         refreshTokenRepository.deleteById(refreshToken);
     }
 
+    @Scheduled(fixedRate = 604800000) // Every week
+    public void deleteExpiredRefreshToken() {
+        Instant now = Instant.now();
+        refreshTokenRepository.deleteByExpirationBefore(now);
+    }
+
 
     @Transactional
     public User registerUser(RegisterRequest request) {
@@ -111,8 +119,7 @@ public class AuthService {
         if (emailVerificationRequired) {
             String otp = otpService.generateAndStoreOtp(savedUser.getId());
             String verificationUrl = "http://localhost:8080/api/auth/verify?uid=" + savedUser.getId() + "&otp=" + otp;
-            emailService.sendVerificationEmail(savedUser.getEmailAddress(), "Verify Your Email",
-                    "Click here to verify: " + verificationUrl);
+            emailService.sendVerificationEmail(savedUser.getEmailAddress(), "Verify Your SmartCalendar Account", verificationUrl, otp);
         }
 
         return savedUser;
@@ -138,8 +145,7 @@ public class AuthService {
         if (!user.isEmailVerified()) {
             String otp = otpService.generateAndStoreOtp(user.getId());
             String verificationUrl = "http://localhost:8080/api/auth/verify?uid=" + user.getId() + "&otp=" + otp;
-            emailService.sendVerificationEmail(user.getEmailAddress(), "Verify Your Email",
-                    "Click here to verify: " + verificationUrl);
+            emailService.sendVerificationEmail(user.getEmailAddress(), "Verify Your SmartCalendar Account", verificationUrl, otp);
         } else {
             throw new RuntimeException("Email already verified");
         }
