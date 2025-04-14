@@ -45,6 +45,7 @@ const CalendarGrid = ({ activities, weekdays, timeSlots }) => {
                                 <TableCell 
                                     key={`${day.name}-${time}`}
                                     align="center"
+
                                 >
                                     {/* Om en aktivitet matchas visas den*/}
                                     {matchingAcitivty && (

@@ -26,6 +26,14 @@ const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit }) =>
                     />
                 </Box>
                 <Box mb ={2}>
+                    <TextField
+                        name="location"
+                        label="Plats"
+                        value={formData.location}
+                        onChange={handleChange}
+                    />
+                </Box>
+                <Box mb ={2}>
                     <TextField 
                         name="date" 
                         label="Datum" 
@@ -58,24 +66,6 @@ const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit }) =>
                         required
                     />
                 </Box>                
-                <Box mb ={2}>
-                    <TextField  
-                        name="categoryId"
-                        label="Kategori ID"
-                        type="number"
-                        value={formData.categoryId}
-                        onChange={handleChange}
-                    />
-                </Box>                
-                <Box mb ={2}>
-                    <TextField
-                        name="userId"
-                        label="Användar-ID"
-                        type="number"
-                        value={formData.userId}
-                        onChange={handleChange}
-                    />  
-                </Box>
             </DialogContent>
 
             <DialogActions>

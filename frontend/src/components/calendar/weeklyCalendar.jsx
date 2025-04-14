@@ -1,4 +1,4 @@
-import { Box, Typography,  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Container } from "@mui/material";
+import { Box, Typography, TableContainer, Paper, Button, Container } from "@mui/material";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import CalendarGrid from "./../calendar/calendarGrid"
@@ -44,10 +44,17 @@ function WeeklyCalendar() {
     // Funktion för att hantera formuläret för att lägga till aktiviter
     const handleSubmit = async () =>{
         try{
+            const token = localStorage.getItem("jwt"); // Tar emot token från localstorage
+            if (!token){
+                console.error("No JWT found in localStorage. User might not be logged in");
+                return;
+            }
+
             const response = await fetch("http://localhost:8080/api/activity/create",{
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Autorization": `Bearer ${token}`
                 },
                 body: JSON.stringify(formData)
             });
@@ -65,8 +72,6 @@ function WeeklyCalendar() {
                 date:"",
                 startTime:"",
                 endTime:"",
-                categoryId:"",
-                userId:""
             });
         } catch (error){
             console.error(error);
@@ -80,7 +85,7 @@ function WeeklyCalendar() {
             ...prev,
             [name]:value,
         }));
-    };
+    }
 
     // Hämtar aktiviteter från API 
     useEffect(() => {
@@ -102,13 +107,13 @@ function WeeklyCalendar() {
     }, []);
         
     return(
-        <Container sx={{my:5}}>
-            <Typography variant="h5" sx={{textAlign:"center", mb: 3}}>
+        <Container sx={{my:2}}>
+            <Typography variant="h6" sx={{textAlign:"center", mb: 1}}>
                 Veckokalender - {currentYear}
             </Typography>
 
             {/* Kalendern visas */}
-            <TableContainer component ={Paper} elevation="2" sx={{height:"450px"}}>
+            <TableContainer component ={Paper} elevation="2" sx={{height:"fit-content"}}>
                 <CalendarGrid
                     activities = {activities}
                     weekdays = {weekdays}
