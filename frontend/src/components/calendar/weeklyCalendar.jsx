@@ -19,10 +19,10 @@ function WeeklyCalendar() {
 
     return(
         <Container sx={{my:5}}>
-            <Typography variant="h4" sx={{textAlign:"center", mb: 3}}>
+            <Typography variant="h5" sx={{textAlign:"center", mb: 3}}>
                 Veckokalender - {currentYear}
             </Typography>
-            <TableContainer component ={Paper}>
+            <TableContainer component ={Paper} elevation="2" sx={{height:"450px"}}>
                 <Table>
                     <TableHead>
                         <TableRow>
@@ -35,18 +35,14 @@ function WeeklyCalendar() {
                     </TableHead>
                     <TableBody>
                         <TableRow>
-                            {weekdays.map((day) => (
-                                <TableCell key={day} align="center" sx={{ verticalAlign:"top" }}>
-                                    <Box>
-                                        <Typography>
-                                            hej hej
-                                        </Typography>
-                                    </Box>
-                                    <ul>
-                                        {/*Här ska det finnas aktiviteter taget från backend*/}
-                                    </ul>
-                                </TableCell>
-                            ))}
+                            <TableCell align="center" sx={{verticalAlign:"top", borderStyle:"solid", borderWidth:"0.5px"}}>
+                                <Box>
+                                    <Typography variant="p">
+                                        hej hej
+                                    </Typography>
+                                </Box>
+                            </TableCell>
+
                         </TableRow>
                     </TableBody>
                 </Table>
