@@ -1,33 +1,88 @@
 import { Box, Typography,  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Container } from "@mui/material";
 import dayjs from "dayjs";
 import { useEffect, useState } from "react";
+import CalendarGrid from "./../calendar/calendarGrid"
+import AddActivity from "./../calendar/addActivity";
 
 
 
 function WeeklyCalendar() {
 
-    {/* Satta variabler för datum*/}
+    // Satta variabler för datum
     const today = dayjs();
     const currentYear = today.year();
     const startOfWeek = today.startOf("week").add(1, "day"); // Första dagen i veckan är Måndag
 
-    {/* Const för aktiviteter*/}
+    // Tillstånd för aktiviteter och felhanteirng 
     const [activities, setActivities] = useState([]);
     const [error, setError] = useState(null);
 
-    {/* Lista för veckodatum */}
+    // Lista över veckodagar från måndag till söndag med aktuella datum
     const weekdays = Array.from ({ length: 7 }, (_, i) => ({
         name: ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag", "Söndag"][i],
-        date: startOfWeek.add(i, "day").format("YYYY-MM-DD") //Formatet från JSON-fil -- ändra sedan formatet som visas
+        date: startOfWeek.add(i, "day").format("YYYY-MM-DD") //Formatet från JSON-fil 
     }));
 
-    {/* Lista för tider*/}
+    // Lista för tider från 08:00 till 20:00 
     const timeSlots = Array.from({ length: 13}, (_,i) => {
         const hour = 8 + i;
         return `${hour.toString().padStart(2, '0')}:00`;
     });
 
-    {/* Funktion för att ta emot användarens aktiviteter */}
+    const [openDialog, setOpenDialog] = useState(false); // Hanterar formuläret för att lägga till aktiviteter
+    const [formData, setFormData] = useState({
+        name:"",
+        description:"",
+        location:"",
+        date:"",
+        startTime:"",
+        endTime:"",
+        categoryId:"",
+        userId:""
+    });
+
+    // Funktion för att hantera formuläret för att lägga till aktiviter
+    const handleSubmit = async () =>{
+        try{
+            const response = await fetch("http://localhost:8080/api/activity/create",{
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok){
+                throw new error("Kunder inte skapa aktivitet");
+            }
+
+            // Stänger dialogen och tömmer formuläret
+            setOpenDialog(false);
+            setFormData({
+                name:"",
+                description:"",
+                location:"",
+                date:"",
+                startTime:"",
+                endTime:"",
+                categoryId:"",
+                userId:""
+            });
+        } catch (error){
+            console.error(error);
+        }
+    };
+
+    // Funktioner för att hantera ändringar i formuläret
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]:value,
+        }));
+    };
+
+    // Hämtar aktiviteter från API 
     useEffect(() => {
         const fetchActivites = async() => {
             try {
@@ -40,7 +95,7 @@ function WeeklyCalendar() {
                 setActivities(data); // Användarens aktiviteter
             } catch (error) {
                 console.error("Fel vid hämtning: ", error.message);
-                setError(error.message);
+                setError(error.message); // Visar eventuella fel
             }
         };
         fetchActivites();
@@ -51,87 +106,31 @@ function WeeklyCalendar() {
             <Typography variant="h5" sx={{textAlign:"center", mb: 3}}>
                 Veckokalender - {currentYear}
             </Typography>
+
+            {/* Kalendern visas */}
             <TableContainer component ={Paper} elevation="2" sx={{height:"450px"}}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            {/* Tom cell endast för tids-kolumnen*/}
-                            <TableCell
-                                sx={{ verticalAlign: "top", borderRight:"1px solid #ccc", borderTop:"1px solid #ccc"}}
-                            />
-
-                            {/*Resten av kolumnerna för varje veckodag*/}
-                            {weekdays.map((day) => {
-                                const dayActivities = activities.filter((a) =>
-                                    a.startTime.startsWith(day.date)
-                                );
-
-                                return (
-                                    <TableCell
-                                        key={day.name}
-                                        align="center"
-                                        sx={{ verticalAlign: "top", borderRight:"1px solid #ccc", borderTop:"1px solid #ccc"}}
-                                    >
-                                        <Typography variant="subtitle1">
-                                            {day.name} {dayjs(day.date).format("MM/DD")}
-                                        </Typography>
-
-                                        {dayActivities.map((activity) => 
-                                            <Box key = {activity.id}>
-                                                <Typography variant="subtitle2">
-                                                    {activity.title}
-                                                </Typography>
-                                                <Typography variant="caption">
-                                                    {dayjs(activity.startTime).format("HH:mm")} - {dayjs(activity.endTime).format("HH:mm")}
-                                                </Typography>
-                                            </Box>
-                                        )}
-                                    </TableCell>
-                                );
-                            })}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {/* Mappar ut tiderna 08:00 - 20:00 för varje första kolumn*/}
-                        {timeSlots.map((time) => (
-                            <TableRow key={time}>
-                                <TableCell>
-                                    {time}
-                                </TableCell>
-
-                                {/*Mappar ut */}
-                                {weekdays.map((day) => {
-                                    const matchingAcitivty = activities.find((activity) => {
-                                        const start = dayjs(activity.startTime);
-                                        return (
-                                            start.format("YYYY-MM-DD") === day.date &&
-                                            start.format("HH:mm") === time
-                                        );
-                                    });
-                                
-                                return (
-                                    <TableCell
-                                        key={`${day.name}-${time}`}
-                                        align="center"
-                                    >
-                                        {matchingAcitivty && (
-                                            <Box>
-                                                <Typography variant = "subtitle2">
-                                                    {matchingAcitivty.title}
-                                                </Typography>
-                                                <Typography variant = "caption">
-                                                    {dayjs(matchingAcitivty.startTime).format("HH:mm")} - {dayjs(matchingAcitivty.endTime).format("HH:mm")}
-                                                </Typography>
-                                            </Box>
-                                        )}
-                                    </TableCell>
-                                );
-                            })}
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                <CalendarGrid
+                    activities = {activities}
+                    weekdays = {weekdays}
+                    timeSlots = {timeSlots}
+                />
             </TableContainer>
+            <Box display="flex" justifycontent="flex-end" mt={2}>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setOpenDialog(true)}
+                >
+                    Lägg till
+                </Button>
+            </Box>
+            <AddActivity
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                formData={formData}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+            />
         </Container>
     );
 };
