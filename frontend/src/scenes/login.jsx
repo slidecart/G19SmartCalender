@@ -5,7 +5,6 @@ import Body from "../components/containers/body";
 
 function LogIn(key, value) {
 
-    {/*Här måste läggas till funktioner kopplat till backend för att få möjlighet att logga in*/}
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
