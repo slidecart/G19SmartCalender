@@ -21,14 +21,11 @@ Backend är en Spring Boot-applikation byggd med Maven och startas via klassen A
 
 - Java 17 (eller den version som anges i pom.xml).
 - Maven (installerat på din dator eller via din IDE:s inbyggda stöd).
-- Docker (installerat på din dator). Det går att starta programmet utan docker men det kommer uppstå 2 errors och vissa funktioner kommer inte fungera. Se README.md filen i backend/backend/app för mer information om detta.
 
 
 **Steg i IntelliJ IDEA**
 1. Öppna projektet i IntelliJ IDEA genom att välja den extraherade mappen.
 2. Vänta tills IntelliJ har indexerat projektet och laddat ner Maven-beroenden (detta sker automatiskt om Maven är aktiverat).
-3. Starta Docker och kör följande kommando i backend/backend/app i IntelliJ IDEA terminalen eller utanför för att starta email-servern:
-   `docker-compose up`
 4. Hitta filen `AppApplication.java` i backend/backend/app/src/main/java/com.smartcalender.app/AppApplication.java
 5. Högerklicka på `AppApplication.java` och välj "Run 'AppApplication.main()'".
 6. Backend startar och körs på port 8080 ifall man vill testa detta på webbläsaren eller i exempelvis programmet Postman.
@@ -36,8 +33,6 @@ Backend är en Spring Boot-applikation byggd med Maven och startas via klassen A
 **Steg i VS Code**
 1. Öppna projektet i VS Code genom att välja den extraherade mappen.
 2. Installera rekommenderade tillägg som "Java Extension Pack" och "Spring Boot Extension Pack" om du inte redan har dem.
-3. Starta Docker och kör följande kommando i backend/backend/app i VS Code terminalen eller utanför för att starta email-servern:
-   `docker-compose up`
 4. Öppna en terminal i VS Code (Terminal > New Terminal).
 5. Navigera till rotmappen (om du inte redan är där) och kör:
   `mvn clean install`
@@ -76,5 +71,7 @@ Frontend är byggd med Create React App, en verktygslåda för React-applikation
 - Portar: Se till att portarna 8080 (backend) och 3000 (frontend) är lediga på din dator.
 
 - IDE-inställningar: Om du stöter på problem, kontrollera att din IDE har rätt Java- och Node.js-versioner konfigurerade i inställningarna.
+
+- För att email verifieringen ska fungera måste användarens email address vara verifierat under domänen i MailGun. Kontakta utvecklaren för mer information om detta.
 
 
