@@ -1,7 +1,10 @@
-import {data} from "react-router-dom";
+{/*Function for HTTP requests. Usage const data = await fetchData(path, method, options);
+* path = endpoint path after /api/ as "String"
+* method = request method as "string"
+* options = blank string for GET "" or the data being sent for POST/PUT
+* */}
 
-
-export async function fetchData(path, method) {
+export async function fetchData(path, method, options) {
     const token = localStorage.getItem("jwt");
     if (!token) {
         console.error("No JWT found in localStorage. User might not be logged in.")
@@ -40,7 +43,7 @@ export async function fetchData(path, method) {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(options)
         });
 
         if (!response.ok) {
