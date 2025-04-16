@@ -27,7 +27,7 @@ public class ActivityController {
     public ResponseEntity<ActivityDTO> createActivity(@RequestBody CreateActivityRequest activity) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         ActivityDTO created = activityService.createActivity(activity, currentUser);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+        return new ResponseEntity<>(created, HttpStatus.OK);
     }
 
     @GetMapping("/all")
