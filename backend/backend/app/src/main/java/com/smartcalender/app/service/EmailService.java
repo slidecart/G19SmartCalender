@@ -36,4 +36,25 @@ public class EmailService {
             throw new RuntimeException("Failed to send email: " + request.getBody().toString());
         }
     }
+
+    public void sendPasswordResetEmail(String to, String subject, String resetUrl) {
+        HttpResponse<String> request = null;
+        try {
+            request = Unirest.post("https://api.mailgun.net/v3/" + mailgunDomain + "/messages")
+                    .basicAuth("api", mailgunApiKey)
+                    .queryString("from", "SmartCalendar <noreply@" + mailgunDomain + ">")
+                    .queryString("to", to)
+                    .queryString("subject", subject)
+                    .queryString("template", "password reset")
+                    .queryString("h:X-Mailgun-Variables", "{\"resetUrl\": \"" + resetUrl + "\"}")
+                    .asString();
+        } catch (UnirestException e) {
+            throw new RuntimeException(e);
+            // Göra något mer här eller skapa en specifik exception?
+        }
+
+        if (request.getStatus() != 200) {
+            throw new RuntimeException("Failed to send email: " + request.getBody().toString());
+        }
+    }
 }
