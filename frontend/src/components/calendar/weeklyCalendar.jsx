@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import CalendarGrid from "./../calendar/calendarGrid"
 import AddActivity from "./../calendar/addActivity";
+import {fetchData} from "../FetchData";
 
 
 
@@ -44,23 +45,11 @@ function WeeklyCalendar() {
     // Funktion för att hantera formuläret för att lägga till aktiviter
     const handleSubmit = async () =>{
         try{
-            const token = localStorage.getItem("jwt"); // Tar emot token från localstorage
-            if (!token){
-                console.error("No JWT found in localStorage. User might not be logged in");
-                return;
-            }
 
-            const response = await fetch("http://localhost:8080/api/activity/create",{
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Autorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(formData)
-            });
+            const response = await fetchData("activity/create", "POST", formData);
 
-            if (!response.ok){
-                throw new error("Kunder inte skapa aktivitet");
+            if (!response.create){
+                throw new Error("Kunde inte skapa aktivitet");
             }
 
             // Stänger dialogen och tömmer formuläret
@@ -91,7 +80,7 @@ function WeeklyCalendar() {
     useEffect(() => {
         const fetchActivites = async() => {
             try {
-                const response = await fetch("http://localhost:8080/api/activity/all"); // Tar emot aktiviteter från backend
+                const response = await fetchData("activity/all", "GET", ""); // Tar emot aktiviteter från backend
                 if (!response.ok) {
                     throw new Error("Något gick fel vid upphämtningen av aktiviteter");
                 }
