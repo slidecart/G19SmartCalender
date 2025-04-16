@@ -47,10 +47,7 @@ function WeeklyCalendar() {
         try{
 
             const response = await fetchData("activity/create", "POST", formData);
-
-            if (!response.create){
-                throw new Error("Kunde inte skapa aktivitet");
-            }
+            console.log(response);
 
             // Stänger dialogen och tömmer formuläret
             setOpenDialog(false);
@@ -78,21 +75,18 @@ function WeeklyCalendar() {
 
     // Hämtar aktiviteter från API 
     useEffect(() => {
-        const fetchActivites = async() => {
+        const fetchActivities = async() => {
             try {
                 const response = await fetchData("activity/all", "GET", ""); // Tar emot aktiviteter från backend
-                if (!response.ok) {
-                    throw new Error("Något gick fel vid upphämtningen av aktiviteter");
-                }
-    
-                const data = await response.json();
-                setActivities(data); // Användarens aktiviteter
+
+
+                setActivities(response); // Användarens aktiviteter
             } catch (error) {
                 console.error("Fel vid hämtning: ", error.message);
                 setError(error.message); // Visar eventuella fel
             }
         };
-        fetchActivites();
+        fetchActivities();
     }, []);
         
     return(

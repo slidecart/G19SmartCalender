@@ -33,14 +33,17 @@ const CalendarGrid = ({ activities, weekdays, timeSlots }) => {
 
                         {/* En cell för varje veckodag och kontrollerar om en aktivitet finns i denna tidslucka */}
                         {weekdays.map((day) => {
-                            const matchingAcitivty = activities.find((activity) => {
-                                const start = dayjs(activity.startTime);
+                            const matchingActivity = activities.find((activity) => {
+                                const startTime = dayjs(`1970-01-01T${activity.startTime}`);
+                                const startDate = dayjs(activity.date);
                                 return (
-                                    start.format("YYYY-MM-DD") === day.date &&
-                                    start.format("HH:mm") === time
+                                    startDate.format("YYYY-MM-DD") === day.date &&
+                                    startTime.format("HH:mm") === time
+
                                 );
                             });
-                            
+
+                            console.log(matchingActivity);
                             return (
                                 <TableCell 
                                     key={`${day.name}-${time}`}
@@ -48,16 +51,17 @@ const CalendarGrid = ({ activities, weekdays, timeSlots }) => {
 
                                 >
                                     {/* Om en aktivitet matchas visas den*/}
-                                    {matchingAcitivty && (
+                                    {matchingActivity && (
                                         <Box>
                                             {/* Aktivitetens rubrik */}
                                             <Typography variant="subtitle2">
-                                                {matchingAcitivty.title} 
+                                                {matchingActivity.name}
                                             </Typography>
 
                                             {/* Aktivitetens starttid och sluttid */}
                                             <Typography variant="caption">
-                                                {dayjs(matchingAcitivty.startTime).format("HH:mm")} - {dayjs(matchingAcitivty.endtTime).format("HH:mm")}
+                                                {dayjs(`1970-01-01T${matchingActivity.startTime}`).format("HH:mm")}
+                                                - {dayjs(`1970-01-01T${matchingActivity.endTime}`).format("HH:mm")}
                                             </Typography>
                                         </Box>
                                     )}
