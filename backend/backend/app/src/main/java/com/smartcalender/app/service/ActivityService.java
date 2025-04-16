@@ -52,9 +52,7 @@ public class ActivityService {
         User user = userRepository.findByUsername(currentUser.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if (activityRepository.findByNameAndDate(request.getName(), request.getDate()).isPresent()) {
-            throw new IllegalArgumentException("Activity already exists");
-        }
+        
         Activity activity = new Activity();
         activity.setName(request.getName());
         activity.setDescription(request.getDescription());
