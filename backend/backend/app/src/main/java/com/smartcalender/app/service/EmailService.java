@@ -1,25 +1,39 @@
 package com.smartcalender.app.service;
 
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
 
-    private final JavaMailSender mailSender;
+    @Value("${mailgun.domain}")
+    private String mailgunDomain;
 
-    public EmailService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
+    @Value("${mailgun.api.key}")
+    private String mailgunApiKey;
 
-    @Async
-    public void sendVerificationEmail(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setSubject(subject);
-        message.setText(text);
-        mailSender.send(message);
+    public void sendVerificationEmail(String to, String subject, String verificationUrl, String otp) {
+        HttpResponse<String> request = null;
+        try {
+            request = Unirest.post("https://api.mailgun.net/v3/" + mailgunDomain + "/messages")
+                    .basicAuth("api", mailgunApiKey)
+                    .queryString("from", "SmartCalendar <noreply@" + mailgunDomain + ">")
+                    .queryString("to", to)
+                    .queryString("subject", subject)
+                    .queryString("template", "email verification")
+                    .queryString("h:X-Mailgun-Variables", "{\"verificationUrl\": \"" + verificationUrl + "\", \"otp\": \"" + otp + "\"}")
+                    .asString();
+        } catch (UnirestException e) {
+            throw new RuntimeException(e);
+            // Göra något mer här eller skapa en specifik exception?
+        }
+
+        if (request.getStatus() != 200) {
+            throw new RuntimeException("Failed to send email: " + request.getBody().toString());
+        }
     }
 }

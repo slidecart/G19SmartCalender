@@ -1,46 +1,54 @@
 package com.smartcalender.app.service;
 
-import org.springframework.data.redis.core.RedisTemplate;
+import com.smartcalender.app.entity.Otp;
+import com.smartcalender.app.repository.OtpRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
-import java.time.Duration;
-import java.util.Objects;
-import java.util.UUID;
+import java.time.LocalDateTime;
 
 @Service
 public class OtpService {
 
-    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
-    private final RedisTemplate<String, String> redisTemplate;
+    private final OtpRepository otpRepository;
+    private static final int OTP_EXPIRATION_MINUTES = 30;
 
-    public OtpService(RedisTemplate<String, String> redisTemplate) {
-        this.redisTemplate = redisTemplate;
+    public OtpService(OtpRepository otpRepository) {
+        this.otpRepository = otpRepository;
     }
 
-    public String generateAndStoreOtp(Long id) {
-        String otp = generateOtp("ABCDEFG123456789", 10);
-        String cacheKey = "otp:" + id;
-        redisTemplate.opsForValue().set(cacheKey, otp, Duration.ofMinutes(5));
+    public String generateAndStoreOtp(Long userId) {
+        String otp = generateOtp();
+        LocalDateTime expiration = LocalDateTime.now().plusMinutes(OTP_EXPIRATION_MINUTES);
+        Otp otpEntity = new Otp();
+        otpEntity.setUserId(userId);
+        otpEntity.setOtp(otp);
+        otpEntity.setExpiration(expiration);
+        otpRepository.save(otpEntity);
         return otp;
     }
 
-    public boolean isOtpValid(Long id, String otp) {
-        String cacheKey = "otp:" + id.toString();
-        return Objects.equals(redisTemplate.opsForValue().get(cacheKey), otp);
-    }
+    public boolean isOtpValid(Long userId, String otp) {
+        Otp otpEntity = otpRepository.findById(userId).orElse(null);
 
-    public void deleteOtp(Long id) {
-        String cacheKey = "otp:" + id.toString();
-        redisTemplate.delete(cacheKey);
-    }
-
-    private String generateOtp(String characters, int length) {
-        StringBuilder otp = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            int index = SECURE_RANDOM.nextInt(characters.length());
-            otp.append(characters.charAt(index));
+        if (otpEntity == null || otpEntity.getExpiration().isBefore(LocalDateTime.now())) {
+            return false;
         }
-        return otp.toString();
+        return otpEntity.getOtp().equals(otp);
     }
+
+    public void deleteOtp(Long userId) {
+        otpRepository.deleteById(userId);
+    }
+
+    private String generateOtp() {
+        return String.valueOf((int) (Math.random() * 900000) + 100000);
+    }
+
+    @Scheduled(fixedRate = 3600000)  //Every hour
+    public void deleteExpiredOtps() {
+        LocalDateTime now = LocalDateTime.now();
+        otpRepository.deleteByExpirationBefore(now);
+    }
+
 }
