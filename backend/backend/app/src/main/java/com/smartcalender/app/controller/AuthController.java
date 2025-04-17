@@ -47,7 +47,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/reset-password")
+    @PutMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestParam("token") String token, @RequestParam("newPassword") String newPassword) {
         try {
             authService.resetPassword(token, newPassword);
