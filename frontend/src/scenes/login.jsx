@@ -1,6 +1,7 @@
 
 import { Box, Container, TextField, Typography, Button, FormControl } from "@mui/material";
 import Body from "../components/containers/body";
+import UserInput from "../components/userInput";
 
 
 function LogIn(key, value) {
@@ -48,39 +49,7 @@ function LogIn(key, value) {
     return(
 
         <Body>
-            <Container sx={{display: "flex", alignItems:"center", justifyContent:"center", flexDirection:"column"}}>
-                <Box sx={{display: "flex", flexDirection:"column", maxWidth:"350px", width:"100%"}}>
-                    <Typography variant="h1" sx={{textAlign:"center"}}>
-                        Välkommen!
-                    </Typography>
-
-                    <FormControl sx={{ my: 1 }}>
-                        <TextField
-                            label="Användarnamn"
-                            name="username"
-                            variant="outlined"
-                            fullWidth
-
-
-                        />
-                    </FormControl>
-                    <FormControl sx={{ my: 1 }}>
-                        <TextField
-                            label="Lösenord"
-                            name="password"
-                            variant="outlined"
-                            fullWidth
-
-                        />
-                    </FormControl>
-                    <Button 
-                        variant ="outlined"
-                        color="primary"
-                    >
-                        Logga in
-                    </Button>
-                    
-                </Box>
+            <UserInput title="Välkommen" action="Logga in" navigation="/today"/>
                 <Box sx={{display:"flex", flexDirection:"column", my: 3, justifyContent:"center", alignItems:"center", maxWidth:"350px", width:"100%"}}>
                     <Typography variant="p" sx={{my: 1, textDecoration:"underline", fontWeight:"600", fontSize:"18px"}}>
                         Inte registrerat dig än?
@@ -93,7 +62,6 @@ function LogIn(key, value) {
                         Registrera dig idag!
                     </Button>
                 </Box>
-            </Container>
         </Body>
         
 
