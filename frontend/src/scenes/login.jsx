@@ -1,5 +1,6 @@
 
-import { Box, Container, TextField, Typography, Button, FormControl } from "@mui/material";
+import { Box, Container, TextField, Typography, Button, FormControl, colors } from "@mui/material";
+import { Link } from "react-router-dom";
 import Body from "../components/containers/body";
 import UserInput from "../components/userInput";
 
@@ -49,7 +50,36 @@ function LogIn(key, value) {
     return(
 
         <Body>
-            <UserInput title="Välkommen" action="Logga in" navigation="/today"/>
+            <UserInput title="Välkommen">
+                <FormControl>
+                    <TextField
+                        label="Användarnamn"
+                        name="username"
+                        variant="outlined"
+                        fullWidth
+                    />
+                </FormControl>
+
+                <FormControl>
+                    <TextField
+                        label="Lösenord"
+                        name="username"
+                        variant="outlined"
+                        fullWidth
+                    />
+                </FormControl>
+
+                <Link to="/today" style={{textDecoration:"none", color:"black"}}>
+                    <Button
+                        variant="outlined"
+                        color="primary"
+                    >
+                        Logga in
+                    </Button>
+                </Link>
+            </UserInput>
+
+            {/* Box för att ge användaren möjlighet att registrera sig */}
                 <Box sx={{display:"flex", flexDirection:"column", my: 3, justifyContent:"center", alignItems:"center", maxWidth:"350px", width:"100%"}}>
                     <Typography variant="p" sx={{my: 1, textDecoration:"underline", fontWeight:"600", fontSize:"18px"}}>
                         Inte registrerat dig än?

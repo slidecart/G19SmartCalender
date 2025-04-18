@@ -1,5 +1,4 @@
-import { Box, Container, Typography, FormControl, TextField, Button } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Box, Container, Typography } from "@mui/material";
 
 
 {/* Denna ska skicka tillbaka formuläret för att logga in och registera
@@ -15,32 +14,6 @@ function UserInput(title, action, navigation){
                 <Typography variant="h1" sx={{textAlign:"center"}}>
                     {title}
                 </Typography>
-
-                <FormControl sx={{ my:1 }}>
-                    <TextField
-                        label="Användarnamn"
-                        name="username"
-                        variant="outlined"
-                        fullWidth
-                    />
-                </FormControl>
-
-                <FormControl sx={{ my:1 }}>
-                    <TextField
-                        label="Lösenord"
-                        name="password"
-                        variant="outlined"
-                        fullWidth
-                    />
-                </FormControl>
-                <Link to="navigation" style={{textDecoration:"none", color:"black"}}>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                    >
-                        {action}
-                    </Button>
-                </Link>
             </Box>
         </Container>
     )
