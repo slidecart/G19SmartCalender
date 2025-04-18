@@ -17,15 +17,15 @@ public class EmailService {
     private String mailgunApiKey;
 
     public void sendVerificationEmail(String to, String subject, String verificationUrl, String otp) {
-        HttpResponse<String> request = null;
+        HttpResponse<String> request;
         try {
             request = Unirest.post("https://api.mailgun.net/v3/" + mailgunDomain + "/messages")
                     .basicAuth("api", mailgunApiKey)
-                    .queryString("from", "SmartCalendar <noreply@" + mailgunDomain + ">")
-                    .queryString("to", to)
-                    .queryString("subject", subject)
-                    .queryString("template", "email verification")
-                    .queryString("h:X-Mailgun-Variables", "{\"verificationUrl\": \"" + verificationUrl + "\", \"otp\": \"" + otp + "\"}")
+                    .field("from", "SmartCalendar <noreply@" + mailgunDomain + ">")
+                    .field("to", to)
+                    .field("subject", subject)
+                    .field("template", "email_verification_html")
+                    .field("h:X-Mailgun-Variables", "{\"verificationUrl\": \"" + verificationUrl + "\", \"otp\": \"" + otp + "\"}") //Lägga till variabeln unsubscribeUrl här när det ska implementeras
                     .asString();
         } catch (UnirestException e) {
             throw new RuntimeException(e);
@@ -36,4 +36,26 @@ public class EmailService {
             throw new RuntimeException("Failed to send email: " + request.getBody().toString());
         }
     }
+
+    public void sendPasswordResetEmail(String to, String subject, String resetUrl) {
+        HttpResponse<String> response;
+
+        try {
+            response = Unirest.post("https://api.mailgun.net/v3/" + mailgunDomain + "/messages")
+                    .basicAuth("api", mailgunApiKey)
+                    .field("from", "SmartCalendar <noreply@" + mailgunDomain + ">")
+                    .field("to", to)
+                    .field("subject", subject)
+                    .field("template", "reset_password_html")
+                    .field("h:X-Mailgun-Variables", "{\"resetUrl\": \"" + resetUrl + "\"}") //Lägga till variabeln unsubscribeUrl här när det ska implementeras
+                    .asString();
+        } catch (UnirestException e) {
+            throw new RuntimeException("Failed to send email", e);
+        }
+
+        if (response.getStatus() != 200) {
+            throw new RuntimeException("Failed to send email: " + response.getBody());
+        }
+    }
+
 }

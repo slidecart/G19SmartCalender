@@ -30,16 +30,6 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshToken(
-            @RequestBody Map<String, UUID> requestBody
-    ) {
-        UUID refreshToken = requestBody.get("refreshToken");
-        LoginResponseDTO response =
-                authService.refreshToken(refreshToken);
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("/logout")
     public ResponseEntity<?> revokeToken(@RequestBody Map<String, UUID> requestBody) {
         UUID refreshToken = requestBody.get("refreshToken");
@@ -47,6 +37,25 @@ public class AuthController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestParam("email") String email) {
+        try {
+            authService.forgotPassword(email);
+            return ResponseEntity.ok("Password reset link sent to your email");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam("token") String token, @RequestParam("newPassword") String newPassword) {
+        try {
+            authService.resetPassword(token, newPassword);
+            return ResponseEntity.ok("Password reset successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
@@ -72,5 +81,15 @@ public class AuthController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(
+            @RequestBody Map<String, UUID> requestBody
+    ) {
+        UUID refreshToken = requestBody.get("refreshToken");
+        LoginResponseDTO response =
+                authService.refreshToken(refreshToken);
+        return ResponseEntity.ok(response);
     }
 }
