@@ -18,10 +18,10 @@ const ActivityBox = ({ activities, weekdays }) => {
                                 {dayActivities.map((activity, i) => (
                                     <Box key={i} sx={{ mb:1 }}>
                                         <Typography variant="subtitle2">
-                                            {activity.title}
+                                            {activity.name}
                                         </Typography>
                                         <Typography variant="caption">
-                                            {dayjs(activity.startTime).format("HH:mm")} - {dayjs(activity.endTime).format("HH:mm")}
+                                            {dayjs(`1970-01-01T${activity.startTime}`).format("HH:mm")} - {dayjs(`1970-01-01T${activity.endTime}`).format("HH:mm")}
                                         </Typography>
                                     </Box>
                                 ))}
