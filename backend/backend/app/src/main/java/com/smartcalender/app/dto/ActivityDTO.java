@@ -1,9 +1,12 @@
 package com.smartcalender.app.dto;
 
 import com.smartcalender.app.entity.Activity;
+import jakarta.validation.constraints.AssertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActivityDTO {
     private String name;
@@ -21,9 +24,10 @@ public class ActivityDTO {
     private Boolean onGoing;
     private Boolean future;
     private Boolean validTimeRange;
-
+    private List<String> warnings;
 
     public ActivityDTO() {
+        this.warnings = new ArrayList<>();
     }
 
     public ActivityDTO(Activity activity) {
@@ -33,12 +37,21 @@ public class ActivityDTO {
         this.date = activity.getDate();
         this.startTime = activity.getStartTime();
         this.endTime = activity.getEndTime();
-        this.categoryId = activity.getCategory().getId();
-        this.userId = activity.getUser().getId();
+        this.categoryId = activity.getCategory() != null ? activity.getCategory().getId() : null;
+        this.userId = activity.getUser() != null ? activity.getUser().getId() : null;
         this.duration = activity.getDuration();
         this.onGoing = activity.isOnGoing();
         this.future = activity.isFuture();
         this.validTimeRange = activity.isValidTimeRange();
+        this.warnings = new ArrayList<>();
+    }
+
+    @AssertTrue(message = "Start time must be before end time")
+    public boolean isValidTimeRange() {
+        if (startTime == null || endTime == null) {
+            return false;
+        }
+        return startTime.isBefore(endTime);
     }
 
     public String getName() {
@@ -159,5 +172,13 @@ public class ActivityDTO {
 
     public void setValidTimeRange(Boolean validTimeRange) {
         this.validTimeRange = validTimeRange;
+    }
+
+    public List<String> getWarnings() {
+        return warnings;
+    }
+
+    public void setWarnings(List<String> warnings) {
+        this.warnings = warnings;
     }
 }

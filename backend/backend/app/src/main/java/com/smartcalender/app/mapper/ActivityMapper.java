@@ -4,6 +4,8 @@ import com.smartcalender.app.dto.ActivityDTO;
 import com.smartcalender.app.entity.Activity;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+
 @Component
 public class ActivityMapper {
 
@@ -24,6 +26,7 @@ public class ActivityMapper {
         dto.setFuture(activity.isFuture());
         dto.setOnGoing(activity.isOnGoing());
         dto.setValidTimeRange(activity.isValidTimeRange());
+        dto.setWarnings(new ArrayList<>());
 
         return dto;
     }

@@ -30,4 +30,8 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
                                           @Param("currentDate") LocalDate currentDate);
 
     List<Activity> findByUser(User user);
+
+    List<Activity> findByCategoryIdAndUserId(Long categoryId, Long id);
+
+    List<Activity> findByUserAndDateBetween(User user, LocalDate start, LocalDate end);
 }
