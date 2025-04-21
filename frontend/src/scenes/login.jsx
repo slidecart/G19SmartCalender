@@ -1,6 +1,8 @@
 
-import { Box, Container, TextField, Typography, Button, FormControl } from "@mui/material";
+import { Box, Container, TextField, Typography, Button, FormControl, colors } from "@mui/material";
+import { Link } from "react-router-dom";
 import Body from "../components/containers/body";
+import UserInput from "../components/userInput";
 
 
 function LogIn(key, value) {
@@ -47,51 +49,64 @@ function LogIn(key, value) {
         }
     };
 
+    const fields = [
+        {label: "Användarnamn", name:"username", required:true},
+        {label: "Lösenord", name:"password", required:true}
+    ]
+
     return(
 
         <Body>
-            <Container sx={{display: "flex", alignItems:"center", justifyContent:"center", flexDirection:"column"}}>
-                <Box
-                    component="form"
-                    onSubmit={handleSubmit}
-                    sx={{display: "flex", flexDirection:"column", maxWidth:"350px", width:"100%"}}>
-                    <Typography variant="h1" sx={{textAlign:"center"}}>
-                        Välkommen!
-                    </Typography>
+            <UserInput 
+                title="Välkommen"
+                fields={[
+                    { label: "Användarnamn", name:"username", required:true},
+                    {label: "Lösenord", name:"password", required:true}
 
-                    <FormControl sx={{ my: 1 }}>
-                        <TextField
-                            label="Användarnamn"
-                            name="username"
-                            variant="outlined"
-                            fullWidth
+                ]}
+                buttonText="Logga in"
+                onSubmit={handleSubmit}
+                >
 
+                {/*
+                <FormControl>
+                    <TextField
+                        label="Användarnamn"
+                        name="username"
+                        variant="outlined"
+                        fullWidth
+                    />
+                </FormControl>
 
-                        />
-                    </FormControl>
-                    <FormControl sx={{ my: 1 }}>
-                        <TextField
-                            label="Lösenord"
-                            name="password"
-                            variant="outlined"
-                            fullWidth
+                <FormControl>
+                    <TextField
+                        label="Lösenord"
+                        name="username"
+                        variant="outlined"
+                        fullWidth
+                    />
+                </FormControl>
 
-                        />
-                    </FormControl>
-                    <Button 
-                        variant ="outlined"
-                        color="primary"
-                        type="submit"
-                    >
-                        Logga in
-                    </Button>
-                    
-                </Box>
+                <Button
+                    component={Link}
+                    to="/today"
+                    variant="outlined"
+                    color="primary"
+                >
+                    Logga in
+                </Button>
+            */}
+            </UserInput>
+
+            {/* Box för att ge användaren möjlighet att registrera sig */}
+
                 <Box sx={{display:"flex", flexDirection:"column", my: 3, justifyContent:"center", alignItems:"center", maxWidth:"350px", width:"100%"}}>
                     <Typography variant="p" sx={{my: 1, textDecoration:"underline", fontWeight:"600", fontSize:"18px"}}>
                         Inte registrerat dig än?
                     </Typography>
                     <Button
+                        component={Link}
+                        to="/register"
                         variant="contained"
                         backgroundColor="secondary.main"
                         fullWidth
@@ -99,7 +114,6 @@ function LogIn(key, value) {
                         Registrera dig idag!
                     </Button>
                 </Box>
-            </Container>
         </Body>
         
 
