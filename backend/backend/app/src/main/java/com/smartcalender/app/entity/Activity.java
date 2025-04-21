@@ -51,8 +51,9 @@ public class Activity {
     }
 
     public boolean isOnGoing() {
+        LocalDate today = LocalDate.now();
         LocalTime now = LocalTime.now();
-        return now.isAfter(startTime) && now.isBefore(endTime);
+        return date.equals(today) && now.isAfter(startTime) && now.isBefore(endTime);
     }
 
     public boolean isFuture() {

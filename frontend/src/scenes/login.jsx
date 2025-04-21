@@ -38,9 +38,11 @@ function LogIn(key, value) {
                 throw new Error(`Login failed: ${response.status} – ${response.statusText}`);
             }
 
-            const data = await response.text();
+            const data = await response.json();
             console.log('Login successful:', data); // Handle response data
-            localStorage.setItem("jwt", data.token);
+            // Save tokens correctly using their property names
+            localStorage.setItem("accessToken", data.accessToken);
+            localStorage.setItem("refreshToken", data.refreshToken);
         } catch (error) {
             console.error('An error occurred:', error.message);
             alert('Login failed. Please try again.');
@@ -97,6 +99,7 @@ function LogIn(key, value) {
             </UserInput>
 
             {/* Box för att ge användaren möjlighet att registrera sig */}
+
                 <Box sx={{display:"flex", flexDirection:"column", my: 3, justifyContent:"center", alignItems:"center", maxWidth:"350px", width:"100%"}}>
                     <Typography variant="p" sx={{my: 1, textDecoration:"underline", fontWeight:"600", fontSize:"18px"}}>
                         Inte registrerat dig än?
