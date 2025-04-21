@@ -5,18 +5,18 @@
 * */}
 
 export async function fetchData(path, method, options) {
-    const token = localStorage.getItem("jwt");
-    if (!token) {
+    const accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
         console.error("No JWT found in localStorage. User might not be logged in.")
         return;
     }
-
+    console.log(accessToken);
     if (method === "GET") {
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}${path}`, {
                 method: "GET",
                 headers: {
-                    "Authorization": `Bearer ${token}`
+                    "Authorization": `Bearer ${accessToken}`
                 }
             });
 
@@ -41,7 +41,7 @@ export async function fetchData(path, method, options) {
             method: method,
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
+                "Authorization": `Bearer ${accessToken}`
             },
             body: JSON.stringify(options)
         });
