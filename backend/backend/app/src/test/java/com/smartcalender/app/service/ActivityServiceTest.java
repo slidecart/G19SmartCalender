@@ -1,5 +1,6 @@
 package com.smartcalender.app.service;
 
+import com.smartcalender.app.dto.ActivityDTO;
 import com.smartcalender.app.dto.CreateActivityRequest;
 import com.smartcalender.app.entity.Activity;
 import com.smartcalender.app.repository.ActivityRepository;
@@ -54,7 +55,7 @@ public class ActivityServiceTest {
         when(activityRepository.save(any(Activity.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
 
-        Activity activity = activityService.createActivity(createRequest, currentUser);
+        ActivityDTO activity = activityService.createActivity(createRequest, currentUser);
 
         assertNotNull(activity);
         assertEquals(createRequest.getName(), activity.getName());
