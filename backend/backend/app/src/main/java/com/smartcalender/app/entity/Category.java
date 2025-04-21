@@ -13,6 +13,10 @@ public class Category {
 
     private String color;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public Category() {
     }
 

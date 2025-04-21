@@ -22,7 +22,8 @@ import java.util.Optional;
 public class ActivityController {
     private final ActivityService activityService;
 
-    public ActivityController(ActivityService activityService, CategoryRepository categoryRepository, UserRepository userRepository) {
+
+    public ActivityController(ActivityService activityService) {
         this.activityService = activityService;
     }
 
