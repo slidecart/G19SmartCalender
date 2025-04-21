@@ -4,7 +4,7 @@ import Navbar from "./navbar";
 function Header(){
     
     return(
-        <Box sx={{backgroundColor: "#0077ff7e", py: 1.5, display: "flex"}}>
+        <Box sx={{backgroundColor: "#0077ff7e", py: 0.5, display: "flex"}}>
             <Typography variant="h1" sx={{ mx: 1 }}>
                 SmartCalendar
             </Typography>

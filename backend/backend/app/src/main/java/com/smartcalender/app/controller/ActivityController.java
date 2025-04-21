@@ -29,6 +29,7 @@ public class ActivityController {
     @PostMapping("/create")
     public ResponseEntity<?> createActivity(@Valid @RequestBody CreateActivityRequest activity) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
+
         if (currentUser != null) {
             ActivityDTO created = activityService.createActivity(activity, currentUser);
             return new ResponseEntity<>(created, HttpStatus.CREATED);
