@@ -47,10 +47,26 @@ function LogIn(key, value) {
         }
     };
 
+    const fields = [
+        {label: "Användarnamn", name:"username", required:true},
+        {label: "Lösenord", name:"password", required:true}
+    ]
+
     return(
 
         <Body>
-            <UserInput title="Välkommen">
+            <UserInput 
+                title="Välkommen"
+                fields={[
+                    { label: "Användarnamn", name:"username", required:true},
+                    {label: "Lösenord", name:"password", required:true}
+
+                ]}
+                buttonText="Logga in"
+                onSubmit={handleSubmit}
+                >
+
+                {/*
                 <FormControl>
                     <TextField
                         label="Användarnamn"
@@ -69,14 +85,15 @@ function LogIn(key, value) {
                     />
                 </FormControl>
 
-                <Link to="/today" style={{textDecoration:"none", color:"black"}}>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                    >
-                        Logga in
-                    </Button>
-                </Link>
+                <Button
+                    component={Link}
+                    to="/today"
+                    variant="outlined"
+                    color="primary"
+                >
+                    Logga in
+                </Button>
+            */}
             </UserInput>
 
             {/* Box för att ge användaren möjlighet att registrera sig */}
@@ -85,6 +102,8 @@ function LogIn(key, value) {
                         Inte registrerat dig än?
                     </Typography>
                     <Button
+                        component={Link}
+                        to="/register"
                         variant="contained"
                         backgroundColor="secondary.main"
                         fullWidth
