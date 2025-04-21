@@ -40,7 +40,7 @@ public class Activity {
     public Activity() {
     }
 
-    public Activity(String name, String description, LocalDate date, LocalTime startTime, LocalTime endTime, String location, Category category) {
+    public Activity(String name, String description, LocalDate date, LocalTime startTime, LocalTime endTime, String location, Category category, User user) {
         this.name = name;
         this.description = description; //Can be null
         this.date = date;
@@ -48,6 +48,7 @@ public class Activity {
         this.endTime = endTime;
         this.location = location; //Can be null
         this.category = category; //Can be default
+        this.user = user;
     }
 
     public boolean isOnGoing() {

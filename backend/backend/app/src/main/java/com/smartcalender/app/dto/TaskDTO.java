@@ -1,16 +1,19 @@
 package com.smartcalender.app.dto;
 
 import com.smartcalender.app.entity.Task;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 
 public class TaskDTO {
     private Long id;
+    @NotBlank
     private String name;
     private String description;
     private LocalDate date;
     private String location;
     private boolean completed;
+    private Long categoryId;
 
     public TaskDTO() {}
 
@@ -21,6 +24,7 @@ public class TaskDTO {
         this.date = task.getDate();
         this.location = task.getLocation();
         this.completed = task.isCompleted();
+        this.categoryId = task.getCategory() != null ? task.getCategory().getId() : null;
     }
 
     public Long getId() {
@@ -71,5 +75,11 @@ public class TaskDTO {
         this.completed = completed;
     }
 
+    public Long getCategoryId() {
+        return categoryId;
+    }
 
+    public void setCategoryId(Long categoryId) {
+        this.categoryId = categoryId;
+    }
 }

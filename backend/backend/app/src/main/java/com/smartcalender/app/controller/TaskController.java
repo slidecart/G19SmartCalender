@@ -1,20 +1,20 @@
 package com.smartcalender.app.controller;
 
+import com.smartcalender.app.auth.SecurityUtils;
 import com.smartcalender.app.dto.ActivityDTO;
 import com.smartcalender.app.dto.ConvertTaskRequest;
 import com.smartcalender.app.dto.TaskDTO;
-import com.smartcalender.app.entity.Activity;
 import com.smartcalender.app.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/task")
+@RequestMapping("/api/tasks")
 public class TaskController {
     private final TaskService taskService;
 
@@ -22,59 +22,82 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<TaskDTO>> getTasks() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<TaskDTO> tasks = taskService.getTasksForUser(username);
-        return ResponseEntity.ok(tasks);
+    @GetMapping("/all")
+    public ResponseEntity<?> getTasks() {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null) {
+            List<TaskDTO> tasks = taskService.getTasksForUser(currentUser);
+            return ResponseEntity.ok(tasks);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TaskDTO> getTaskById(@PathVariable Long id) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        TaskDTO task = taskService.getUserTaskById(id, username);
-        return ResponseEntity.ok(task);
+    public ResponseEntity<?> getTaskById(@PathVariable Long id) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null) {
+            TaskDTO task = taskService.getUserTaskById(id, currentUser);
+            return ResponseEntity.ok(task);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @PostMapping
-    public ResponseEntity<TaskDTO> createTask(@RequestBody TaskDTO taskDTO) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        TaskDTO created = taskService.createTask(taskDTO, username);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    @PostMapping("/create")
+    public ResponseEntity<?> createTask(@RequestBody @Valid TaskDTO taskDTO) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null) {
+            TaskDTO created = taskService.createTask(taskDTO, currentUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TaskDTO> editTask(@PathVariable Long id, @RequestBody TaskDTO taskDTO) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        TaskDTO updated = taskService.editTask(id, taskDTO, username);
-        return ResponseEntity.ok(updated);
+    @PutMapping("/edit/{id}")
+    public ResponseEntity<?> editTask(@PathVariable Long id, @RequestBody @Valid TaskDTO taskDTO) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null) {
+            TaskDTO updated = taskService.editTask(id, taskDTO, currentUser);
+            return ResponseEntity.ok(updated);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<TaskDTO> deleteTask(@PathVariable Long id) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        taskService.deleteTask(id, username);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteTask(@PathVariable Long id) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null) {
+            taskService.deleteTask(id, currentUser);
+            return ResponseEntity.ok("Task deleted successfully");
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PutMapping("/{id}/complete")
-    public ResponseEntity<Void> toggleTaskCompletion(@PathVariable Long id){
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        taskService.toggleTaskCompletion(id, username);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> toggleTaskCompletion(@PathVariable Long id){
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null) {
+            TaskDTO updated = taskService.toggleTaskCompletion(id, currentUser);
+            return ResponseEntity.ok(updated);        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @GetMapping(params = "category")
-    public ResponseEntity<List<TaskDTO>> getTasksByCategory(@RequestParam String category) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<TaskDTO> tasks = taskService.getTasksByCategory(category, username);
-        return ResponseEntity.ok(tasks);
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<?> getTasksByCategory(@PathVariable Long categoryId) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null) {
+            List<TaskDTO> tasks = taskService.getTasksByCategory(categoryId, currentUser);
+            return ResponseEntity.ok(tasks);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @PostMapping("/api/tasks/{id}/convert")
-    public ResponseEntity<ActivityDTO> convertTaskToActivity(@PathVariable Long id, @RequestBody @Valid ConvertTaskRequest taskRequest) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Activity activity = taskService.convertTaskToActivity(id, taskRequest, username);
-        return new ResponseEntity<>(new ActivityDTO(activity), HttpStatus.CREATED);
+    @PostMapping("/{id}/convert")
+    public ResponseEntity<?> convertTaskToActivity(@PathVariable Long id, @RequestBody @Valid ConvertTaskRequest taskRequest) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null) {
+            ActivityDTO activity = taskService.convertTaskToActivity(id, taskRequest, currentUser);
+            return ResponseEntity.ok(activity);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

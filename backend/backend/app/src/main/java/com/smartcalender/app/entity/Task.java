@@ -1,6 +1,8 @@
 package com.smartcalender.app.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,33 +14,40 @@ public class Task {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @NotNull
+    @Column(nullable = false)
     private String name;
 
     private String description;
 
     private LocalDate date;
+
     private String location;
+
     private boolean completed;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @NotNull
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 
     public Task() {
     }
 
-    public Task(String name, String description, LocalDate date, String location, Category category) {
+    public Task(String name, String description, LocalDate date, String location, Category category, User user) {
         this.name = name;
-        this.description = description; // Can be null
-        this.date = date; //Can be null
-        this.location = location; //Can be null
+        this.description = description;
+        this.date = date;
+        this.location = location;
         this.completed = false;
-        this.category = category; //Can be default
+        this.category = category;
+        this.user = user;
     }
 
 
@@ -46,22 +55,9 @@ public class Task {
         this.completed = !this.completed;
     }
 
-    public Activity convertToActivity(LocalDate date, LocalTime startTime, LocalTime endTime) {
-        if (startTime == null || endTime == null) {
-            return null; // Exception-throw?
-        }
-        if (startTime.isBefore(endTime)) {
-            return null; // Exception-throw?
-        }
-        if (date == null) { //
-            this.date = date;
-        }
-        return new Activity(this.name, this.description, this.date, startTime, endTime, this.location, this.category);
-    }
-
     //Hjälpmetod
     public boolean isValid() {
-        return name != null && !name.trim().isEmpty() && date != null;
+        return name != null && !name.isEmpty() && user != null;
     }
 
 
@@ -119,5 +115,9 @@ public class Task {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public User getUser() {
+        return user;
     }
 }

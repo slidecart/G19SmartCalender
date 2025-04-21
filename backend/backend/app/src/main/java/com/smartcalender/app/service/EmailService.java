@@ -1,7 +1,6 @@
 package com.smartcalender.app.service;
 
 import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,12 +27,12 @@ public class EmailService {
                     .field("h:X-Mailgun-Variables", "{\"verificationUrl\": \"" + verificationUrl + "\", \"otp\": \"" + otp + "\"}") //Lägga till variabeln unsubscribeUrl här när det ska implementeras
                     .asString();
         } catch (UnirestException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to send email", e);
             // Göra något mer här eller skapa en specifik exception?
         }
 
         if (request.getStatus() != 200) {
-            throw new RuntimeException("Failed to send email: " + request.getBody().toString());
+            throw new RuntimeException("Failed to send email: " + request.getBody());
         }
     }
 
@@ -51,6 +50,7 @@ public class EmailService {
                     .asString();
         } catch (UnirestException e) {
             throw new RuntimeException("Failed to send email", e);
+            // Göra något mer här eller skapa en specifik exception?
         }
 
         if (response.getStatus() != 200) {
