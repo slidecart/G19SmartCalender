@@ -6,16 +6,19 @@ import com.smartcalender.app.dto.CreateActivityRequest;
 import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.UserRepository;
 import com.smartcalender.app.service.ActivityService;
+import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/activity")
+@RequestMapping("/api/activities")
 public class ActivityController {
     private final ActivityService activityService;
 
@@ -24,54 +27,102 @@ public class ActivityController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ActivityDTO> createActivity(@RequestBody CreateActivityRequest activity) {
+    public ResponseEntity<?> createActivity(@Valid @RequestBody CreateActivityRequest activity) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
-        ActivityDTO created = activityService.createActivity(activity, currentUser);
-        return new ResponseEntity<>(created, HttpStatus.OK);
+
+        if (currentUser != null) {
+            ActivityDTO created = activityService.createActivity(activity, currentUser);
+            return new ResponseEntity<>(created, HttpStatus.CREATED);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ActivityDTO>> getAllActivities() {
+    public ResponseEntity<?> getAllActivities() {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
-        List<ActivityDTO> activities = activityService.getAllActivities(currentUser);
-        return new ResponseEntity<>(activities, HttpStatus.OK);
+        if (currentUser != null) {
+            List<ActivityDTO> activities = activityService.getAllActivities(currentUser);
+            return new ResponseEntity<>(activities, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ActivityDTO> getActivity(@PathVariable Long id) {
+    public ResponseEntity<?> getActivity(@PathVariable Long id) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
-        return activityService.getActivity(id, currentUser)
-                .map(activity -> new ResponseEntity<>(activity, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        if (currentUser != null) {
+            return activityService.getActivity(id, currentUser)
+                    .map(activity -> new ResponseEntity<>(activity, HttpStatus.OK))
+                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ActivityDTO> editActivity(@PathVariable Long id, @RequestBody ActivityDTO activityDTO) {
+    public ResponseEntity<?> editActivity(@PathVariable Long id, @Valid @RequestBody ActivityDTO activityDTO) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
-        Optional<ActivityDTO> updatedActivity = activityService.editActivity(currentUser, id, activityDTO);
-        return updatedActivity
-                .map(activity -> new ResponseEntity<>(activity, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        if (currentUser != null) {
+            Optional<ActivityDTO> updatedActivity = activityService.editActivity(currentUser, id, activityDTO);
+            return updatedActivity
+                    .map(activity -> new ResponseEntity<>(activity, HttpStatus.OK))
+                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
+
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
     }
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Boolean> deleteActivity(@PathVariable Long id) {
+    public ResponseEntity<?> deleteActivity(@PathVariable Long id) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
-        return activityService.deleteActivity(currentUser, id);
+        if (currentUser != null) {
+            return activityService.deleteActivity(currentUser, id);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
     @GetMapping("/ongoing")
-    public ResponseEntity<List<ActivityDTO>> getOngoingActivities() {
+    public ResponseEntity<?> getOngoingActivities() {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
-        List<ActivityDTO> ongoing = activityService.getOngoingActivities(currentUser);
-        return new ResponseEntity<>(ongoing, HttpStatus.OK);
+        if (currentUser != null) {
+            List<ActivityDTO> ongoing = activityService.getOngoingActivities(currentUser);
+            return new ResponseEntity<>(ongoing, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
     }
 
     @GetMapping("/future")
-    public ResponseEntity<List<ActivityDTO>> getFutureActivities() {
+    public ResponseEntity<?> getFutureActivities() {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
-        List<ActivityDTO> ongoing = activityService.getFutureActivities(currentUser);
-        return new ResponseEntity<>(ongoing, HttpStatus.OK);
+        if (currentUser != null) {
+            List<ActivityDTO> ongoing = activityService.getFutureActivities(currentUser);
+            return new ResponseEntity<>(ongoing, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public ResponseEntity<?> getActivitiesByCategory(@PathVariable Long categoryId) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null) {
+            List<ActivityDTO> activities = activityService.getActivitiesByCategory(currentUser, categoryId);
+            return new ResponseEntity<>(activities, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
+    @GetMapping("/between")
+    public ResponseEntity<?> getActivitiesBetween(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+        if (currentUser != null) {
+            List<ActivityDTO> activities = activityService.getActivitiesBetween(currentUser, start, end);
+            return new ResponseEntity<>(activities, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 }

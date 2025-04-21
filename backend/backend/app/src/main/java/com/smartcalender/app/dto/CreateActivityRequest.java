@@ -1,5 +1,6 @@
 package com.smartcalender.app.dto;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -17,11 +18,20 @@ public class CreateActivityRequest {
 
     @NotNull
     private LocalTime startTime;
+
     @NotNull
     private LocalTime endTime;
 
     private Long categoryId;
     private Long userId;
+
+    @AssertTrue(message = "Start time must be before end time")
+    public boolean isValidTimeRange() {
+        if (startTime == null || endTime == null) {
+            return false; // Let @NotNull handle null validation
+        }
+        return startTime.isBefore(endTime);
+    }
 
     public @NotNull String getName() {
         return name;

@@ -5,6 +5,7 @@ import com.smartcalender.app.dto.CreateActivityRequest;
 import com.smartcalender.app.entity.Activity;
 import com.smartcalender.app.entity.Category;
 import com.smartcalender.app.entity.User;
+import com.smartcalender.app.exception.UserNotFoundException;
 import com.smartcalender.app.mapper.ActivityMapper;
 import com.smartcalender.app.repository.ActivityRepository;
 import com.smartcalender.app.repository.CategoryRepository;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,7 +41,7 @@ public class ActivityService {
 
     public List<ActivityDTO> getAllActivities(UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return activityRepository.findAll()
                 .stream()
                 .filter(activity -> activity.getUser().getId().equals(user.getId()))
@@ -50,11 +52,9 @@ public class ActivityService {
     @Transactional
     public ActivityDTO createActivity(CreateActivityRequest request, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if (activityRepository.findByNameAndDate(request.getName(), request.getDate()).isPresent()) {
-            throw new IllegalArgumentException("Activity already exists");
-        }
+        
         Activity activity = new Activity();
         activity.setName(request.getName());
         activity.setDescription(request.getDescription());
@@ -71,14 +71,18 @@ public class ActivityService {
         }
 
         Activity savedActivity = activityRepository.save(activity);
+        ActivityDTO activityDTO = activityMapper.toDto(savedActivity);
 
-        return activityMapper.toDto(savedActivity);
+        List<String> warnings = checkForOverlaps(savedActivity, user, savedActivity.getId());
+        activityDTO.setWarnings(warnings);
+
+        return activityDTO;
     }
 
     @Transactional
     public ResponseEntity<Boolean> deleteActivity(UserDetails currentUser, Long id) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         Optional<Activity> activityOptional = activityRepository.findByIdAndUser(id, user);
         if (activityOptional.isPresent()) {
             activityRepository.delete(activityOptional.get());
@@ -90,7 +94,7 @@ public class ActivityService {
     @Transactional
     public Optional<ActivityDTO> editActivity(UserDetails currentUser, Long id, ActivityDTO activityDTO) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Optional<Activity> activityOptional = activityRepository.findByIdAndUser(id, user);
 
@@ -110,26 +114,27 @@ public class ActivityService {
                 activityToEdit.setCategory(category);
             }
 
-            if (activityDTO.getUserId() != null && activityDTO.getUserId().equals(user.getId())) {
-                activityToEdit.setUser(user);
-            }
-
             Activity savedActivity = activityRepository.save(activityToEdit);
-            return Optional.of(activityMapper.toDto(savedActivity));
+            ActivityDTO updatedDTO = activityMapper.toDto(savedActivity);
+
+            List<String> warnings = checkForOverlaps(savedActivity, user, id);
+            updatedDTO.setWarnings(warnings);
+
+            return Optional.of(updatedDTO);
         }
         return Optional.empty();
     }
 
     public Optional<ActivityDTO> getActivity(long id, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return activityRepository.findByIdAndUser(id, user)
                 .map(activityMapper::toDto);
     }
 
     public List<ActivityDTO> getOngoingActivities(UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         LocalDate currentDate = LocalDate.now();
         LocalTime currentTime = LocalTime.now();
@@ -143,7 +148,7 @@ public class ActivityService {
 
     public List<ActivityDTO> getFutureActivities(UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         LocalDate currentDate = LocalDate.now();
 
@@ -151,5 +156,39 @@ public class ActivityService {
                 .stream()
                 .map(activityMapper::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<ActivityDTO> getActivitiesByCategory(UserDetails currentUser, Long categoryId) {
+        User user = userRepository.findByUsername(currentUser.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        return activityRepository.findByCategoryIdAndUserId(categoryId, user.getId())
+                .stream()
+                .map(activityMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<ActivityDTO> getActivitiesBetween(UserDetails currentUser, LocalDate start, LocalDate end) {
+        User user = userRepository.findByUsername(currentUser.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return activityRepository.findByUserAndDateBetween(user, start, end)
+                .stream()
+                .map(activityMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    private List<String> checkForOverlaps(Activity activity, User user, Long excludeId) {
+        List<Activity> userActivities = activityRepository.findByUser(user);
+        List<String> warnings = new ArrayList<>();
+
+        for (Activity existing : userActivities) {
+            if (!userActivities.isEmpty() && (!existing.getId().equals(excludeId)) &&
+                    activity.getDate().equals(existing.getDate()) &&
+                    (activity.getStartTime().isBefore(existing.getEndTime()) && activity.getEndTime().isAfter(existing.getStartTime()))) {
+                warnings.add("This activity overlaps with '" + existing.getName() + "' on " + existing.getDate() +
+                        " from " + existing.getStartTime() + " to " + existing.getEndTime());
+            }
+        }
+        return warnings;
     }
 }
