@@ -6,10 +6,10 @@ const CalendarGrid = ({ activities, weekdays, timeSlots }) => {
         <Table>
             <TableHead>
                 <TableRow>
-                    {/* Tom cell endast för tids-kolumnen*/ }
+                    {/* Empty cell, only for the time-column */}
                     <TableCell sx={{ verticalAlign:"top", borderRight:"1px solid #ccc", borderTop:"1px solid #ccc" }}/>
 
-                    {/* Veckodagar som rubriker */}
+                    {/* Weekdays as titles */}
                     {weekdays.map((day) => (
                         <TableCell
                             key={day.name}
@@ -24,14 +24,14 @@ const CalendarGrid = ({ activities, weekdays, timeSlots }) => {
                 </TableRow>
             </TableHead>
             <TableBody>
-                {/* Mappar ut tiderna för 08:00 - 20:00 för varje första kolumn*/ }
+                {/* Maps out times from 08:00 - 20:00 for every row in the first column */ }
                 {timeSlots.map((time) => (
                     <TableRow key={time}>
                         <TableCell>
                             {time}
                         </TableCell>
 
-                        {/* En cell för varje veckodag och kontrollerar om en aktivitet finns i denna tidslucka */}
+                        {/* One cell for every weekday and checks if any activity exists in this time-span */}
                         {weekdays.map((day) => {
                             const matchingActivity = activities.find((activity) => {
                                 const startTime = dayjs(`1970-01-01T${activity.startTime}`);
@@ -50,15 +50,15 @@ const CalendarGrid = ({ activities, weekdays, timeSlots }) => {
                                     align="center"
 
                                 >
-                                    {/* Om en aktivitet matchas visas den*/}
+                                    {/* Shows activities if date and time matches */}
                                     {matchingActivity && (
                                         <Box>
-                                            {/* Aktivitetens rubrik */}
+                                            {/* Activity title */}
                                             <Typography variant="subtitle2">
                                                 {matchingActivity.name}
                                             </Typography>
 
-                                            {/* Aktivitetens starttid och sluttid */}
+                                            {/* Activities start time and end time */}
                                             <Typography variant="caption">
                                                 {dayjs(`1970-01-01T${matchingActivity.startTime}`).format("HH:mm")}
                                                 - {dayjs(`1970-01-01T${matchingActivity.endTime}`).format("HH:mm")}
