@@ -1,5 +1,5 @@
 import {createContext, useContext, useState} from "react";
-import {data, Navigate, Outlet, useNavigate} from "react-router-dom";
+import {Navigate, Outlet, useNavigate} from "react-router-dom";
 
 
 const AuthContext = createContext();
@@ -18,6 +18,10 @@ const AuthProvider = ({ children }) => {
                 },
                 body: JSON.stringify(data),
             });
+
+            if (!response.ok) {
+                throw new Error(`Login failed: ${response.status} – ${response.statusText}`);
+            }
 
             const res = await response.json();
             //setUser(res.user);

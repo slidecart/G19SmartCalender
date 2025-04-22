@@ -46,7 +46,7 @@ function WeeklyCalendar() {
     const handleSubmit = async () =>{
         try{
 
-            const response = await fetchData("activity/create", "POST", formData);
+            const response = await fetchData("activities/create", "POST", formData);
             console.log(response);
 
             // Closes the dialog och resets the form
@@ -77,7 +77,7 @@ function WeeklyCalendar() {
     useEffect(() => {
         const fetchActivities = async() => {
             try {
-                const response = await fetchData("activity/all", "GET", ""); // Tar emot aktiviteter från backend
+                const response = await fetchData("activities/all", "GET", ""); // Tar emot aktiviteter från backend
 
 
                 setActivities(response); // Användarens aktiviteter
