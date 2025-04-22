@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 
 import LogIn from "./scenes/login";
 import TodaysAgenda from "./scenes/todaysAgenda";
+import TaskTodo from "./scenes/taskTodo";
 
 function App() {
   return (

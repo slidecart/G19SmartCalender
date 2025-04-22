@@ -1,1 +1,7 @@
-{/*Upplägget av hur tasks & todos ska se ut*/}
+import { Box, Container } from "@mui/material";
+
+function TaskTodo(){
+    return("")
+}
+
+export default TaskTodo;
