@@ -208,14 +208,23 @@ public class ActivityService {
                 .collect(Collectors.toList());
     }
 
-    public List<ActivityDTO> getActivitiesBetween(UserDetails currentUser, LocalDate start, LocalDate end) {
-        User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-        return activityRepository.findByUserAndDateBetween(user, start, end)
-                .stream()
-                .map(activityMapper::toDto)
-                .collect(Collectors.toList());
-    }
+  /**
+   * Retrieves a list of activity DTOs for the given user filtered by the specified date range.
+   *
+   * @param currentUser the details of the currently authenticated user
+   * @param start the start date (inclusive) for filtering activities
+   * @param end the end date (inclusive) for filtering activities
+   * @return a list of activity DTOs within the specified date range
+   * @throws UserNotFoundException if the current user cannot be found
+   */
+  public List<ActivityDTO> getActivitiesBetween(UserDetails currentUser, LocalDate start, LocalDate end) {
+      User user = userRepository.findByUsername(currentUser.getUsername())
+              .orElseThrow(() -> new UserNotFoundException("User not found"));
+      return activityRepository.findByUserAndDateBetween(user, start, end)
+              .stream()
+              .map(activityMapper::toDto)
+              .collect(Collectors.toList());
+  }
 
     /**
      * Checks for overlapping activities for a given user and activity, excluding a specific activity ID if provided.
