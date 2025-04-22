@@ -40,9 +40,9 @@ public class ActivityController {
 
         if (currentUser != null) {
             ActivityDTO created = activityService.createActivity(activity, currentUser);
-            return new ResponseEntity<>(created, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(created);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/all")
@@ -50,9 +50,9 @@ public class ActivityController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             List<ActivityDTO> activities = activityService.getAllActivities(currentUser);
-            return new ResponseEntity<>(activities, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(activities);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
 
@@ -61,10 +61,10 @@ public class ActivityController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             return activityService.getActivity(id, currentUser)
-                    .map(activity -> new ResponseEntity<>(activity, HttpStatus.OK))
-                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                    .map(activity -> ResponseEntity.status(HttpStatus.OK).body(activity))
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PutMapping("/{id}")
@@ -73,11 +73,11 @@ public class ActivityController {
         if (currentUser != null) {
             Optional<ActivityDTO> updatedActivity = activityService.editActivity(currentUser, id, activityDTO);
             return updatedActivity
-                    .map(activity -> new ResponseEntity<>(activity, HttpStatus.OK))
-                    .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                    .map(activity -> ResponseEntity.status(HttpStatus.OK).body(activity))
+                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
         }
 
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
 
@@ -88,7 +88,7 @@ public class ActivityController {
         if (currentUser != null) {
             return activityService.deleteActivity(currentUser, id);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/ongoing")
@@ -96,9 +96,9 @@ public class ActivityController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             List<ActivityDTO> ongoing = activityService.getOngoingActivities(currentUser);
-            return new ResponseEntity<>(ongoing, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(ongoing);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
 
@@ -107,9 +107,9 @@ public class ActivityController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             List<ActivityDTO> ongoing = activityService.getFutureActivities(currentUser);
-            return new ResponseEntity<>(ongoing, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(ongoing);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/category/{categoryId}")
@@ -117,9 +117,9 @@ public class ActivityController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             List<ActivityDTO> activities = activityService.getActivitiesByCategory(currentUser, categoryId);
-            return new ResponseEntity<>(activities, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(activities);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @GetMapping("/between")
@@ -129,8 +129,8 @@ public class ActivityController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             List<ActivityDTO> activities = activityService.getActivitiesBetween(currentUser, start, end);
-            return new ResponseEntity<>(activities, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(activities);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }
