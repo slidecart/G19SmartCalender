@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import CalendarGrid from "./../calendar/calendarGrid"
 import AddActivity from "./../calendar/addActivity";
-import {fetchData} from "../FetchData";
+import {fetchData} from "../../hooks/FetchData";
 
 
 
