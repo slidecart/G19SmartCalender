@@ -3,10 +3,13 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, B
 const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit }) => {
     return(
         <Dialog open={open} onClose={onClose}>
+
+            {/* Title for the dialog */}
             <DialogTitle m={1}>
                 Lägg till aktivitet
             </DialogTitle>
 
+            {/* Dialog content allowing the user to enter information about created activity */}
             <DialogContent sx={{width:"400px", ml:1}}>
                 <Box mb ={2}>
                     <TextField 

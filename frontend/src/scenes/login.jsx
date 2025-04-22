@@ -1,7 +1,6 @@
 
-import { Box, Container, TextField, Typography, Button, FormControl, colors } from "@mui/material";
+import { Box, Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
-import Body from "../components/containers/body";
 import UserInput from "../components/userInput";
 
 
@@ -13,6 +12,8 @@ function LogIn(key, value) {
 
         const username = formData.get('username');
         const password = formData.get('password');
+
+        
 
         const loginRequest = {
             username,
@@ -49,14 +50,10 @@ function LogIn(key, value) {
         }
     };
 
-    const fields = [
-        {label: "Användarnamn", name:"username", required:true},
-        {label: "Lösenord", name:"password", required:true}
-    ]
-
     return(
-
         <Box sx={{display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", height:"100vh"}}>
+            
+            {/* Field that let's the user log in using their username and password */}
             <UserInput 
                 title="Välkommen"
                 fields={[
@@ -68,25 +65,7 @@ function LogIn(key, value) {
                 onSubmit={handleSubmit}
                 >
 
-                {/*
-                <FormControl>
-                    <TextField
-                        label="Användarnamn"
-                        name="username"
-                        variant="outlined"
-                        fullWidth
-                    />
-                </FormControl>
-
-                <FormControl>
-                    <TextField
-                        label="Lösenord"
-                        name="username"
-                        variant="outlined"
-                        fullWidth
-                    />
-                </FormControl>
-
+                {/* Hur knappen ska vara utformad
                 <Button
                     component={Link}
                     to="/today"
@@ -98,8 +77,7 @@ function LogIn(key, value) {
             */}
             </UserInput>
 
-            {/* Box för att ge användaren möjlighet att registrera sig */}
-
+            {/* Box that allows the user to register themselves */}
                 <Box sx={{display:"flex", flexDirection:"column", my: 3, justifyContent:"center", alignItems:"center", maxWidth:"350px", width:"100%"}}>
                     <Typography variant="p" sx={{my: 1, textDecoration:"underline", fontWeight:"600", fontSize:"18px"}}>
                         Inte registrerat dig än?

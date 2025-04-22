@@ -30,6 +30,7 @@ function UserInput({title, fields = [], buttonText, onSubmit, children}){
                     </FormControl>
                 ))}
 
+                {/* Button delivering the data written by the user */}
                 <Button 
                     type="submit"   
                     variant="contained" 
