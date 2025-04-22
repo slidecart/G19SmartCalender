@@ -9,8 +9,8 @@ import { Link } from "react-router-dom";
 function UserInput({title, fields = [], buttonText, onSubmit, children}){
 
     return (
-        <Container sx={{display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column"}}>
-            <Box sx={{display:"flex", flexdirection:"column", maxWidth:"350px", width:"100%"}}>
+        <Container sx={{display:"flex", alignItems:"center", justifyContent:"center"}}>
+            <Box sx={{display:"flex", flexDirection:"column", width:"100%", maxWidth:"350px"}}>
                 <Typography variant="h1" sx={{textAlign:"center"}}>
                     {title}
                 </Typography>

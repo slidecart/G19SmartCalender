@@ -56,7 +56,7 @@ function LogIn(key, value) {
 
     return(
 
-        <Body>
+        <Box sx={{display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", height:"100vh"}}>
             <UserInput 
                 title="Välkommen"
                 fields={[
@@ -114,7 +114,7 @@ function LogIn(key, value) {
                         Registrera dig idag!
                     </Button>
                 </Box>
-        </Body>
+        </Box>
         
 
     )
