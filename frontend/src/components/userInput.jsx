@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
     ska ha så man upprepar lösenordet? Vet ej hur jag ska implementera detta då
     men det tar jag sen */}
 
-function UserInput(title, fields = [], buttonText, onSubmit, children){
+function UserInput({title, fields = [], buttonText, onSubmit, children}){
 
     return (
         <Container sx={{display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column"}}>
