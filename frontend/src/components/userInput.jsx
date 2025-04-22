@@ -10,17 +10,23 @@ function UserInput({title, fields = [], buttonText, onSubmit, children}){
 
     return (
         <Container sx={{display:"flex", alignItems:"center", justifyContent:"center"}}>
-            <Box sx={{display:"flex", flexDirection:"column", width:"100%", maxWidth:"350px"}}>
+
+            <Box
+                component="form"
+                onSubmit={onSubmit}
+                sx={{display:"flex", flexDirection:"column", width:"100%", maxWidth:"350px"}}>
+
                 <Typography variant="h1" sx={{textAlign:"center"}}>
                     {title}
                 </Typography>
 
+                {/* Maps out all textFields for the form */}
                 {fields.map((field, index) => (
                     <FormControl key={index} sx={{ mb: 2 }}>
                         <TextField
                             label={field.label}
                             name={field.name}
-                            type="text"
+                            type={field.type || "text" }
                             variant="outlined"
                             fullWidth
                             required={field.required ?? true}
@@ -28,6 +34,7 @@ function UserInput({title, fields = [], buttonText, onSubmit, children}){
                     </FormControl>
                 ))}
 
+                {/* Button delivering the data written by the user */}
                 <Button 
                     type="submit"   
                     variant="contained" 
@@ -38,7 +45,7 @@ function UserInput({title, fields = [], buttonText, onSubmit, children}){
                     {buttonText}
                 </Button>
                 
-                {/* Om det finns element inuti <UserInput> skall dessa element fortfarande visas */}
+                {/*If there are any elements inside of <UserInput> shall these elements still show */}
                 {children && (
                     <Box sx={{ mt: 2 }}>
                         {children}

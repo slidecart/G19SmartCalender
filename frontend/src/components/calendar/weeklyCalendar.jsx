@@ -3,34 +3,34 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import CalendarGrid from "./../calendar/calendarGrid"
 import AddActivity from "./../calendar/addActivity";
-import {fetchData} from "../FetchData";
+import {fetchData} from "../../hooks/FetchData";
 
 
 
 function WeeklyCalendar() {
 
-    // Satta variabler för datum
+    // Constant variables for dates
     const today = dayjs();
     const currentYear = today.year();
-    const startOfWeek = today.startOf("week").add(1, "day"); // Första dagen i veckan är Måndag
+    const startOfWeek = today.startOf("week").add(1, "day"); // First day of the week is monday
 
-    // Tillstånd för aktiviteter och felhanteirng 
+    // Activity permissions and error handling
     const [activities, setActivities] = useState([]);
     const [error, setError] = useState(null);
 
-    // Lista över veckodagar från måndag till söndag med aktuella datum
+    // Array over weekdays from monday to sunday with actual dates from local computer
     const weekdays = Array.from ({ length: 7 }, (_, i) => ({
         name: ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag", "Söndag"][i],
-        date: startOfWeek.add(i, "day").format("YYYY-MM-DD") //Formatet från JSON-fil 
+        date: startOfWeek.add(i, "day").format("YYYY-MM-DD") //Format from JSON-file
     }));
 
-    // Lista för tider från 08:00 till 20:00 
+    // Array with time from 08:00 to 20:00 
     const timeSlots = Array.from({ length: 13}, (_,i) => {
         const hour = 8 + i;
         return `${hour.toString().padStart(2, '0')}:00`;
     });
 
-    const [openDialog, setOpenDialog] = useState(false); // Hanterar formuläret för att lägga till aktiviteter
+    const [openDialog, setOpenDialog] = useState(false); // Handling of form to add activities
     const [formData, setFormData] = useState({
         name:"",
         description:"",
@@ -42,14 +42,14 @@ function WeeklyCalendar() {
         userId:""
     });
 
-    // Funktion för att hantera formuläret för att lägga till aktiviter
+    // Function to handle form to be able to add activities
     const handleSubmit = async () =>{
         try{
 
-            const response = await fetchData("activity/create", "POST", formData);
+            const response = await fetchData("activities/create", "POST", formData);
             console.log(response);
 
-            // Stänger dialogen och tömmer formuläret
+            // Closes the dialog och resets the form
             setOpenDialog(false);
             setFormData({
                 name:"",
@@ -64,7 +64,7 @@ function WeeklyCalendar() {
         }
     };
 
-    // Funktioner för att hantera ändringar i formuläret
+    // Function to handle edits for activities
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -73,11 +73,11 @@ function WeeklyCalendar() {
         }));
     }
 
-    // Hämtar aktiviteter från API 
+    // Recieves activities from API 
     useEffect(() => {
         const fetchActivities = async() => {
             try {
-                const response = await fetchData("activity/all", "GET", ""); // Tar emot aktiviteter från backend
+                const response = await fetchData("activities/all", "GET", ""); // Tar emot aktiviteter från backend
 
 
                 setActivities(response); // Användarens aktiviteter
@@ -95,7 +95,7 @@ function WeeklyCalendar() {
                 Veckokalender - {currentYear}
             </Typography>
 
-            {/* Kalendern visas */}
+            {/* Shows calendar */}
             <TableContainer component ={Paper} elevation="2" sx={{height:"fit-content"}}>
                 <CalendarGrid
                     activities = {activities}
@@ -103,15 +103,19 @@ function WeeklyCalendar() {
                     timeSlots = {timeSlots}
                 />
             </TableContainer>
+
+            {/* Button for adding activites */}
             <Box display="flex" justifycontent="flex-end" mt={2}>
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => setOpenDialog(true)}
+                    onClick={() => setOpenDialog(true)} // Dialog appears 
                 >
                     Lägg till
                 </Button>
             </Box>
+
+            {/* Shows dialog */}
             <AddActivity
                 open={openDialog}
                 onClose={() => setOpenDialog(false)}

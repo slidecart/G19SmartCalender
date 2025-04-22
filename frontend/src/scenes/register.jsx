@@ -1,49 +1,33 @@
-import Body from "../components/containers/body";
-import { Box, Container, Typography, FormControl, TextField, Button } from "@mui/material";
+import { Box, Container } from "@mui/material";
+import UserInput from "../components/userInput";
 
-return (
-    <Body>
+function Register(){
+
+
+    return (
         <Container sx={{display: "flex", alignItems:"center", justifyContent:"center", flexDirection:"column"}}>
             <Box sx={{display: "flex", flexDirection:"column", maxWidth:"350px", width:"100%"}}>
-                <Typography variant="h1" sx={{textAlign:"center"}}>
-                    Registrera dig
-                </Typography>
-
-                <FormControl sx={{ my:1 }}>
-                    <TextField
-                        label="Användarnamn"
-                        name="username"
-                        variant="outlined"
-                        fullWidth
-                    />
-                </FormControl>
-
-                <FormControl sx={{ my: 1}}>
-                    <TextField
-                        label="Email"
-                        name="emailAdress"
-                        variant="outlined"
-                        fullWidth
-                    />
-                </FormControl>
+                {/* 
+                    Field allowing the user to register by deciding a username and password 
+                    connected to their email. Password needs to be repeated to make sure the 
+                    user typed in the correct password
                 
-                <FormControl sx={{ my:1 }}>
-                    <TextField
-                        label="Lösenord"
-                        name="password"
-                        variant="outlined"
-                        fullWidth
-                    />
-                </FormControl>
-
-                <Button
-                    variant="contained"
-                    color="primary"
-                >
-                    Registrera
-                </Button>
+                */}
+                <UserInput
+                    title="Registrera dig"
+                    fields={[
+                        { label: "Användarnamn", name:"username", required:true },
+                        { label: "Email", name:"emailAdress", required:true},
+                        { label:"Lösenord", name:"password", required:true},
+                        { label:"Upprepa lösenord", name:"checkPassword", required:true}
+                    ]}
+                    buttonText="Registrera"
+                    onsubmit={handleSubmit} // Tillägg av handleSubmit för att skicka vidare till backend 
+                />
             </Box>
         </Container>
+    )
+}
 
-    </Body>
-)
+export default Register;
+

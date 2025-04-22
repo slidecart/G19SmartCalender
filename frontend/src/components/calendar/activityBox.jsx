@@ -2,19 +2,27 @@ import { Box, Typography, Card, CardContent } from "@mui/material";
 import dayjs from "dayjs";
 
 const ActivityBox = ({ activities, weekdays }) => {
+    {/* */}
+
     return (
         <Box sx={{display: "flex", gap:2, mb:3 }}>
             {weekdays.map((day) => {
                 const dayActivities = activities
+
+                    // Filters activities by date
                     .filter((activity) => dayjs(activity.startTime).format("YYYY-MM-DD") === day.date)
+
+                    // Sorts activites by time
                     .sort((a, b) => dayjs(a.startTime).diff(dayjs(b.startTime)));
 
-                    //Om det inte finns aktiviteter ska inga aktiviteter skickas tillbaka
+                    // If there is no activites, no activites returns 
                     if (dayActivities.length === 0) return null;
 
                     return (
                         <Card key = {day.name} sx={{ maxWidth: 200 }}>
                             <CardContent>
+
+                                {/* Maps out every activity over the calendar */}
                                 {dayActivities.map((activity, i) => (
                                     <Box key={i} sx={{ mb:1 }}>
                                         <Typography variant="subtitle2">
