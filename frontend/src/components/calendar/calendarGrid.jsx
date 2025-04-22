@@ -1,7 +1,8 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography, Box } from "@mui/material";
 import dayjs from "dayjs";
+import ActivityBox from "./activityBox";
 
-const CalendarGrid = ({ activities, weekdays, timeSlots }) => {
+const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
     return (
         <Table>
             <TableHead>
@@ -30,9 +31,13 @@ const CalendarGrid = ({ activities, weekdays, timeSlots }) => {
                         <TableCell>
                             {time}
                         </TableCell>
+                        <ActivityBox
+                            activities={activities}
+                            weekdays={weekdays}
+                        />
 
                         {/* One cell for every weekday and checks if any activity exists in this time-span */}
-                        {weekdays.map((day) => {
+                        {/* {weekdays.map((day) => {
                             const matchingActivity = activities.find((activity) => {
                                 const startTime = dayjs(`1970-01-01T${activity.startTime}`);
                                 const startDate = dayjs(activity.date);
@@ -43,31 +48,21 @@ const CalendarGrid = ({ activities, weekdays, timeSlots }) => {
                                 );
                             });
 
-                            console.log(matchingActivity);
+                            console.log(matchingActivity); 
                             return (
                                 <TableCell 
                                     key={`${day.name}-${time}`}
                                     align="center"
 
                                 >
-                                    {/* Shows activities if date and time matches */}
-                                    {matchingActivity && (
-                                        <Box>
-                                            {/* Activity title */}
-                                            <Typography variant="subtitle2">
-                                                {matchingActivity.name}
-                                            </Typography>
-
-                                            {/* Activities start time and end time */}
-                                            <Typography variant="caption">
-                                                {dayjs(`1970-01-01T${matchingActivity.startTime}`).format("HH:mm")}
-                                                - {dayjs(`1970-01-01T${matchingActivity.endTime}`).format("HH:mm")}
-                                            </Typography>
-                                        </Box>
-                                    )}
+                                    <Box>
+                                        <Typography>
+                                            hej
+                                        </Typography>
+                                    </Box>
                                 </TableCell>
                             );
-                        })}
+                        })} */}
                     </TableRow>
                 ))}
             </TableBody>
