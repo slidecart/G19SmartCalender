@@ -17,6 +17,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * ActivityController is a REST controller that provides endpoints for managing and retrieving activities.
+ * It allows users to perform CRUD operations on activities such as creation, retrieval, updating, and deletion.
+ * The controller also provides endpoint filters for activities based on various criteria like time periods or categories.
+ * It utilizes the ActivityService to handle the business logic and interacts with the currently authenticated user
+ * to ensure proper access control.
+ */
 @RestController
 @RequestMapping("/api/activities")
 public class ActivityController {

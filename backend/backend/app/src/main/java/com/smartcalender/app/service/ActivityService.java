@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service class responsible for managing activities.
+ * Provides methods to create, retrieve, update, and delete activities associated with a user.
+ */
 @Service
 public class ActivityService {
 
@@ -39,6 +43,13 @@ public class ActivityService {
         this.activityMapper = activityMapper;
     }
 
+    /**
+     * Retrieves a list of all activities associated with the currently authenticated user.
+     *
+     * @param currentUser the details of the currently authenticated user
+     * @return a list of {@code ActivityDTO} objects representing the user's activities
+     * @throws UserNotFoundException if the current user cannot be found in the system
+     */
     public List<ActivityDTO> getAllActivities(UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -49,6 +60,19 @@ public class ActivityService {
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * Creates a new activity based on the provided request and associates it with the current user.
+     * The activity details such as name, description, date, time, location, and optional category
+     * are saved and returned in the form of an ActivityDTO.
+     *
+     * @param request the request object containing the details of the activity to be created
+     * @param currentUser the details of the currently authenticated user creating the activity
+     * @return an {@code ActivityDTO} object representing the created activity, including any
+     * warnings about overlapping activities
+     * @throws UserNotFoundException if the current user cannot be found in the system
+     * @throws IllegalArgumentException if the specified category is not found
+     */
     @Transactional
     public ActivityDTO createActivity(CreateActivityRequest request, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
@@ -91,6 +115,22 @@ public class ActivityService {
         return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Edits an existing activity associated with the currently authenticated user.
+     * The activity is identified by its unique ID and is updated with the details
+     * provided in the ActivityDTO. The method verifies user authorization, validates
+     * category existence if specified, and checks for overlapping activities.
+     *
+     * @param currentUser the details of the currently authenticated user
+     * @param id the unique identifier of the activity to be edited
+     * @param activityDTO the data transfer object containing updated activity details
+     * @return an Optional containing the updated ActivityDTO, including any warnings
+     *         about overlapping activities, if the activity was successfully edited;
+     *         otherwise, an empty Optional if the activity is not found or not accessible
+     *         by the current user
+     * @throws UserNotFoundException if the current user cannot be found in the system
+     * @throws RuntimeException if the specified category is not found
+     */
     @Transactional
     public Optional<ActivityDTO> editActivity(UserDetails currentUser, Long id, ActivityDTO activityDTO) {
         User user = userRepository.findByUsername(currentUser.getUsername())
@@ -177,6 +217,15 @@ public class ActivityService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Checks for overlapping activities for a given user and activity, excluding a specific activity ID if provided.
+     * If overlaps are detected, warning messages are generated describing the conflicts.
+     *
+     * @param activity the activity to check for overlaps
+     * @param user the user whose activities are to be checked for potential overlaps
+     * @param excludeId an optional ID of the activity to exclude from the overlap check
+     * @return a list of warning messages indicating overlapping activities, or an empty list if no overlaps are found
+     */
     private List<String> checkForOverlaps(Activity activity, User user, Long excludeId) {
         List<Activity> userActivities = activityRepository.findByUser(user);
         List<String> warnings = new ArrayList<>();

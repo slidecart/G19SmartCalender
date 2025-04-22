@@ -4,55 +4,66 @@
 * options = blank string for GET "" or the data being sent for POST/PUT
 * */}
 
-export async function fetchData(path, method, options) {
-    const accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
-        console.error("No JWT found in localStorage. User might not be logged in.")
+const API_BASE = process.env.REACT_APP_BACKEND_URL;
+
+async function makeRequest(path, method, body, token) {
+    const url = `${API_BASE}${path}`;
+    const headers = { "Content-Type": "application/json" };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const opts = { method, headers };
+    if (body && method !== "GET") {
+        opts.body = JSON.stringify(body);
+    }
+
+    return fetch(url, opts);
+}
+
+export async function fetchData(path, method = "GET", body = null) {
+    let accessToken  = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+
+    if (!accessToken && !refreshToken) {
+        console.error("No tokens in storage—user must log in.");
+        window.location.href = "/login";
         return;
     }
-    console.log(accessToken);
-    if (method === "GET") {
-        try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}${path}`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${accessToken}`
-                }
-            });
 
-            if (!response.ok) {
-                throw new Error(
-                    `HTTP error! status: ${response.status}, message: ${await response.text()}`);
-            }
+    // 1) Try the original request
+    let res = await makeRequest(path, method, body, accessToken);
 
-            const data = await response.json();
-            console.log(data);
+    // 2) If unauthorized, try refreshing the access token
+    if (res.status === 401 && refreshToken) {
+        const refreshRes = await makeRequest(
+            "auth/refresh-token",
+            "POST",
+            { refreshToken },
+            null                      // no bearer header on refresh
+        );
 
-            return data;
+        if (refreshRes.ok) {
+            const { accessToken: newAccess, refreshToken: newRefresh } = await refreshRes.json();
+            // Update storage
+            localStorage.setItem("accessToken", newAccess);
+            if (newRefresh) localStorage.setItem("refreshToken", newRefresh);
+            accessToken = newAccess;
 
-        } catch (error) {
-            console.error("Error:", error);
+            // Retry the original request with the fresh token
+            res = await makeRequest(path, method, body, accessToken);
+        } else {
+            // Refresh failed → force login
+            console.error("Refresh failed, redirecting to login");
+            window.location.href = "/login";
             return;
         }
     }
 
-    try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}${path}`, {
-            method: method,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${accessToken}`
-            },
-            body: JSON.stringify(options)
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}, message: ${await response.text()}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error("Error:", error);
-
+    // 3) Final error check
+    if (!res.ok) {
+        const msg = await res.text().catch(() => res.statusText);
+        throw new Error(`HTTP ${res.status}: ${msg}`);
     }
+
+    // 4) Parse JSON and return
+    return res.json();
 }

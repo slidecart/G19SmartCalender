@@ -54,7 +54,7 @@ export const useAuth = () => {
 };
 
 export const PrivateRoute = () => {
-    const { accessToken } = useAuth();    // pull out just the token
+    const { accessToken } = useAuth();
     return accessToken
         ? <Outlet />
         : <Navigate to="/login" replace />;

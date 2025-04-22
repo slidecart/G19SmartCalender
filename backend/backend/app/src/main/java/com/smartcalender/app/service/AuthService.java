@@ -69,10 +69,14 @@ public class AuthService {
 
         String accessToken = jwtUtil.generateToken(userDetails);
 
-        RefreshToken refreshToken = new RefreshToken();
-        refreshToken.setUser(user);
-        refreshToken.setExpiresAt(Instant.now().plusSeconds(60 * 60 * 24 * 7)); // 7 days expiration
-        refreshTokenRepository.save(refreshToken);
+        RefreshToken refreshToken = refreshTokenRepository.findByUserAndExpiresAtAfter(user, Instant.now())
+                .orElseGet(() -> {
+                    RefreshToken newToken = new RefreshToken();
+                    newToken.setUser(user);
+                    newToken.setExpiresAt(Instant.now().plusSeconds(60 * 60 * 24 * 7)); // 7 days expiration
+                    refreshTokenRepository.save(newToken);
+                    return newToken;
+                });
 
         return new LoginResponseDTO(accessToken, refreshToken.getId());
     }
