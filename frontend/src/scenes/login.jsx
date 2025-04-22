@@ -61,7 +61,7 @@ function LogIn(key, value) {
                 title="Välkommen"
                 fields={[
                     { label: "Användarnamn", name:"username", required:true},
-                    {label: "Lösenord", name:"password", required:true}
+                    { label: "Lösenord", name:"password", type:"password", required:true}
 
                 ]}
                 buttonText="Logga in"
