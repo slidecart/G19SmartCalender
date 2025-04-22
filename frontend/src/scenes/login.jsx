@@ -3,11 +3,13 @@ import { Box, Container, TextField, Typography, Button, FormControl, colors } fr
 import { Link } from "react-router-dom";
 import Body from "../components/containers/body";
 import UserInput from "../components/userInput";
+import {useAuth} from "../hooks/AuthContext";
 
 
 function LogIn(key, value) {
 
-    const handleSubmit = async (e) => {
+    const auth = useAuth();
+    const handleSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
 
@@ -20,33 +22,11 @@ function LogIn(key, value) {
         }
 
         // Basic Validation
-        if (!username || !password) {
-            alert('Please provide both username and password.');
+        if (loginRequest.username !== "" && loginRequest.password !== "") {
+            auth.loginAction(loginRequest);
             return;
         }
-
-        try {
-            const response = await fetch(`http://localhost:8080/api/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(loginRequest),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Login failed: ${response.status} – ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            console.log('Login successful:', data); // Handle response data
-            // Save tokens correctly using their property names
-            localStorage.setItem("accessToken", data.accessToken);
-            localStorage.setItem("refreshToken", data.refreshToken);
-        } catch (error) {
-            console.error('An error occurred:', error.message);
-            alert('Login failed. Please try again.');
-        }
+        alert("please provide a valid input");
     };
 
     const fields = [

@@ -10,7 +10,10 @@ function UserInput({title, fields = [], buttonText, onSubmit, children}){
 
     return (
         <Container sx={{display:"flex", alignItems:"center", justifyContent:"center"}}>
-            <Box sx={{display:"flex", flexDirection:"column", width:"100%", maxWidth:"350px"}}>
+            <Box
+                component="form"
+                onSubmit={onSubmit}
+                sx={{display:"flex", flexDirection:"column", width:"100%", maxWidth:"350px"}}>
                 <Typography variant="h1" sx={{textAlign:"center"}}>
                     {title}
                 </Typography>
