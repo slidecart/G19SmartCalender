@@ -13,11 +13,7 @@ function Body({children}){
     return(
         <Box sx={{display:"flex", justifyContent:"space-between", flexDirection:"column", minHeight:"108vh"}}> 
             <Header/>
-
-            {/* If there are any elements inside of <Body> shall these elements  still show */}
-            {children && (
-                {children}
-            )}
+            {children}
             
             <Footer/>
         </Box>
