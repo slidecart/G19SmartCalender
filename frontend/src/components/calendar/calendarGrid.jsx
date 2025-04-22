@@ -28,13 +28,33 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
                 {/* Maps out times from 08:00 - 20:00 for every row in the first column */ }
                 {timeSlots.map((time) => (
                     <TableRow key={time}>
-                        <TableCell>
+                        <TableCell sx={{ borderRight:"1px solid #ccc"}}>
                             {time}
                         </TableCell>
-                        <ActivityBox
-                            activities={activities}
-                            weekdays={weekdays}
-                        />
+
+                        {weekdays.map((day) => {
+                            const activity = activities
+                                .filter((activity) => {
+                                    const activityDate = dayjs(activity.date);
+                                    const activityTime = dayjs(`1970-01-01T${activity.startTime}`);
+                                    return (
+                                        activityDate.format("YYYY-MM-DD") === day.date &&
+                                        activityTime.format("HH:mm") === time
+                                    );
+                                })
+
+                                .sort((a,b) => dayjs(a.startTime).diff(dayjs(b.startTime)));
+                                
+                                return(
+                                    <TableCell 
+                                        key={`${day.name}-${time}`} 
+                                        sx={{
+                                            position:"relative",
+                                            align:"center"
+                                        }}
+                                    />
+                                );
+                        })}
 
                         {/* One cell for every weekday and checks if any activity exists in this time-span */}
                         {/* {weekdays.map((day) => {
