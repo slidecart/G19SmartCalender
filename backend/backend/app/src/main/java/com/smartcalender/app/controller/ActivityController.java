@@ -67,7 +67,7 @@ public class ActivityController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/edit/{id}")
     public ResponseEntity<?> editActivity(@PathVariable Long id, @Valid @RequestBody ActivityDTO activityDTO) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
@@ -82,7 +82,7 @@ public class ActivityController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteActivity(@PathVariable Long id) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
