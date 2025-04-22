@@ -5,7 +5,6 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import AuthProvider from "./hooks/AuthContext";
 
 const theme = createTheme({
   palette: {
@@ -46,11 +45,9 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <ThemeProvider theme={theme}>
-          <App />
-        </ThemeProvider>
-      </AuthProvider>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
     </BrowserRouter>
     
   </React.StrictMode>
