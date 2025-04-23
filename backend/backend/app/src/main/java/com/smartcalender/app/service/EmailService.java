@@ -6,6 +6,10 @@ import com.mashape.unirest.http.exceptions.UnirestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+/**
+ * The EmailService class is responsible for sending different types of emails using the Mailgun API.
+ * It provides functionality to send verification emails and password reset emails.
+ */
 @Service
 public class EmailService {
 
@@ -15,6 +19,15 @@ public class EmailService {
     @Value("${mailgun.api.key}")
     private String mailgunApiKey;
 
+    /**
+     * Sends a verification email to the specified recipient using the Mailgun API.
+     * The "template" parameter specifies the Mailgun template to use for the email.
+     *
+     * @param to the recipient's email address.
+     * @param subject the subject of the email.
+     * @param verificationUrl the verification URL to include in the email.
+     * @param otp the one-time password (OTP) to include in the email.
+     */
     public void sendVerificationEmail(String to, String subject, String verificationUrl, String otp) {
         HttpResponse<String> request;
         try {
@@ -36,6 +49,15 @@ public class EmailService {
         }
     }
 
+    /**
+     * Sends a password reset email to the specified recipient using the Mailgun API.
+     * The email includes a reset URL which allows the user to reset their password.
+     * The "template" parameter specifies the Mailgun template to use for the email.
+     *
+     * @param to the recipient's email address
+     * @param subject the subject of the password reset email
+     * @param resetUrl the URL for resetting the password, included in the email
+     */
     public void sendPasswordResetEmail(String to, String subject, String resetUrl) {
         HttpResponse<String> response;
 
