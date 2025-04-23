@@ -5,6 +5,7 @@ import LogIn from "./scenes/login";
 import TodaysAgenda from "./scenes/todaysAgenda";
 import TaskTodo from "./scenes/taskTodo";
 import AuthProvider, {PrivateRoute} from "./hooks/AuthContext";
+import Register from "./scenes/register";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Routes>
               <Route path="/" element={<Navigate to="/login" replace/>} />
               <Route path="/login" element={<LogIn/>} />
+              <Route path="/register" element={<Register/>} />
               <Route element={<PrivateRoute />}>
                   <Route path="/today" element={<TodaysAgenda/>} />
                   <Route path="/taskTodoPage" element={<TaskTodo/>} />

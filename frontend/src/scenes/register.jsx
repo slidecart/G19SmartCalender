@@ -1,40 +1,37 @@
 import React from 'react';
 import { Container, Box } from '@mui/material';
-import UserInput from '../components/UserInput'; // Adjust path if needed
+import UserInput from '../components/userInput';
 
 function Register() {
-    // This function handles form submission
     const handleSubmit = (e) => {
-        e.preventDefault(); // Prevent default page refresh
+        e.preventDefault();
 
-        const formData = new FormData(e.target); // Get form data
+        const formData = new FormData(e.target);
 
-        // Extract fields from form
+
         const username = formData.get('username');
-        const email = formData.get('emailAdress'); // Match backend's "emailAddress"
+        const email = formData.get('emailAdress');
         const password = formData.get('password');
         const checkPassword = formData.get('checkPassword');
 
-        // Basic frontend validation
+
         if (!username || !email || !password || !checkPassword) {
-            alert("Alla fält måste fyllas i."); // All fields are required
+            alert("Alla fält måste fyllas i.");
             return;
         }
 
         if (password !== checkPassword) {
-            alert("Lösenorden matchar inte."); // Passwords don't match
+            alert("Lösenorden matchar inte.");
             return;
         }
 
-        // Prepare object for backend
         const registerRequest = {
             username,
             emailAddress: email,
             password
         };
 
-        // Send request to backend
-        fetch("http://localhost:8080/register", {
+        fetch(`${process.env.REACT_APP_BACKEND_URL}auth/register`,{
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -54,8 +51,7 @@ function Register() {
             })
             .then(data => {
                 alert("Registrering lyckades! Välkommen, " + data.username);
-                // Optional: redirect to login or homepage
-                // window.location.href = "/login";
+                 window.location.href = "/login";
             })
             .catch(error => {
                 console.error("Fel vid registrering:", error);
@@ -83,7 +79,7 @@ function Register() {
                         { label: "Upprepa lösenord", name: "checkPassword", type: "password", required: true }
                     ]}
                     buttonText="Registrera"
-                    onSubmit={handleSubmit} // Capital "S" is important!
+                    onSubmit={handleSubmit}
                 />
             </Box>
         </Container>
