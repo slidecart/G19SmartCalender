@@ -103,6 +103,20 @@ public class ActivityService {
         return activityDTO;
     }
 
+    /**
+     * Deletes an activity associated with the currently authenticated user.
+     * The activity is identified by its unique ID and must belong to the user
+     * making the request. If the activity is found and deleted successfully,
+     * the method returns a positive response, otherwise, a not found response
+     * is returned.
+     *
+     * @param currentUser the details of the currently authenticated user
+     * @param id the unique identifier of the activity to be deleted
+     * @return a {@code ResponseEntity} containing {@code true} if the activity
+     *         was deleted successfully, or {@code false} if the activity was
+     *         not found
+     * @throws UserNotFoundException if the current user cannot be found in the system
+     */
     @Transactional
     public ResponseEntity<Boolean> deleteActivity(UserDetails currentUser, Long id) {
         User user = userRepository.findByUsername(currentUser.getUsername())
@@ -165,6 +179,15 @@ public class ActivityService {
         return Optional.empty();
     }
 
+    /**
+     * Retrieves a specific activity associated with the given ID for the current authenticated user.
+     *
+     * @param id the unique identifier of the activity to be retrieved
+     * @param currentUser the details of the currently authenticated user
+     * @return an Optional containing the {@code ActivityDTO} object if the activity is found
+     *         and belongs to the current user; an empty Optional otherwise
+     * @throws UserNotFoundException if the current user cannot be found in the system
+     */
     public Optional<ActivityDTO> getActivity(long id, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -172,6 +195,13 @@ public class ActivityService {
                 .map(activityMapper::toDto);
     }
 
+    /**
+     * Retrieves a list of ongoing activities for the currently authenticated user.
+     *
+     * @param currentUser the details of the currently authenticated user
+     * @return a list of {@code ActivityDTO} objects representing the user's ongoing activities
+     * @throws UserNotFoundException if the current user cannot be found in the system
+     */
     public List<ActivityDTO> getOngoingActivities(UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -186,6 +216,13 @@ public class ActivityService {
     }
 
 
+    /**
+     * Retrieves a list of future activities for the currently authenticated user.
+     *
+     * @param currentUser the details of the currently authenticated user
+     * @return a list of {@code ActivityDTO} objects representing the user's future activities
+     * @throws UserNotFoundException if the current user cannot be found in the system
+     */
     public List<ActivityDTO> getFutureActivities(UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -198,6 +235,15 @@ public class ActivityService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a list of activities belonging to a specific category for the currently authenticated user.
+     *
+     * @param currentUser the details of the currently authenticated user
+     * @param categoryId the unique identifier of the category to filter activities by
+     * @return a list of {@code ActivityDTO} objects representing the activities in the specified category
+     *         for the authenticated user
+     * @throws UserNotFoundException if the current user cannot be found in the system
+     */
     public List<ActivityDTO> getActivitiesByCategory(UserDetails currentUser, Long categoryId) {
         User user = userRepository.findByUsername(currentUser.getUsername())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));

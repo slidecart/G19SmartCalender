@@ -1,7 +1,10 @@
-import { Box, List, ListItem } from "@mui/material";
+import { Box, List, ListItem, Button } from "@mui/material";
+import {useAuth} from "../../hooks/AuthContext";
+import {useContext} from "react";
 
 
 function Navbar() {
+    const { logoutAction } = useAuth();
     // Creates an array for every object inside the navbar
     const navItems = [
         { name: "Dagens agenda", link:"#"},
@@ -28,6 +31,18 @@ function Navbar() {
                         </Box>
                     </ListItem>
                 ))}
+
+                {/*Logout button*/}
+                <ListItem>
+                    <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={logoutAction}
+                        sx={{ textTransform: "none" }}
+                    >
+                        Logga ut
+                    </Button>
+                </ListItem>
             </List>
         </Box>
     )

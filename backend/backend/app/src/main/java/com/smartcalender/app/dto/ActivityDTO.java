@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ActivityDTO {
+    private Long id;
     private String name;
     private String description;
     private String location;
@@ -31,6 +32,7 @@ public class ActivityDTO {
     }
 
     public ActivityDTO(Activity activity) {
+        this.id = activity.getId();
         this.name = activity.getName();
         this.description = activity.getDescription();
         this.location = activity.getLocation();
@@ -52,6 +54,14 @@ public class ActivityDTO {
             return false;
         }
         return startTime.isBefore(endTime);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

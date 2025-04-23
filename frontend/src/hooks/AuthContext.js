@@ -20,6 +20,7 @@ const AuthProvider = ({ children }) => {
             });
 
             if (!response.ok) {
+                alert("Invalid credentials, please try again.")
                 throw new Error(`Login failed: ${response.status} – ${response.statusText}`);
             }
 
@@ -35,14 +36,14 @@ const AuthProvider = ({ children }) => {
         }
     };
 
-    const logOut = () => {
+    const logoutAction = () => {
         setAccToken("");
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         navigate("/login");
 
     }
-    return <AuthContext.Provider value ={{ accessToken, refreshToken, loginAction, logOut}}>
+    return <AuthContext.Provider value ={{ accessToken, refreshToken, loginAction, logoutAction}}>
         {children}
     </AuthContext.Provider>
 };
