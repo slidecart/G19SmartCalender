@@ -1,6 +1,7 @@
 package com.smartcalender.app.dto;
 
 import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.time.LocalTime;
 
 public class CreateActivityRequest {
     @NotNull
+    @NotBlank
     public String name;
 
     private String description;
