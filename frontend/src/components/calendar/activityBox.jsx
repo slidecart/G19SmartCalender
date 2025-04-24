@@ -1,12 +1,26 @@
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import dayjs from "dayjs";
 
-const ActivityBox = ({ activities, weekdays }) => {
+const ActivityBox = ({ activities }) => {
     {/* */}
 
     return (
         <Box sx={{display: "flex", gap:2, mb:3 }}>
-            {weekdays.map((day) => {
+
+            {activities.map((activity, i) => (
+                <Card key={i} sx={{  maxWidth: 200, position:"absolute", backgroundColor:"#60f085" }}>
+                    <CardContent>
+
+                        <Typography variant="subtitle2" textAlign={"center"}>
+                            {activity.name}
+                        </Typography>
+                        <Typography variant="caption">
+                            {dayjs(`1970-01-01T${activity.startTime}`).format("HH:mm")} - {dayjs(`1970-01-01T${activity.endTime}`).format("HH:mm")}
+                        </Typography>
+                    </CardContent>
+                </Card>
+            ))}
+            {/*{weekdays.map((day) => {
                 const dayActivities = activities
 
                     // Filters activities by date
@@ -22,7 +36,7 @@ const ActivityBox = ({ activities, weekdays }) => {
                         <Card key = {day.name} sx={{ maxWidth: 200 }}>
                             <CardContent>
 
-                                {/* Maps out every activity over the calendar */}
+                                //{/* Maps out every activity over the calendar 
                                 {dayActivities.map((activity, i) => (
                                     <Box key={i} sx={{ mb:1 }}>
                                         <Typography variant="subtitle2">
@@ -36,7 +50,7 @@ const ActivityBox = ({ activities, weekdays }) => {
                             </CardContent>
                         </Card>
                     );
-                })}
+                })} */}
         </Box>
     );
 };
