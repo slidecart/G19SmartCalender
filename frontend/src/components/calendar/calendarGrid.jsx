@@ -52,7 +52,11 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
                                             position:"relative",
                                             align:"center"
                                         }}
-                                    />
+                                    > 
+                                        {activities.length>0 && (
+                                            <ActivityBox activities={activity}/>
+                                        )}
+                                    </TableCell>
                                 );
                         })}
 

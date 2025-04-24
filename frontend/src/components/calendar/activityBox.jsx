@@ -8,10 +8,10 @@ const ActivityBox = ({ activities }) => {
         <Box sx={{display: "flex", gap:2, mb:3 }}>
 
             {activities.map((activity, i) => (
-                <Card key={i} sx={{ mb:1, maxWidth: 200, position:"absolute" }}>
+                <Card key={i} sx={{  maxWidth: 200, position:"absolute", backgroundColor:"#60f085" }}>
                     <CardContent>
 
-                        <Typography variant="subtitle2">
+                        <Typography variant="subtitle2" textAlign={"center"}>
                             {activity.name}
                         </Typography>
                         <Typography variant="caption">
