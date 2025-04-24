@@ -19,11 +19,11 @@ async function makeRequest(path, method, body, token) {
     return fetch(url, opts);
 }
 
-export async function fetchData(path, method = "GET", body = null) {
-    let accessToken  = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
+export async function fetchData(path, method = "GET", body = null, isPublic = false) {
+    let accessToken = isPublic ? null : localStorage.getItem("accessToken");
+    const refreshToken = isPublic ? null : localStorage.getItem("refreshToken");
 
-    if (!accessToken && !refreshToken) {
+    if (!isPublic && !accessToken && !refreshToken) {
         console.error("No tokens in storage—user must log in.");
         window.location.href = "/login";
         return;
@@ -32,8 +32,8 @@ export async function fetchData(path, method = "GET", body = null) {
     // 1) Try the original request
     let res = await makeRequest(path, method, body, accessToken);
 
-    // 2) If unauthorized, try refreshing the access token
-    if (res.status === 401 && refreshToken) {
+    // 2) If unauthorized and not public, try refreshing the access token
+    if (!isPublic && res.status === 401 && refreshToken) {
         const refreshRes = await makeRequest(
             "auth/refresh-token",
             "POST",
