@@ -16,17 +16,17 @@ function VerifyEmail() {
 
     useEffect(() => {
         if (hasVerified.current) {
-            console.log("Verification already attempted, skipping.");
+            console.log("Verifiering redan försökt, hoppar över.");
             return;
         }
 
         if (!uid || !otp) {
-            setMessage("Invalid verification link.");
+            setMessage("Ogiltig verifieringslänk. Vänligen kontrollera din e-post och försök igen.");
             setIsVerifying(false);
             return;
         }
 
-        console.log("Triggering email verification for uid:", uid);
+        console.log("Utlöser e-postverifiering för uid:", uid);
         hasVerified.current = true;
         setIsVerifying(true);
         verifyEmail(uid, otp);
@@ -38,15 +38,15 @@ function VerifyEmail() {
             const uidNumber = parseInt(uid, 10);
 
             if (isNaN(uidNumber)) {
-                throw new Error("Invalid user ID format");
+                throw new Error("Ogiltig användare");
             }
 
             const data = await fetchData(`auth/verify?uid=${uidNumber}&otp=${otp}`, "PUT", null, true);
 
             setUserEmail(data.email || "");
-            setMessage(data.message || "Email verified successfully");
+            setMessage(data.message || "E-postadressen har verifierats.");
 
-            if (data.message === "Email verified successfully") {
+            if (data.message === "E-postadressen har verifierats.") {
                 setShowRedirect(true);
                 setTimeout(() => {
                     handleLoginRedirect();
@@ -54,27 +54,27 @@ function VerifyEmail() {
             }
 
         } catch (error) {
-            console.error("Verification failed", error);
+            console.error("Verifiering misslyckades", error);
 
             let errorData;
             try {
                 errorData = JSON.parse(error.message.split("HTTP 400: ")[1] || "{}");
             } catch (parseError) {
-                console.error("Failed to parse error response", parseError);
+                console.error("Misslyckades med att analysera felsvaret", parseError);
                 errorData = {};
             }
 
             setUserEmail(errorData.email || "");
 
             // Handle specific error messages
-            if (error.message.includes("Email already verified")) {
-                setMessage("Email already verified. Please log in.");
-            } else if (error.message.includes("Invalid or expired OTP")) {
-                setMessage("Invalid or expired OTP. Please request a new verification email.");
-            } else if (error.message.includes("Invalid user ID format")) {
-                setMessage("Invalid verification link.");
+            if (error.message.includes("E-postadressen är redan verifierad")) {
+                setMessage("E-postadressen är redan verifierad. Du kan logga in nu.");
+            } else if (error.message.includes("Ogiltig otp")) {
+                setMessage("Verifieringslänken är ogiltig eller har redan använts. Vänligen begär en ny verifieringslänk.");
+            } else if (error.message.includes("Ogiltig användare")) {
+                setMessage("Ogiltig verifieringslänk. Vänligen kontrollera din e-post och försök igen.");
             } else {
-                setMessage("Verification failed. Please try again.");
+                setMessage("Verifiering misslyckades. Vänligen försök igen.");
             }
         } finally {
             setIsVerifying(false);
@@ -84,17 +84,17 @@ function VerifyEmail() {
     const resendVerificationEmail = async () => {
 
         if (!userEmail) {
-            setMessage("Unable to resend verification email: Email address not available.");
+            setMessage("Ingen e-postadress tillgänglig för att skicka verifieringslänken.");
             return;
         }
 
         setIsResending(true);
         try {
             const data = await fetchData(`auth/resend-verification?email=${encodeURIComponent(userEmail)}`, "POST", null, true);
-            setMessage(data.message || "Verification email resent successfully");
+            setMessage(data.message || "Verifieringslänk har skickats till din e-postadress.");
         } catch (error) {
-            console.error("Resend verification failed", error);
-            setMessage("Failed to resend verification email: " + error.message);
+            console.error("Verifiering av återsändning misslyckades", error);
+            setMessage("Misslyckades med att skicka ett nytt verifieringsmeddelande: " + error.message);
         } finally {
             setIsResending(false);
         }
@@ -103,7 +103,7 @@ function VerifyEmail() {
     const handleRetry = () => {
         if (uid && otp) {
             setIsVerifying(true);
-            setMessage("Verifying your email...");
+            setMessage("Verifierar din e-post...");
             hasVerified.current = false;
             verifyEmail(uid, otp);
         }
@@ -133,26 +133,26 @@ function VerifyEmail() {
                     <CircularProgress />
                 ) : showRedirect ? (
                     <>
-                        <Typography variant="h5">Email verified successfully</Typography>
+                        <Typography variant="h5">E-postadressen har verifierats</Typography>
                         <CircularProgress sx={{ mt: 2 }} />
                         <Typography variant="body1" sx={{ mt: 2 }}>
-                            Redirecting to login page...
+                            Omdirigerar till inloggning...
                         </Typography>
                     </>
                 ) : (
                     <>
                         <Typography variant="h5">{message}</Typography>
-                        {message.includes("Email already verified") ? (
+                        {message.includes("E-postadressen är redan verifierad") ? (
                             <Button variant="contained" onClick={handleLoginRedirect} sx={{ mt: 2 }}>
-                                Log in
+                                Logga in
                             </Button>
-                        ) : message.includes("Invalid") ? (
+                        ) : message.includes("Ogiltig") ? (
                             <Button variant="contained" onClick={resendVerificationEmail} sx={{ mt: 2 }}>
-                                Resend Verification Email
+                                Skicka verifieringslänk igen
                             </Button>
-                        ) : message.includes("Verification failed") ? (
+                        ) : message.includes("Verifiering misslyckades") ? (
                             <Button variant="contained" onClick={handleRetry} sx={{ mt: 2 }}>
-                                Retry Verification
+                                Försök igen
                             </Button>
                         ) : null}
                     </>

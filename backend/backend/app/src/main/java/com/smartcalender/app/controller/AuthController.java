@@ -44,9 +44,9 @@ public class AuthController {
     public ResponseEntity<?> forgotPassword(@RequestParam("email") String email) {
         try {
             authService.forgotPassword(email);
-            return ResponseEntity.ok(new ResponseDTO("Password reset link sent to your email"));
+            return ResponseEntity.ok(new ResponseDTO("Länk för återställning av lösenord skickas till din e-post.", email));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage(), email));
         }
     }
 
@@ -54,7 +54,7 @@ public class AuthController {
     public ResponseEntity<?> resetPassword(@RequestParam("token") String token, @RequestParam("newPassword") String newPassword) {
         try {
             authService.resetPassword(token, newPassword);
-            return ResponseEntity.ok(new ResponseDTO("Password reset successfully"));
+            return ResponseEntity.ok(new ResponseDTO("Lösenordet har återställts."));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
@@ -70,7 +70,7 @@ public class AuthController {
     public ResponseEntity<?> verifyEmail(@RequestParam("uid") Long userId, @RequestParam("otp") String otp) {
         try {
             String userEmailAddress = authService.verifyEmail(userId, otp);
-            return ResponseEntity.ok(new ResponseDTO("Email verified successfully", userEmailAddress));
+            return ResponseEntity.ok(new ResponseDTO("E-postadressen har verifierats.", userEmailAddress));
         } catch (RuntimeException e) {
             String userEmailAddress = userRepository.findById(userId)
                     .map(User::getEmailAddress)
@@ -83,7 +83,7 @@ public class AuthController {
     public ResponseEntity<?> resendVerification(@RequestParam("email") String email) {
         try {
             authService.resendVerification(email);
-            return ResponseEntity.ok(new ResponseDTO("Verification email resent"));
+            return ResponseEntity.ok(new ResponseDTO("Verifieringslänk skickad till din e-post.", email));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }

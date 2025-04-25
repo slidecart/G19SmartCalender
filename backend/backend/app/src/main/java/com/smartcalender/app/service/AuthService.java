@@ -24,6 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Service
@@ -97,7 +99,7 @@ public class AuthService {
         passwordResetTokenRepository.save(resetToken);
 
         // Create the reset URL
-        String resetUrl = "http://localhost:8080/api/auth/reset-password?token=" + token;
+        String resetUrl = "http://localhost:3000/reset-password?token=" + token;
 
         // Send the email
         emailService.sendPasswordResetEmail(user.getEmailAddress(), "Reset Your SmartCalendar Password", resetUrl);
@@ -163,11 +165,11 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (user.isEmailVerified()) {
-            throw new RuntimeException("Email already verified");
+            throw new RuntimeException("E-postadressen är redan verifierad");
         }
 
         if (!otpService.isOtpValid(userId, otp)) {
-            throw new RuntimeException("Invalid or expired OTP");
+            throw new RuntimeException("Ogiltigt otp");
         }
 
             user.setEmailVerified(true);
