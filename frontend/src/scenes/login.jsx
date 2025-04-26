@@ -103,7 +103,7 @@ function LogIn() {
                     {message && (
                         <Typography
                             variant="body1"
-                            sx={{ mt: 2, color: message.includes("sent") ? "green" : "red" }}
+                            sx={{ mt: 2, color: message.includes("skickas") ? "green" : "red" }}
                         >
                             {message}
                         </Typography>
