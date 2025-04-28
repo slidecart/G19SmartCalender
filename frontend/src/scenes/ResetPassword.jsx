@@ -54,7 +54,7 @@ function ResetPassword() {
                 SmartCalendar
             </Typography>
             <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                <Typography variant="h5">Reset Your Password</Typography>
+                <Typography variant="h5">Återställ Ditt Lösenord</Typography>
                 <Box component="div" sx={{ width: "300px", mt: 2 }}>
                     <TextField
                         label="Nytt Lösenord"
