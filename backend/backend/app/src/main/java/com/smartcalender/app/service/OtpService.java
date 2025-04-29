@@ -4,6 +4,7 @@ import com.smartcalender.app.entity.Otp;
 import com.smartcalender.app.repository.OtpRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -37,8 +38,11 @@ public class OtpService {
         return otpEntity.getOtp().equals(otp);
     }
 
+    @Transactional
     public void deleteOtp(Long userId) {
-        otpRepository.deleteById(userId);
+        if (otpRepository.existsById(userId)) {
+            otpRepository.deleteById(userId);
+        }
     }
 
     private String generateOtp() {
