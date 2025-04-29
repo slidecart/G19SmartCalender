@@ -17,7 +17,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Trebuchet MS", sans-serif',
+    fontFamily: '"Bahnschrift", sanas-serif',
     h1:{
       fontSize: "34px",
       fontWeight: "bold",
