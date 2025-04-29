@@ -214,7 +214,7 @@ public class AuthService {
         refreshTokenRepository.deleteById(refreshToken);
     }
 
-    @Scheduled(fixedRate = 604800000) // Every week
+    @Scheduled(fixedRate = 86400000) // Every day
     public void deleteExpiredRefreshToken() {
         Instant now = Instant.now();
         refreshTokenRepository.deleteByExpirationBefore(now);

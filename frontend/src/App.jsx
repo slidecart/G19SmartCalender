@@ -7,6 +7,7 @@ import TaskTodo from "./scenes/taskTodo";
 import AuthProvider, {PrivateRoute} from "./hooks/AuthContext";
 import VerifyEmail from "./scenes/VerifyEmail";
 import ResetPassword from "./scenes/ResetPassword";
+import Register from "./scenes/register";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
               <Route path="/login" element={<LogIn/>} />
               <Route path="/verify-email" element={<VerifyEmail/>} />
                 <Route path="/reset-password" element={<ResetPassword/>} />
+              <Route path="/register" element={<Register/>} />
               <Route element={<PrivateRoute />}>
                   <Route path="/today" element={<TodaysAgenda/>} />
                   <Route path="/taskTodoPage" element={<TaskTodo/>} />
