@@ -3,9 +3,7 @@ package com.smartcalender.app.controller;
 import com.smartcalender.app.dto.LoginRequest;
 import com.smartcalender.app.dto.LoginResponseDTO;
 import com.smartcalender.app.dto.RegisterRequest;
-import com.smartcalender.app.dto.ResponseDTO;
 import com.smartcalender.app.entity.User;
-import com.smartcalender.app.repository.UserRepository;
 import com.smartcalender.app.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +17,11 @@ import java.util.UUID;
 public class AuthController {
 
     private final AuthService authService;
-    private final UserRepository userRepository;
 
 
-    public AuthController(AuthService authService, UserRepository userRepository) {
+    public AuthController(AuthService authService) {
         this.authService = authService;
-        this.userRepository = userRepository;
+
     }
 
     @PostMapping("/login")
@@ -44,9 +41,9 @@ public class AuthController {
     public ResponseEntity<?> forgotPassword(@RequestParam("email") String email) {
         try {
             authService.forgotPassword(email);
-            return ResponseEntity.ok(new ResponseDTO("Länk för återställning av lösenord skickas till din e-post.", email));
+            return ResponseEntity.ok("Password reset link sent to your email");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage(), email));
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -54,28 +51,25 @@ public class AuthController {
     public ResponseEntity<?> resetPassword(@RequestParam("token") String token, @RequestParam("newPassword") String newPassword) {
         try {
             authService.resetPassword(token, newPassword);
-            return ResponseEntity.ok(new ResponseDTO("Lösenordet har återställts."));
+            return ResponseEntity.ok("Password reset successfully");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         User user = authService.registerUser(registerRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @PutMapping("/verify")
+    @GetMapping("/verify")
     public ResponseEntity<?> verifyEmail(@RequestParam("uid") Long userId, @RequestParam("otp") String otp) {
         try {
-            String userEmailAddress = authService.verifyEmail(userId, otp);
-            return ResponseEntity.ok(new ResponseDTO("E-postadressen har verifierats.", userEmailAddress));
+            authService.verifyEmail(userId, otp);
+            return ResponseEntity.ok("Email verified successfully");
         } catch (RuntimeException e) {
-            String userEmailAddress = userRepository.findById(userId)
-                    .map(User::getEmailAddress)
-                    .orElse(null);
-            return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage(), userEmailAddress));
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
@@ -83,9 +77,9 @@ public class AuthController {
     public ResponseEntity<?> resendVerification(@RequestParam("email") String email) {
         try {
             authService.resendVerification(email);
-            return ResponseEntity.ok(new ResponseDTO("Verifieringslänk skickad till din e-post.", email));
+            return ResponseEntity.ok("Verification email resent");
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 

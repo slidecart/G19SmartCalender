@@ -24,8 +24,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Service
@@ -83,7 +81,6 @@ public class AuthService {
         return new LoginResponseDTO(accessToken, refreshToken.getId());
     }
 
-    @Transactional
     public void forgotPassword(String email) {
         User user = userRepository.findByEmailAddress(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -99,13 +96,12 @@ public class AuthService {
         passwordResetTokenRepository.save(resetToken);
 
         // Create the reset URL
-        String resetUrl = "http://localhost:3000/reset-password?token=" + token;
+        String resetUrl = "http://localhost:8080/api/auth/reset-password?token=" + token;
 
         // Send the email
         emailService.sendPasswordResetEmail(user.getEmailAddress(), "Reset Your SmartCalendar Password", resetUrl);
     }
 
-    @Transactional
     public void resetPassword(String token, String newPassword) {
         // Find the reset token
         PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
@@ -152,40 +148,34 @@ public class AuthService {
 
         if (emailVerificationRequired) {
             String otp = otpService.generateAndStoreOtp(savedUser.getId());
-            String verificationUrl = "http://localhost:3000/verify-email?uid=" + savedUser.getId() + "&otp=" + otp;
+            String verificationUrl = "http://localhost:8080/api/auth/verify?uid=" + savedUser.getId() + "&otp=" + otp;
             emailService.sendVerificationEmail(savedUser.getEmailAddress(), "Verify Your SmartCalendar Account", verificationUrl, otp);
         }
 
         return savedUser;
     }
 
-    @Transactional
-    public String verifyEmail(Long userId, String otp) {
+    //probably not needed since the email verification is done in the register method
+    public void verifyEmail(Long userId, String otp) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (user.isEmailVerified()) {
-            throw new RuntimeException("E-postadressen är redan verifierad");
-        }
-
-        if (!otpService.isOtpValid(userId, otp)) {
-            throw new RuntimeException("Ogiltigt otp");
-        }
-
+        if (otpService.isOtpValid(userId, otp)) {
             user.setEmailVerified(true);
             userRepository.save(user);
             otpService.deleteOtp(userId);
-            return user.getEmailAddress();
+        } else {
+            throw new RuntimeException("Invalid or expired OTP");
+        }
     }
 
-    @Transactional
     public void resendVerification(String emailAddress) {
         User user = userRepository.findByEmailAddress(emailAddress)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!user.isEmailVerified()) {
             String otp = otpService.generateAndStoreOtp(user.getId());
-            String verificationUrl = "http://localhost:3000/verify-email?uid=" + user.getId() + "&otp=" + otp;
+            String verificationUrl = "http://localhost:8080/api/auth/verify?uid=" + user.getId() + "&otp=" + otp;
             emailService.sendVerificationEmail(user.getEmailAddress(), "Verify Your SmartCalendar Account", verificationUrl, otp);
         } else {
             throw new RuntimeException("Email already verified");
