@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableRow, Typography, Box } fro
 import dayjs from "dayjs";
 import ActivityBox from "./activityBox";
 
+
 const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
     return (
         <Table>
@@ -34,12 +35,21 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
 
                         {weekdays.map((day) => {
                             // Filters and sets every date & time for each
+                            const cellStart = dayjs(`1970-01-01T${time}`);
+                            const cellEnd = cellStart.add(1, "hour");
+
+
                             const activity = activities.filter((a) => {
                                 const activityDate = dayjs(a.date).format("YYYY-MM-DD");
-                                const startTime = dayjs(`1970-01-01T${a.startTime}`).format("HH:mm");
-                                return activityDate === day.date && startTime === time;
-                            })
+                                const start = dayjs(`1970-01-01T${a.startTime}`);
+                                const end = dayjs(`1970-01-01${a.endTime}`);
 
+                                return (
+                                    activityDate === day.date && 
+                                    end.isAfter(cellStart) &&
+                                    start.isBefore(cellEnd)
+                                );
+                            });
                             return(
                                     <TableCell 
                                         key={`${day.name}-${time}`} 

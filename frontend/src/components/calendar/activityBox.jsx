@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 const ActivityBox = ({ activities }) => {
     {/* */}
     if (!activities || activities.length === 0 ) return null;
-    
+
     // Height of every cell in calendarGrid
     const cellHeight = 50;
     return (
@@ -19,7 +19,6 @@ const ActivityBox = ({ activities }) => {
                 const endMinutes = (end.hour() -8 ) * 60+ end.minute();
 
                 // Where activity box is going to start and end based on time from calendarGrid
-                
                 const duration = (endMinutes - startMinutes)*(cellHeight/60);
 
                 return (
