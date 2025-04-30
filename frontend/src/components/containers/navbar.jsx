@@ -1,4 +1,4 @@
-import { Box, List, ListItem, Button } from "@mui/material";
+import {Box, List, ListItem, Button, IconButton} from "@mui/material";
 import {useAuth} from "../../hooks/AuthContext";
 
 
@@ -25,7 +25,7 @@ function Navbar() {
                         {/* Box as a component "a" to allow user to enter pages using links */}
                         <Box component="a" href={item.link} sx={{ display:"flex", textDecoration:"none",
                             whiteSpace:"nowrap", textAlign:"center", backgroundColor:"transparent", color: "#444444", transition:"all 0.5s",
-                            "&:hover":{ backgroundColor: "transparent", color:"black", fontSize:"18px"
+                            "&:hover":{ backgroundColor: "transparent", color:"black", scale:1.25
                         }}}>
                             {item.name}
                         </Box>

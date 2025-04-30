@@ -3,55 +3,44 @@ import dayjs from "dayjs";
 
 const ActivityBox = ({ activities }) => {
     {/* */}
+    if (!activities || activities.length === 0 ) return null;
 
+    // Height of every cell in calendarGrid
+    const cellHeight = 50;
     return (
-        <Box sx={{display: "flex", gap:2, mb:3 }}>
+        <>
+            {activities.map((activity, i) => {
+                // Get start- and endtime
+                const start = dayjs(`1970-01-01T${activity.startTime}`);
+                const end = dayjs(`1970-01-01T${activity.endTime}`);
 
-            {activities.map((activity, i) => (
-                <Card key={i} sx={{  maxWidth: 200, position:"absolute", backgroundColor:"#60f085" }}>
-                    <CardContent>
+                // Convert start- and endtime to minutes from 08:00
+                const startMinutes = (start.hour() - 8)* 60  + start.minute();
+                const endMinutes = (end.hour() -8 ) * 60+ end.minute();
 
-                        <Typography variant="subtitle2" textAlign={"center"}>
-                            {activity.name}
-                        </Typography>
-                        <Typography variant="caption">
-                            {dayjs(`1970-01-01T${activity.startTime}`).format("HH:mm")} - {dayjs(`1970-01-01T${activity.endTime}`).format("HH:mm")}
-                        </Typography>
-                    </CardContent>
-                </Card>
-            ))}
-            {/*{weekdays.map((day) => {
-                const dayActivities = activities
+                // Where activity box is going to start and end based on time from calendarGrid
+                const duration = (endMinutes - startMinutes)*(cellHeight/60);
 
-                    // Filters activities by date
-                    .filter((activity) => dayjs(activity.startTime).format("YYYY-MM-DD") === day.date)
-
-                    // Sorts activites by time
-                    .sort((a, b) => dayjs(a.startTime).diff(dayjs(b.startTime)));
-
-                    // If there is no activites, no activites returns 
-                    if (dayActivities.length === 0) return null;
-
-                    return (
-                        <Card key = {day.name} sx={{ maxWidth: 200 }}>
-                            <CardContent>
-
-                                //{/* Maps out every activity over the calendar 
-                                {dayActivities.map((activity, i) => (
-                                    <Box key={i} sx={{ mb:1 }}>
-                                        <Typography variant="subtitle2">
-                                            {activity.name}
-                                        </Typography>
-                                        <Typography variant="caption">
-                                            {dayjs(`1970-01-01T${activity.startTime}`).format("HH:mm")} - {dayjs(`1970-01-01T${activity.endTime}`).format("HH:mm")}
-                                        </Typography>
-                                    </Box>
-                                ))}
-                            </CardContent>
-                        </Card>
-                    );
-                })} */}
-        </Box>
+                return (
+                    <Box key={i} sx={{ 
+                            position:"absolute", 
+                            mt:"-25px",
+                            height: `${duration}px`,
+                            backgroundColor:"#60f085",
+                            boxShadow:1,
+                            width:"80%",
+                            align:"center"
+                        }}>
+                            <Typography variant="subtitle2">
+                                {activity.name}
+                            </Typography>
+                            <Typography variant="caption">
+                                {dayjs(`1970-01-01T${activity.startTime}`).format("HH:mm")} - {dayjs(`1970-01-01T${activity.endTime}`).format("HH:mm")}
+                            </Typography>
+                    </Box>
+                )
+            })}
+        </>
     );
 };
 

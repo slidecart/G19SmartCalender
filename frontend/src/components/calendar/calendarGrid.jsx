@@ -2,6 +2,7 @@ import { Table, TableBody, TableCell, TableHead, TableRow, Typography, Box } fro
 import dayjs from "dayjs";
 import ActivityBox from "./activityBox";
 
+
 const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
     return (
         <Table>
@@ -15,7 +16,7 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
                         <TableCell
                             key={day.name}
                             align="center"
-                            sx={{ verticalAlign: "top", borderRight:"1px solid #ccc", borderTop:"1px solid #ccc"}}
+                            sx={{ height:"30px", verticalAlign: "top", borderRight:"1px solid #ccc", borderTop:"1px solid #ccc"}}
                         >
                             <Typography variant="subtitle1">
                                 {day.name} {dayjs(day.date).format("DD/MM")}
@@ -27,33 +28,38 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
             <TableBody>
                 {/* Maps out times from 08:00 - 20:00 for every row in the first column */ }
                 {timeSlots.map((time) => (
-                    <TableRow key={time}>
-                        <TableCell sx={{ borderRight:"1px solid #ccc"}}>
+                    <TableRow key={time} sx={{ height:"30px" }}>
+                        <TableCell sx={{  borderRight:"1px solid #ccc", padding:"15px"}}>
                             {time}
                         </TableCell>
 
                         {weekdays.map((day) => {
-                            const activity = activities
-                                .filter((activity) => {
-                                    const activityDate = dayjs(activity.date);
-                                    const activityTime = dayjs(`1970-01-01T${activity.startTime}`);
-                                    return (
-                                        activityDate.format("YYYY-MM-DD") === day.date &&
-                                        activityTime.format("HH:mm") === time
-                                    );
-                                })
+                            // Filters and sets every date & time for each
+                            const cellStart = dayjs(`1970-01-01T${time}`);
+                            const cellEnd = cellStart.add(1, "hour");
 
-                                .sort((a,b) => dayjs(a.startTime).diff(dayjs(b.startTime)));
-                                
-                                return(
+
+                            const activity = activities.filter((a) => {
+                                const activityDate = dayjs(a.date).format("YYYY-MM-DD");
+                                const start = dayjs(`1970-01-01T${a.startTime}`);
+                                const end = dayjs(`1970-01-01${a.endTime}`);
+
+                                return (
+                                    activityDate === day.date && 
+                                    end.isAfter(cellStart) &&
+                                    start.isBefore(cellEnd)
+                                );
+                            });
+                            return(
                                     <TableCell 
                                         key={`${day.name}-${time}`} 
                                         sx={{
                                             position:"relative",
+                                            padding:"0",
                                             align:"center"
                                         }}
                                     > 
-                                        {activities.length>0 && (
+                                        {activity.length>0 && (
                                             <ActivityBox activities={activity}/>
                                         )}
                                     </TableCell>
