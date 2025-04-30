@@ -59,6 +59,7 @@ function WeeklyCalendar() {
                 startTime:"",
                 endTime:"",
             });
+            setActivities((prevActivities) => [...prevActivities, response]); // Adds the new activity to the list
         } catch (error){
             console.error(error);
         }

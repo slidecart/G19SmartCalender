@@ -3,6 +3,7 @@ package com.smartcalender.app.controller;
 import com.smartcalender.app.auth.SecurityUtils;
 import com.smartcalender.app.dto.ActivityDTO;
 import com.smartcalender.app.dto.ConvertTaskRequest;
+import com.smartcalender.app.dto.CreateTaskRequest;
 import com.smartcalender.app.dto.TaskDTO;
 import com.smartcalender.app.service.TaskService;
 import jakarta.validation.Valid;
@@ -73,16 +74,16 @@ public class TaskController {
      * in the request body as a TaskDTO object. If the user is not authenticated, the request will
      * return an HTTP 401 Unauthorized status.
      *
-     * @param taskDTO the TaskDTO object containing the details of the task to be created
+     * @param createTaskRequest the CreateTaskRequest object containing the details of the task to be created
      * @return a ResponseEntity containing the created TaskDTO object if the task is successfully created,
      *         or an HTTP 401 Unauthorized response if authentication fails
      * @author Carl Lundholm, David Lexe
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createTask(@RequestBody @Valid TaskDTO taskDTO) {
+    public ResponseEntity<?> createTask(@RequestBody @Valid CreateTaskRequest createTaskRequest) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
-            TaskDTO created = taskService.createTask(taskDTO, currentUser);
+            TaskDTO created = taskService.createTask(createTaskRequest, currentUser);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
