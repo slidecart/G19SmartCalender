@@ -1,8 +1,72 @@
 import { Container, Accordion, AccordionSummary, AccordionDetails, Typography, Stack, Button, IconButton, Box } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
+import {useEffect, useState} from "react";
+import AddTask from "../scenes/addTask";
+import {fetchData} from "../hooks/FetchData";
 
 function TaskTodo(){
+
+    const [tasks, setTasks] = useState([]);
+    const [error, setError] = useState(null);
+
+
+    const [openDialog, setOpenDialog] = useState(false);
+    const [formData, setFormData] = useState({
+        name:"",
+        description:"",
+        location:"",
+        date:"",
+        categoryId:"",
+        userId:"",
+        completed:false
+    })
+
+    const handleSubmit = async () =>{
+        try{
+            const response = await fetchData("tasks/create", "POST", formData);
+            console.log(response);
+
+            setOpenDialog(false);
+            setFormData({
+                name:"",
+                description:"",
+                location:"",
+                date:"",
+                categoryId:"",
+                userId:"",
+                completed:false
+            });
+            setTasks((prevTasks) => [...prevTasks, response]);
+        } catch (error){
+            console.error(error);
+        }
+    }
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]:value,
+        }));
+    }
+
+    
+    useEffect(() => {
+        const fetchTasks = async() => {
+            try {
+                const response = await fetchData("tasks/all", "GET", "");
+
+
+                setTasks(response);
+            } catch (error) {
+                console.error("Fel vid hämtning: ", error.message);
+                setError(error.message); // Visar eventuella fel
+            }
+        };
+        fetchTasks();
+    }, []);
+
     return (
         <Container maxWidth="xs" sx={{ bgcolor: "#0077ff7e", p: 2, mt: 2, borderRadius: 2, fontFamily: "'Fira Code', 'Consolas', 'monospace'"}}>
             <Box 
@@ -15,13 +79,29 @@ function TaskTodo(){
                 <Typography variant="h1" align="center" sx={{ fontWeight: "bold", textDecoration: "underline", color: "black"}}>
                     TASKS
                 </Typography>
-                <IconButton size="small" sx={{ color: "black" }}>
+                <IconButton
+                    size="small"
+                    sx={{ color: "black" }}
+                    onClick={() => setOpenDialog(true)}
+                >
                     <AddIcon />
                     Ny Task
                 </IconButton>
             </Box>
-            {/* kurser */}
-            <Accordion disableGutters sx={{ bgcolor: "white", mb: 1}}>
+
+
+            <AddTask
+                open={openDialog}
+                onClose={() => setOpenDialog(false)}
+                formData={formData}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+            />
+
+
+
+
+            {/*<Accordion disableGutters sx={{ bgcolor: "white", mb: 1}}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography sx={{ fontWeight: "bold" }}>Kurser</Typography>
                 </AccordionSummary>
@@ -39,6 +119,7 @@ function TaskTodo(){
                     </Stack>
                 </AccordionDetails>
             </Accordion>
+
 
             <Accordion disableGutters sx={{ bgcolor: "white", mb: 1}}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
@@ -77,7 +158,9 @@ function TaskTodo(){
                         </Button>
                     </Stack>
                 </AccordionDetails>
-            </Accordion>
+            </Accordion>*/}
+
+
         </Container>
     );
 }

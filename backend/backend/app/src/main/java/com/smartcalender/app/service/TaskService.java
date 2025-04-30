@@ -2,6 +2,7 @@ package com.smartcalender.app.service;
 
 import com.smartcalender.app.dto.ActivityDTO;
 import com.smartcalender.app.dto.ConvertTaskRequest;
+import com.smartcalender.app.dto.CreateTaskRequest;
 import com.smartcalender.app.dto.TaskDTO;
 import com.smartcalender.app.entity.Activity;
 import com.smartcalender.app.entity.Category;
@@ -52,7 +53,7 @@ public class TaskService {
      * @author Carl Lundholm, David Lexe
      */
     @Transactional
-    public TaskDTO createTask(TaskDTO newTask, UserDetails currentUser) {
+    public TaskDTO createTask(CreateTaskRequest newTask, UserDetails currentUser) {
         User user = getUser(currentUser);
 
         Task task = new Task();
