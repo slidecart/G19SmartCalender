@@ -1,4 +1,15 @@
-import { Container, Accordion, AccordionSummary, AccordionDetails, Typography, Stack, Button, IconButton, Box } from "@mui/material";
+import {
+    Container,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
+    Typography,
+    Stack,
+    Button,
+    IconButton,
+    Box,
+    Card, CardContent
+} from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import {useEffect, useState} from "react";
@@ -18,7 +29,7 @@ function TaskTodo(){
         location:"",
         date:"",
         categoryId:"",
-        userId:"",
+        id:"",
         completed:false
     })
 
@@ -160,6 +171,16 @@ function TaskTodo(){
                 </AccordionDetails>
             </Accordion>*/}
 
+            <Stack spacing={2}>
+                {tasks.map((task, index) => (
+                <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>
+                    <CardContent>
+                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>{task.name}</Typography>
+                        <Typography>{task.description}</Typography>
+                    </CardContent>
+                </Card>
+                ))}
+            </Stack>
 
         </Container>
     );

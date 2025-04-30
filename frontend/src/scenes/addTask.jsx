@@ -24,6 +24,7 @@ const AddTask = ({ open, onClose, formData, handleChange, handleSubmit}) => {
                         name="description"
                         label="Beskrivning"
                         value={formData.description}
+                        onChange={handleChange}
                     />
                 </Box>
                 <Box mb ={2}>
