@@ -28,7 +28,7 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
             <TableBody>
                 {/* Maps out times from 08:00 - 20:00 for every row in the first column */ }
                 {timeSlots.map((time) => (
-                    <TableRow key={time} sx={{ height:"30px" }}>
+                    <TableRow key={time} sx={{ height:"60px" }}>
                         <TableCell sx={{  borderRight:"1px solid #ccc", padding:"15px"}}>
                             {time}
                         </TableCell>
@@ -42,7 +42,7 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
                             const activity = activities.filter((a) => {
                                 const activityDate = dayjs(a.date).format("YYYY-MM-DD");
                                 const start = dayjs(`1970-01-01T${a.startTime}`);
-                                const end = dayjs(`1970-01-01${a.endTime}`);
+                                const end = start.add(1, "minute")
 
                                 return (
                                     activityDate === day.date && 
@@ -55,8 +55,7 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
                                         key={`${day.name}-${time}`} 
                                         sx={{
                                             position:"relative",
-                                            padding:"0",
-                                            align:"center"
+                                            padding:"0"
                                         }}
                                     > 
                                         {activity.length>0 && (
