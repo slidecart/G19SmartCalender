@@ -65,5 +65,6 @@ export async function fetchData(path, method = "GET", body = null, isPublic = fa
     }
 
     // 4) Parse JSON and return
-    return res.json();
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
 }

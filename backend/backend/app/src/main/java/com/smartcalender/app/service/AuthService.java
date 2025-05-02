@@ -3,6 +3,7 @@ package com.smartcalender.app.service;
 import com.smartcalender.app.dto.LoginRequest;
 import com.smartcalender.app.dto.LoginResponseDTO;
 import com.smartcalender.app.dto.RegisterRequest;
+import com.smartcalender.app.dto.UserDTO;
 import com.smartcalender.app.entity.PasswordResetToken;
 import com.smartcalender.app.entity.RefreshToken;
 import com.smartcalender.app.entity.User;
@@ -127,10 +128,28 @@ public class AuthService {
         passwordResetTokenRepository.delete(resetToken);
     }
 
+    @Transactional
+    public void changePassword(String currentPassword, String newPassword, UserDetails currentUser) {
+        User user = userRepository.findByUsername(currentUser.getUsername())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password is incorrect");
+        }
+
+        if (newPassword.length() < 8 || !newPassword.matches(".*[A-Z].*") || !newPassword.matches(".*[0-9].*")) {
+            throw new ValidationException("New password must be at least 8 characters long, contain at least one uppercase letter, and one number.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
 
     //TODO Change the return User-class to a DTO class response
     @Transactional
-    public User registerUser(RegisterRequest request) {
+    public UserDTO registerUser(RegisterRequest request) {
         userRepository.findByUsername(request.getUsername())
                 .ifPresent(user -> {throw new IllegalArgumentException("Username already exists.");
                 });
@@ -156,7 +175,7 @@ public class AuthService {
             emailService.sendVerificationEmail(savedUser.getEmailAddress(), "Verify Your SmartCalendar Account", verificationUrl, otp);
         }
 
-        return savedUser;
+        return new UserDTO(savedUser.getId(), savedUser.getUsername(), savedUser.getEmailAddress());
     }
 
     @Transactional
@@ -176,6 +195,40 @@ public class AuthService {
             userRepository.save(user);
             otpService.deleteOtp(userId);
             return user.getEmailAddress();
+    }
+
+    public void changeEmail(String newEmail, String password, UserDetails currentUser) {
+        User user = userRepository.findByUsername(currentUser.getUsername())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is incorrect");
+        }
+
+        if (userRepository.existsByEmailAddress(newEmail)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email address already exists");
+        }
+
+        user.setEmail(newEmail);
+        user.setEmailVerified(false);
+        userRepository.save(user);
+
+        String otp = otpService.generateAndStoreOtp(user.getId());
+        String verificationUrl = "http://localhost:3000/verify-email?uid=" + user.getId() + "&otp=" + otp;
+        emailService.sendVerificationEmail(newEmail, "Verify Your SmartCalendar Account", verificationUrl, otp);
+    }
+
+    public void deleteAccount(String password, UserDetails currentUser) {
+        User user = userRepository.findByUsername(currentUser.getUsername())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("Incorrect password");
+        }
+
+        userRepository.delete(user);
     }
 
     @Transactional

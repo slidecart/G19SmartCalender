@@ -1,20 +1,18 @@
 import { Box, List, ListItem } from "@mui/material";
-import { useAuth } from "../../hooks/AuthContext";
+import { useNavigate } from "react-router-dom";
 import ProfileIcon from "./ProfilePopUpFrame";
 
 function Navbar() {
-    const { logoutAction } = useAuth();
-    // Creates an array for every object inside the navbar
+    const navigate = useNavigate();
     const navItems = [
-        { name: "Dagens agenda", link: "#" },
-        { name: "Kalender", link: "#" },
+        { name: "Dagens agenda", link: "/today" },
+        { name: "Kalender", link: "/today" },
         { name: "Task & ToDo", link: "#" },
         { name: "Inställningar", link: "#" },
     ];
 
     return (
         <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
-            {/* Creates a list of every object inside the navbar using the array NavItems */}
             <List sx={{ display: "flex", gap: 5, padding: 0 }}>
                 {navItems.map((item, index) => (
                     <ListItem
@@ -24,15 +22,11 @@ function Navbar() {
                             display: "flex",
                             justifyContent: "center",
                             transition: "none",
-                            "&:hover": {
-                                backgroundColor: "transparent",
-                            },
+                            "&:hover": { backgroundColor: "transparent" },
                         }}
+                        onClick={() => navigate(item.link)}
                     >
-                        {/* Box as a component "a" to allow user to enter pages using links */}
                         <Box
-                            component="a"
-                            href={item.link}
                             sx={{
                                 display: "flex",
                                 textDecoration: "none",
@@ -41,6 +35,7 @@ function Navbar() {
                                 backgroundColor: "transparent",
                                 color: "#444444",
                                 transition: "all 0.5s",
+                                cursor: "pointer",
                                 "&:hover": {
                                     backgroundColor: "transparent",
                                     color: "black",
@@ -53,8 +48,6 @@ function Navbar() {
                     </ListItem>
                 ))}
             </List>
-
-            {/* Profile Icon */}
             <Box sx={{ marginLeft: "auto", marginRight: 2 }}>
                 <ProfileIcon />
             </Box>
