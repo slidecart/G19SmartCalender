@@ -6,7 +6,7 @@ const ActivityBox = ({ activities }) => {
     if (!activities || activities.length === 0 ) return null;
 
     // Height of every cell in calendarGrid
-    const cellHeight = 50;
+    const cellHeight = 60;
     return (
         <>
             {activities.map((activity, i) => {
@@ -19,12 +19,13 @@ const ActivityBox = ({ activities }) => {
                 const endMinutes = (end.hour() -8 ) * 60+ end.minute();
 
                 // Where activity box is going to start and end based on time from calendarGrid
+                const startTime = (start.minute());
                 const duration = (endMinutes - startMinutes)*(cellHeight/60);
 
                 return (
                     <Box key={i} sx={{ 
                             position:"absolute", 
-                            mt:"-25px",
+                            top:`${startTime}px`,
                             height: `${duration}px`,
                             backgroundColor:"#60f085",
                             boxShadow:1,
