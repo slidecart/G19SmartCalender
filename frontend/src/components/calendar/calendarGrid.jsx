@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import ActivityBox from "./activityBox";
 
 
-const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
+const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivityClick }) => {
     return (
         <Table>
             <TableHead>
@@ -39,7 +39,7 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
                             const cellEnd = cellStart.add(1, "hour");
 
 
-                            const activity = activities.filter((a) => {
+                            const hits = activities.filter((a) => {
                                 const activityDate = dayjs(a.date).format("YYYY-MM-DD");
                                 const start = dayjs(`1970-01-01T${a.startTime}`);
                                 const end = start.add(1, "minute")
@@ -58,8 +58,11 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [] }) => {
                                             padding:"0"
                                         }}
                                     > 
-                                        {activity.length>0 && (
-                                            <ActivityBox activities={activity}/>
+                                        {hits.length>0 && (
+                                            <ActivityBox
+                                                activities={hits}
+                                                onClick={() => onActivityClick(hits[0])} // Pass the first activity to the click handler
+                                            />
                                         )}
                                     </TableCell>
                                 );

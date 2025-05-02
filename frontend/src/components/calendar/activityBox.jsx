@@ -1,7 +1,7 @@
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import dayjs from "dayjs";
 
-const ActivityBox = ({ activities }) => {
+const ActivityBox = ({ activities, onClick }) => {
     {/* */}
     if (!activities || activities.length === 0 ) return null;
 
@@ -23,14 +23,21 @@ const ActivityBox = ({ activities }) => {
                 const duration = (endMinutes - startMinutes)*(cellHeight/60);
 
                 return (
-                    <Box key={i} sx={{ 
+                    <Box key={i}
+                         onClick={onClick}
+                         sx={{
                             position:"absolute", 
                             top:`${startTime}px`,
                             height: `${duration}px`,
                             backgroundColor:"#60f085",
                             boxShadow:1,
                             width:"80%",
-                            align:"center"
+                            cursor:"pointer",
+                            align:"center",
+                             transition: "background-color 0.3s ease",
+                             "&:hover": {
+                                 backgroundColor: "primary.main", // Slightly darkens the background
+                             },
                         }}>
                             <Typography variant="subtitle2">
                                 {activity.name}
