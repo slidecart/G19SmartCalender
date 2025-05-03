@@ -6,6 +6,7 @@ import AddActivity from "./../calendar/addActivity";
 import {fetchData} from "../../hooks/FetchData";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ActivityDialog from "./ActivityDialog";
 
 
 
@@ -17,10 +18,6 @@ function WeeklyCalendar() {
     const [startOfWeek, setStartOfWeek] = useState(dayjs().startOf("week").add(1,"day")); //First day of the week is monday
 
     //const startOfWeek = today.startOf("week").add(1, "day"); // First day of the week is monday
-
-    // Activity permissions and error handling
-    const [activities, setActivities] = useState([]);
-    const [error, setError] = useState(null);
 
     // Array over weekdays from monday to sunday with actual dates from local computer
     const weekdays = Array.from ({ length: 7 }, (_, i) => ({
@@ -34,7 +31,12 @@ function WeeklyCalendar() {
         return `${hour.toString().padStart(2, '0')}:00`;
     });
 
-    const [openDialog, setOpenDialog] = useState(false); // Handling of form to add activities
+
+    // State for activities
+    // Activity permissions and error handling
+    const [activities, setActivities] = useState([]);
+    const [error, setError] = useState(null);
+
     const [formData, setFormData] = useState({
         name:"",
         description:"",
@@ -46,15 +48,59 @@ function WeeklyCalendar() {
         userId:""
     });
 
+    {/* Consts and functions to handle activity dialog*/}
+    const [selectedActivity, setSelectedActivity] = useState(null);
+    const [activityDialogOpen, setActivityDialogOpen] = useState(false);
+
+    const handleActivityClick = (activity) => {
+        setSelectedActivity(activity);
+        setActivityDialogOpen(true);
+    };
+
+    {/* Functions for adding and editing activities */}
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [dialogMode, setDialogMode] = useState(null); // "add" or "edit"
+
+    const openAddDialog = () => {
+        setDialogMode("add");
+        setIsDialogOpen(true);
+    };
+
+    const openEditDialog = (activity) => {
+        setFormData(activity);
+        setDialogMode("edit");
+        setIsDialogOpen(true);
+        setActivityDialogOpen(false);
+    };
+
+    const handeCloseDialog = () => {
+        setIsDialogOpen(false);
+        setFormData({
+            name: "",
+            description: "",
+            location: "",
+            date: "",
+            startTime: "",
+            endTime: "",
+            categoryId: "",
+        });
+    };
+
+
     // Function to handle form to be able to add activities
     const handleSubmit = async () =>{
         try{
+            console.log(selectedActivity);
+            // Checks if the user is in edit mode or not
+            const apiPath = dialogMode === "edit" ? `activities/edit/${selectedActivity.id}` : "activities/create";
+            const method = dialogMode === "edit" ? "PUT" : "POST";
 
-            const response = await fetchData("activities/create", "POST", formData);
+
+            const response = await fetchData(apiPath, method, formData);
             console.log(response);
 
             // Closes the dialog och resets the form
-            setOpenDialog(false);
+            setIsDialogOpen(false);
             setFormData({
                 name:"",
                 description:"",
@@ -63,7 +109,16 @@ function WeeklyCalendar() {
                 startTime:"",
                 endTime:"",
             });
-            setActivities((prevActivities) => [...prevActivities, response]); // Adds the new activity to the list
+
+            if (method === "POST") {
+                setActivities((prevActivities) => [...prevActivities, response]); // Adds the new activity to the list
+            } else {
+                setActivities((prevActivities) =>
+                    prevActivities.map((activity) =>
+                        activity.id === response.id ? response : activity
+                    )
+                ); // Updates the existing activity in the list
+            }
         } catch (error){
             console.error(error);
         }
@@ -78,7 +133,7 @@ function WeeklyCalendar() {
         }));
     }
 
-    // Recieves activities from API 
+    // Receives activities from API
     useEffect(() => {
         const fetchActivities = async() => {
             try {
@@ -121,6 +176,7 @@ function WeeklyCalendar() {
                     activities = {activities}
                     weekdays = {weekdays}
                     timeSlots = {timeSlots}
+                    onActivityClick = {handleActivityClick} // Shows activity when clicked
                 />
             </TableContainer>
 
@@ -129,20 +185,33 @@ function WeeklyCalendar() {
                 <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => setOpenDialog(true)} // Dialog appears 
+                    onClick={() => openAddDialog()} // Dialog appears
                 >
                     Lägg till
                 </Button>
             </Box>
 
-            {/* Shows dialog */}
+            {/* Shows dialog in create mode*/}
             <AddActivity
-                open={openDialog}
-                onClose={() => setOpenDialog(false)}
+                open={isDialogOpen}
+                onClose={handeCloseDialog}
                 formData={formData}
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
+
             />
+
+            {/* Shows activity when clicked */}
+            {selectedActivity && (
+                <ActivityDialog
+                    open={activityDialogOpen}
+                    onClose={() => setActivityDialogOpen(false)} // Closes activity dialog
+                    activity={selectedActivity}
+                    onEdit={() => openEditDialog(selectedActivity)} // Opens edit dialog
+                />
+            )}
+
+            {/* Shows error message if any */}
         </Container>
     );
 };
