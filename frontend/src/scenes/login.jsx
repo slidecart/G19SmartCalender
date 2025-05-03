@@ -120,6 +120,7 @@ function LogIn() {
                         buttonText="Logga in"
                         onSubmit={handleSubmit}
                     />
+                    {auth.errorBox()}
                     <Box sx={{ maxWidth: "350px", width: "100%", textAlign: "center", mt: 2 }}>
                         <Typography
                             variant="body1"
