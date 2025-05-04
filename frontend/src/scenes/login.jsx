@@ -136,7 +136,6 @@ function LogIn() {
     };
 
     const handleBackToLogin = () => {
-        console.error("handleBackToLogin called");
         setIsForgotPassword(false);
         setEmailInput("");
         setShowResendVerification(false);
