@@ -7,7 +7,9 @@
 const API_BASE = process.env.REACT_APP_BACKEND_URL;
 
 async function makeRequest(path, method, body, token) {
-    const url = `${API_BASE}${path}`;
+    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+    const url = `${API_BASE}${cleanPath}`;
+
     const headers = { "Content-Type": "application/json" };
     if (token) headers.Authorization = `Bearer ${token}`;
 

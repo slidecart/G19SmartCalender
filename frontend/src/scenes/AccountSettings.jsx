@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/AuthContext';
 import { fetchData } from '../hooks/FetchData';
 import {
@@ -107,6 +106,15 @@ function AccountSettings() {
         setIsLoadingPassword(true);
         setPasswordMessage('');
         try {
+            if (!currentPassword) {
+                throw new Error('Ange nuvarande lösenord.');
+            }
+            if (!newPassword) {
+                throw new Error('Ange nytt lösenord.');
+            }
+            if (!confirmPassword) {
+                throw new Error('Bekräfta nytt lösenord.');
+            }
             if (newPassword !== confirmPassword) {
                 throw new Error('Lösenorden matchar inte.');
             }
@@ -115,13 +123,13 @@ function AccountSettings() {
                     'Lösenordet måste vara minst 8 tecken långt och innehålla minst en stor bokstav och en siffra.'
                 );
             }
-            await fetchData('auth/change-password', 'PUT', { currentPassword, newPassword });
+            await fetchData('auth/change-password', 'PUT', { oldPassword: currentPassword, newPassword });
             setPasswordMessage('Lösenordet har ändrats.');
             setCurrentPassword('');
             setNewPassword('');
             setConfirmPassword('');
         } catch (error) {
-            setPasswordMessage('Fel vid ändring av lösenord: ' + error.message);
+            setPasswordMessage(`Fel vid ändring av lösenord: ${error.message}`);
         } finally {
             setIsLoadingPassword(false);
         }
@@ -278,6 +286,7 @@ function AccountSettings() {
                                 onChange={(e) => setCurrentPassword(e.target.value)}
                                 fullWidth
                                 margin="normal"
+                                required
                             />
                             <TextField
                                 label="Nytt Lösenord"
@@ -286,6 +295,7 @@ function AccountSettings() {
                                 onChange={(e) => setNewPassword(e.target.value)}
                                 fullWidth
                                 margin="normal"
+                                required
                             />
                             <TextField
                                 label="Bekräfta Nytt Lösenord"
@@ -294,6 +304,7 @@ function AccountSettings() {
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 fullWidth
                                 margin="normal"
+                                required
                             />
                             <Button
                                 variant="contained"

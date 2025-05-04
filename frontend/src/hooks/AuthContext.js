@@ -1,14 +1,13 @@
-import {createContext, useContext, useState} from "react";
-import {Navigate, Outlet, useNavigate} from "react-router-dom";
-
+import { createContext, useContext, useState } from "react";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-    //const [user, setUser] = useState(null);
     const [accessToken, setAccToken] = useState(localStorage.getItem("accessToken") || "");
     const [refreshToken, setRefToken] = useState(localStorage.getItem("refreshToken") || "");
     const navigate = useNavigate();
+
     const loginAction = async (data) => {
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}auth/login`, {
@@ -20,19 +19,18 @@ const AuthProvider = ({ children }) => {
             });
 
             if (!response.ok) {
-                alert("Invalid credentials, please try again.")
-                throw new Error(`Login failed: ${response.status} – ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(errorData.message || "Invalid credentials");
             }
 
             const res = await response.json();
-            //setUser(res.user);
             setAccToken(res.accessToken);
             setRefToken(res.refreshToken);
             localStorage.setItem("accessToken", res.accessToken);
             localStorage.setItem("refreshToken", res.refreshToken);
             navigate("/today");
         } catch (error) {
-            console.error("Login failed", error);
+            throw error; // Re-throw the error to be handled by the caller
         }
     };
 
@@ -41,11 +39,13 @@ const AuthProvider = ({ children }) => {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         navigate("/login");
+    };
 
-    }
-    return <AuthContext.Provider value ={{ accessToken, refreshToken, loginAction, logoutAction}}>
-        {children}
-    </AuthContext.Provider>
+    return (
+        <AuthContext.Provider value={{ accessToken, refreshToken, loginAction, logoutAction }}>
+            {children}
+        </AuthContext.Provider>
+    );
 };
 
 export default AuthProvider;
@@ -56,7 +56,5 @@ export const useAuth = () => {
 
 export const PrivateRoute = () => {
     const { accessToken } = useAuth();
-    return accessToken
-        ? <Outlet />
-        : <Navigate to="/login" replace />;
+    return accessToken ? <Outlet /> : <Navigate to="/login" replace />;
 };

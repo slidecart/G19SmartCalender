@@ -7,6 +7,7 @@ import com.smartcalender.app.dto.UserDTO;
 import com.smartcalender.app.entity.PasswordResetToken;
 import com.smartcalender.app.entity.RefreshToken;
 import com.smartcalender.app.entity.User;
+import com.smartcalender.app.exception.UserNotFoundException;
 import com.smartcalender.app.repository.PasswordResetTokenRepository;
 import com.smartcalender.app.repository.RefreshTokenRepository;
 import com.smartcalender.app.repository.UserRepository;
@@ -25,8 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Service
@@ -62,7 +61,11 @@ public class AuthService {
         );
 
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if (emailVerificationRequired && !user.isEmailVerified()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email not verified");
+        }
 
         UserDetails userDetails = org.springframework.security.core.userdetails.User
                 .withUsername(user.getUsername())
@@ -132,6 +135,13 @@ public class AuthService {
     public void changePassword(String currentPassword, String newPassword, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+
+        if (currentPassword == null || currentPassword.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password cannot be empty");
+        }
+        if (newPassword == null || newPassword.trim().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "New password cannot be empty");
+        }
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
