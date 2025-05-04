@@ -1,22 +1,19 @@
-
 import { useState } from "react";
-import { Box, Typography, Button, TextField, CircularProgress } from "@mui/material";
+import { Box, Typography, Button, TextField, CircularProgress, Snackbar, Alert } from "@mui/material";
 import { Link } from "react-router-dom";
 import UserInput from "../components/userInput";
-import {useAuth} from "../hooks/AuthContext";
+import { useAuth } from "../hooks/AuthContext";
 import { fetchData } from "../hooks/FetchData";
 
-
-
 function LogIn() {
-
     const auth = useAuth();
     const [isForgotPassword, setIsForgotPassword] = useState(false);
-    const [email, setEmail] = useState("");
-    const [message, setMessage] = useState("");
+    const [emailInput, setEmailInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [showResendVerification, setShowResendVerification] = useState(false);
+    const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
 
@@ -26,43 +23,127 @@ function LogIn() {
         const loginRequest = {
             username,
             password
-        }
+        };
 
-        // Basic Validation
-        if (loginRequest.username !== "" && loginRequest.password !== "") {
-            auth.loginAction(loginRequest);
-            return;
-        }
-        alert("Var vänlig fyll i alla fält.");
-    };
-
-    const handleForgotPasswordSubmit = async (e) => {
-        e.preventDefault();
-        if (!email) {
-            setMessage("Var vänlig ange din e-postadress.");
+        if (loginRequest.username === "" || loginRequest.password === "") {
+            setSnackbar({
+                open: true,
+                message: "Var vänlig fyll i alla fält.",
+                severity: "error"
+            });
+            setShowResendVerification(false);
             return;
         }
 
         setIsLoading(true);
         try {
-            const data = await fetchData(`auth/forgot-password?email=${encodeURIComponent(email)}`, "POST", null, true);
-            setMessage(data.message || "Länk för återställning av lösenord skickas till din e-post.");
-            setEmail("");
+            await auth.loginAction(loginRequest);
+            setShowResendVerification(false);
         } catch (error) {
-            setMessage(error.message || "Meddelande kunde inte skickas. Var vänlig försök igen.");
+            console.error("Login error:", error);
+            if (error.message.toLowerCase().includes("email not verified")) {
+                setSnackbar({
+                    open: true,
+                    message: "Vänligen verifiera din e-postadress innan du loggar in.",
+                    severity: "error"
+                });
+                setShowResendVerification(true);
+            } else {
+                setSnackbar({
+                    open: true,
+                    message: "Inloggning misslyckades: Fel användarnamn eller lösenord.",
+                    severity: "error"
+                });
+                setShowResendVerification(false);
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleForgotPasswordSubmit = async (e) => {
+        e.preventDefault();
+        if (!emailInput) {
+            setSnackbar({
+                open: true,
+                message: "Var vänlig ange din e-postadress.",
+                severity: "error"
+            });
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const data = await fetchData(`auth/forgot-password?email=${encodeURIComponent(emailInput)}`, "POST", null, true);
+            setSnackbar({
+                open: true,
+                message: data.message || "Länk för återställning av lösenord skickas till din e-post.",
+                severity: "success"
+            });
+            setEmailInput("");
+
+            if (data.message === "Länk för återställning av lösenord skickas till din e-post.") {
+                setIsForgotPassword(false);
+            }
+
+        } catch (error) {
+            console.error("Forgot password error:", error);
+            setSnackbar({
+                open: true,
+                message: error.message || "Meddelande kunde inte skickas. Var vänlig försök igen.",
+                severity: "error"
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleResendVerification = async () => {
+        if (!emailInput) {
+            setSnackbar({
+                open: true,
+                message: "Var vänlig ange din e-postadress för att skicka verifieringslänk.",
+                severity: "error"
+            });
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const data = await fetchData(`auth/resend-verification?email=${encodeURIComponent(emailInput)}`, "POST", null, true);
+            console.error("fetchData response:", data);
+            setSnackbar({
+                open: true,
+                message: data.message || "Verifieringslänk skickad till din e-post.",
+                severity: "success"
+            });
+            setEmailInput("");
+
+            if (data.message === "Verifieringslänk skickad till din e-post.") {
+                setShowResendVerification(false);
+            }
+
+            } catch (error) {
+            console.error("Resend verification error:", error);
+            setSnackbar({
+                open: true,
+                message: error.message || "Kunde inte skicka verifieringslänk. Försök igen.",
+                severity: "error"
+            });
         } finally {
             setIsLoading(false);
         }
     };
 
     const handleBackToLogin = () => {
+        console.error("handleBackToLogin called");
         setIsForgotPassword(false);
-        setMessage("");
-        setEmail("");
+        setEmailInput("");
+        setShowResendVerification(false);
     };
 
-    return(
-        <Box sx={{display:"flex", alignItems:"center", justifyContent:"center", flexDirection:"column", height:"100vh"}}>
+    return (
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", height: "100vh" }}>
             <Typography variant="h1" sx={{ textAlign: "center", mb: 4, color: "primary.main" }}>
                 SmartCalendar
             </Typography>
@@ -76,8 +157,8 @@ function LogIn() {
                         <TextField
                             label="E-postadress"
                             type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={emailInput}
+                            onChange={(e) => setEmailInput(e.target.value)}
                             fullWidth
                             margin="normal"
                             required
@@ -100,14 +181,41 @@ function LogIn() {
                             Tillbaka till inloggning
                         </Button>
                     </form>
-                    {message && (
-                        <Typography
-                            variant="body1"
-                            sx={{ mt: 2, color: message.includes("skickas") ? "green" : "red" }}
-                        >
-                            {message}
-                        </Typography>
-                    )}
+                </Box>
+            ) : showResendVerification ? (
+                <Box sx={{ maxWidth: "350px", width: "100%", textAlign: "center" }}>
+                    <Typography variant="h5" sx={{ mb: 2 }}>
+                        Verifiera din e-post
+                    </Typography>
+                    <TextField
+                        label="E-postadress"
+                        type="email"
+                        value={emailInput}
+                        onChange={(e) => setEmailInput(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        placeholder="Ange e-post för verifieringslänk"
+                    />
+                    <Button
+                        variant="contained"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            handleResendVerification();
+                        }}
+                        fullWidth
+                        sx={{ mt: 2 }}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? <CircularProgress size={24} /> : "Skicka Verifieringslänk"}
+                    </Button>
+                    <Button
+                        onClick={handleBackToLogin}
+                        variant="outlined"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                    >
+                        Tillbaka till inloggning
+                    </Button>
                 </Box>
             ) : (
                 <>
@@ -119,6 +227,7 @@ function LogIn() {
                         ]}
                         buttonText="Logga in"
                         onSubmit={handleSubmit}
+                        isLoading={isLoading}
                     />
                     <Box sx={{ maxWidth: "350px", width: "100%", textAlign: "center", mt: 2 }}>
                         <Typography
@@ -150,8 +259,18 @@ function LogIn() {
                     </Box>
                 </>
             )}
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
-    )
+    );
 }
 
 export default LogIn;
