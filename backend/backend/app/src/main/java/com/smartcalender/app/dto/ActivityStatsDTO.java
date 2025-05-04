@@ -4,7 +4,7 @@ public class ActivityStatsDTO {
     private int totalThisWeek;
     private int totalThisMonth;
     private int averageHoursPerWeek;
-    private int totalToday
+    private int totalToday;
 
     public ActivityStatsDTO(int totalToday, int totalThisWeek, int totalThisMonth, int averageHoursPerWeek) {
         this.totalThisWeek = totalThisWeek;
