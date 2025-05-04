@@ -40,7 +40,7 @@ function Navbar() {
                                 "&:hover": {
                                     backgroundColor: "transparent",
                                     color: "black",
-                                    fontSize: "18px",
+                                    scale:1.25,
                                 },
                             }}
                         >
