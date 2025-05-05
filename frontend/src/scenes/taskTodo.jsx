@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {useEffect, useState} from "react";
 import AddTask from "../scenes/addTask";
 import {fetchData} from "../hooks/FetchData";
@@ -62,6 +63,15 @@ function TaskTodo(){
         }));
     }
 
+    const handleDelete = async (taskId) => {
+        try {
+            await fetchData(`tasks/delete/${taskId}`, "DELETE", null); 
+            setTasks((prev) => prev.filter((task) => task.id !== taskId));
+        } catch (error) {
+            console.error("Fel vid borttagning: ", error.message);
+        }
+    }
+
     
     useEffect(() => {
         const fetchTasks = async() => {
@@ -108,75 +118,19 @@ function TaskTodo(){
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
             />
-
-
-
-
-            {/*<Accordion disableGutters sx={{ bgcolor: "white", mb: 1}}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography sx={{ fontWeight: "bold" }}>Kurser</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Stack spacing={2}>
-                        <Typography>Systemutveckling</Typography>
-                        <Typography>Databasteknik</Typography>
-                        <Button
-                            variant="outlined"
-                            startIcon={<AddIcon />}
-                            size="small"
-                            sx={{ alignSelf: "flex-start", mt: 1}}>
-                            Lägg till
-                        </Button>
-                    </Stack>
-                </AccordionDetails>
-            </Accordion>
-
-
-            <Accordion disableGutters sx={{ bgcolor: "white", mb: 1}}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography sx={{ fontWeight: "bold" }}>Fritid & hobby</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Stack spacing={2}>
-                        <Typography>Träning</Typography>
-                        <Typography>Handla</Typography>
-                        <Typography>Snäll</Typography>
-                        <Button
-                            variant="outlined"
-                            startIcon={<AddIcon />}
-                            size="small"
-                            sx={{ alignSelf: "flex-start", mt: 1}}>
-                            Lägg till
-                        </Button>
-                    </Stack>
-                </AccordionDetails>
-            </Accordion>
-
-            <Accordion disableGutters sx={{ bgcolor: "white", mb: 1}}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography sx={{ fontWeight: "bold" }}>Socialt</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Stack spacing={2}>
-                        <Typography>Familj</Typography>
-                        <Typography>Vänner</Typography>
-                        <Button
-                            variant="outlined"
-                            startIcon={<AddIcon />}
-                            size="small"
-                            sx={{ alignSelf: "flex-start", mt: 1}}>
-                            Lägg till
-                        </Button>
-                    </Stack>
-                </AccordionDetails>
-            </Accordion>*/}
-
             <Stack spacing={2}>
                 {tasks.map((task, index) => (
                 <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>
                     <CardContent>
-                        <Typography variant="h6" sx={{ fontWeight: "bold" }}>{task.name}</Typography>
-                        <Typography>{task.description}</Typography>
+                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                            <Box>
+                                <Typography variant="h6" sx={{ fontWeight: "bold" }}>{task.name}</Typography>
+                                <Typography>{task.description}</Typography>
+                            </Box>
+                            <IconButton onClick={() => handleDelete(task.id)} aria-label="delete" sx={{ color: "red" }}>
+                                <DeleteIcon />
+                            </IconButton>
+                        </Box>
                     </CardContent>
                 </Card>
                 ))}
