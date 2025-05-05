@@ -7,6 +7,7 @@ import {fetchData} from "../../hooks/FetchData";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ActivityDialog from "./ActivityDialog";
+import ConfirmationDialog from "../ConfirmationDialog";
 
 
 
@@ -86,6 +87,16 @@ function WeeklyCalendar() {
         });
     };
 
+    const handleCellClick = (date, time) => {
+        setFormData((prev) => ({
+            ...prev,
+                date: date,
+                startTime: time
+        }));
+        setDialogMode("add");
+        setIsDialogOpen(true);
+    }
+
 
     // Function to handle form to be able to add activities
     const handleSubmit = async () =>{
@@ -148,6 +159,30 @@ function WeeklyCalendar() {
         };
         fetchActivities();
     }, []);
+
+    {/* Delete function */}
+    const [confirmDeleteOpen, setConfirmationDeleteOpen] = useState(false);
+    const [activityToDelete, setActivityToDelete] = useState(null);
+    const requestDelete = (activity) => {
+        setActivityToDelete(activity);
+        setConfirmationDeleteOpen(true);
+    }
+
+    const handleDelete = async () => {
+        if (!activityToDelete) return;
+
+        try {
+            await fetchData(`activities/delete/${activityToDelete.id}`, "DELETE");
+            setActivities(prev => prev.filter(a => a.id !== activityToDelete.id));
+
+        } catch (error) {
+            console.error("Fel vid borttagning: ", error.message);
+        } finally {
+            setConfirmationDeleteOpen(false);
+            setActivityToDelete(null);
+            setSelectedActivity(null);
+        }
+    };
         
     return(
         <Container sx={{my:2}}>
@@ -177,6 +212,7 @@ function WeeklyCalendar() {
                     weekdays = {weekdays}
                     timeSlots = {timeSlots}
                     onActivityClick = {handleActivityClick} // Shows activity when clicked
+                    onCellClick={handleCellClick}
                 />
             </TableContainer>
 
@@ -208,6 +244,18 @@ function WeeklyCalendar() {
                     onClose={() => setActivityDialogOpen(false)} // Closes activity dialog
                     activity={selectedActivity}
                     onEdit={() => openEditDialog(selectedActivity)} // Opens edit dialog
+                    onDelete={() => requestDelete(selectedActivity)} // Deletes activity
+                />
+            )}
+
+            {/* Shows confirmation dialog for delete */}
+            {confirmDeleteOpen && (
+                <ConfirmationDialog
+                    open={confirmDeleteOpen}
+                    onClose={() => setConfirmationDeleteOpen(false)}
+                    onConfirm={handleDelete}
+                    title="Bekräfta borttagning"
+                    content="Är du säker på att du vill ta bort aktiviteten?"
                 />
             )}
 
