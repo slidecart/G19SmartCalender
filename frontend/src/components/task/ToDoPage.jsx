@@ -14,12 +14,12 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {useEffect, useState} from "react";
-import AddTask from "./addTask";
+import AddTask from "./AddTask";
 import {fetchData} from "../../hooks/FetchData";
 import TaskDialog from "./TaskDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
 
-function TaskTodo(){
+function ToDoPage(){
 
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState(null);
@@ -231,4 +231,4 @@ function TaskTodo(){
     );
 }
 
-export default TaskTodo;
+export default ToDoPage;
