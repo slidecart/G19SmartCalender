@@ -18,6 +18,7 @@ import AddTask from "./AddTask";
 import {fetchData} from "../../hooks/FetchData";
 import TaskDialog from "./TaskDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
+import Body from "../containers/body"
 
 function ToDoPage(){
 
@@ -156,78 +157,80 @@ function ToDoPage(){
     };
 
     return (
-        <Container maxWidth="xs" sx={{ bgcolor: "#0077ff7e", p: 2, mt: 2, borderRadius: 2, fontFamily: "'Fira Code', 'Consolas', 'monospace'"}}>
-            <Box 
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                gap={1}
-                mb={2}>
+        <Body>
+            <Container maxWidth="xs" sx={{ bgcolor: "#0077ff7e", p: 2, mt: 2, borderRadius: 2, fontFamily: "'Fira Code', 'Consolas', 'monospace'"}}>
+                <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    gap={1}
+                    mb={2}>
 
-                <Typography variant="h1" align="center" sx={{ fontWeight: "bold", textDecoration: "underline", color: "black"}}>
-                    TASKS
-                </Typography>
-                <IconButton
-                    size="small"
-                    sx={{ color: "black" }}
-                    onClick={() => openAddDialog()}
-                >
-                    <AddIcon />
-                    Ny Task
-                </IconButton>
-            </Box>
+                    <Typography variant="h1" align="center" sx={{ fontWeight: "bold", textDecoration: "underline", color: "black"}}>
+                        TASKS
+                    </Typography>
+                    <IconButton
+                        size="small"
+                        sx={{ color: "black" }}
+                        onClick={() => openAddDialog()}
+                    >
+                        <AddIcon />
+                        Ny Task
+                    </IconButton>
+                </Box>
 
-            <Stack spacing={2}>
-                {tasks.map((task, index) => (
-                <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>
-                    <CardContent>
-                        <Box
-                            onClick={() => handleTaskClick(task)}
-                            display="flex" justifyContent="space-between" alignItems="center">
-                            <Box>
-                                <Typography variant="h6" sx={{ fontWeight: "bold" }}>{task.name}</Typography>
-                                <Typography>{task.description}</Typography>
+                <Stack spacing={2}>
+                    {tasks.map((task, index) => (
+                    <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>
+                        <CardContent>
+                            <Box
+                                onClick={() => handleTaskClick(task)}
+                                display="flex" justifyContent="space-between" alignItems="center">
+                                <Box>
+                                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>{task.name}</Typography>
+                                    <Typography>{task.description}</Typography>
+                                </Box>
+
+
                             </Box>
+                        </CardContent>
+                    </Card>
+                    ))}
+                </Stack>
 
-
-                        </Box>
-                    </CardContent>
-                </Card>
-                ))}
-            </Stack>
-
-            <AddTask
-                open={isDialogOpen}
-                onClose={handleCloseDialog}
-                formData={formData}
-                handleChange={handleChange}
-                handleSubmit={handleSubmit}
-            />
-
-
-            {/* Shows task when clicked */}
-            {selectedTask && (
-                <TaskDialog
-                    open={taskDialogOpen}
-                    onClose={() => setTaskDialogOpen(false)} // Closes task dialog
-                    task={selectedTask}
-                    onEdit={() => openEditDialog(selectedTask)} // Opens edit dialog
-                    onDelete={() => requestDelete(selectedTask)} // Deletes task
+                <AddTask
+                    open={isDialogOpen}
+                    onClose={handleCloseDialog}
+                    formData={formData}
+                    handleChange={handleChange}
+                    handleSubmit={handleSubmit}
                 />
-            )}
 
 
-            {/* Shows confirmation dialog for delete */}
-            {confirmDeleteOpen && (
-                <ConfirmationDialog
-                    open={confirmDeleteOpen}
-                    onClose={() => setConfirmationDeleteOpen(false)}
-                    onConfirm={handleDelete}
-                    title="Bekräfta borttagning"
-                    content="Är du säker på att du vill ta bort ToDo?"
-                />
-            )}
-        </Container>
+                {/* Shows task when clicked */}
+                {selectedTask && (
+                    <TaskDialog
+                        open={taskDialogOpen}
+                        onClose={() => setTaskDialogOpen(false)} // Closes task dialog
+                        task={selectedTask}
+                        onEdit={() => openEditDialog(selectedTask)} // Opens edit dialog
+                        onDelete={() => requestDelete(selectedTask)} // Deletes task
+                    />
+                )}
+
+
+                {/* Shows confirmation dialog for delete */}
+                {confirmDeleteOpen && (
+                    <ConfirmationDialog
+                        open={confirmDeleteOpen}
+                        onClose={() => setConfirmationDeleteOpen(false)}
+                        onConfirm={handleDelete}
+                        title="Bekräfta borttagning"
+                        content="Är du säker på att du vill ta bort ToDo?"
+                    />
+                )}
+            </Container>
+        </Body>
     );
 }
 
