@@ -55,7 +55,8 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivi
                                         key={`${day.name}-${time}`} 
                                         sx={{
                                             position:"relative",
-                                            padding:"0"
+                                            padding:"0",
+                                            overflow:"visible"
                                         }}
                                     > 
                                         {hits.length>0 && (

@@ -33,7 +33,7 @@ const ActivityBox = ({ activities, onClick }) => {
                             boxShadow:1,
                             width:"80%",
                             cursor:"pointer",
-                            align:"center",
+                            zIndex:1,
                              transition: "background-color 0.3s ease",
                              "&:hover": {
                                  backgroundColor: "primary.main", // Slightly darkens the background
