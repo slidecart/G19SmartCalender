@@ -160,9 +160,7 @@ function TaskTodo(){
                     Ny Task
                 </IconButton>
             </Box>
-
-
-
+            
             <Stack spacing={2}>
                 {tasks.map((task, index) => (
                 <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>

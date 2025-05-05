@@ -39,7 +39,11 @@ function TaskDialog({ open, onClose, task, onEdit }){
                         </Typography>
 
                         <Typography variant="body1" sx={{ color: "text.secondary" }}>
-                            <strong>Tid:</strong> {dayjs(`1970-01-01T${task?.startTime}`).format("HH:mm")} - {dayjs(`1970-01-01T${task?.endTime}`).format("HH:mm")}
+                            <strong>Plats:</strong> {task?.location || "Ingen plats angiven."}
+                        </Typography>
+
+                        <Typography variant="body1" sx={{ color: "text.secondary" }}>
+                            <strong>Datum:</strong> {task?.date ? dayjs(task.date).format("YYYY-MM-DD") : "Inget datum angivet."}
                         </Typography>
                     </Box>
                 </DialogContent>
