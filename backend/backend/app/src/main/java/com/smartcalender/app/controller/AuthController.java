@@ -1,15 +1,16 @@
 package com.smartcalender.app.controller;
 
-import com.smartcalender.app.dto.LoginRequest;
-import com.smartcalender.app.dto.LoginResponseDTO;
-import com.smartcalender.app.dto.RegisterRequest;
-import com.smartcalender.app.dto.ResponseDTO;
+import com.smartcalender.app.auth.SecurityUtils;
+import com.smartcalender.app.dto.*;
 import com.smartcalender.app.entity.User;
 import com.smartcalender.app.repository.UserRepository;
 import com.smartcalender.app.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Map;
 import java.util.UUID;
@@ -29,8 +30,14 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        LoginResponseDTO response = authService.authenticateUser(loginRequest);
-        return ResponseEntity.ok(response);
+        try {
+            LoginResponseDTO response = authService.authenticateUser(loginRequest);
+            return ResponseEntity.ok(response);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new ResponseDTO(e.getReason()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ResponseDTO("Invalid credentials"));
+        }
     }
 
     @PostMapping("/logout")
@@ -60,9 +67,25 @@ public class AuthController {
         }
     }
 
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequest requestBody) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+
+        if (currentUser != null) {
+            try {
+                authService.changePassword(requestBody.getOldPassword(), requestBody.getNewPassword(), currentUser);
+                return ResponseEntity.ok(new ResponseDTO("Lösenordet har ändrats."));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new ResponseDTO("Error changing password: " + e.getMessage()));
+            }
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
-        User user = authService.registerUser(registerRequest);
+        UserDTO user = authService.registerUser(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
@@ -87,6 +110,28 @@ public class AuthController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
+    }
+
+    @PutMapping("/change-email")
+    public ResponseEntity<?> changeEmail(@RequestBody ChangeEmailRequest requestBody) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+
+        if (currentUser != null) {
+            authService.changeEmail(requestBody.getNewEmail(), requestBody.getPassword(), currentUser);
+            return ResponseEntity.ok(new ResponseDTO("E-postadressen har ändrats."));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<?> deleteAccount(@RequestBody DeleteAccountRequest request) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+
+        if (currentUser != null) {
+            authService.deleteAccount(request.getPassword(), currentUser);
+            return ResponseEntity.ok(new ResponseDTO("Kontot har raderats."));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
     @PostMapping("/refresh-token")
