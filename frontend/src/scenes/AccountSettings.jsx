@@ -96,10 +96,20 @@ function AccountSettings() {
         const getActivityStats = async () => {
             try {
                 const data = await fetchData('user/me/stats/activities', 'GET');
-                setActivityStats(data);
-            } catch (error) {
+                console.log('Activity Stats Data:', data);
+                setActivityStats({
+                    totalActivitiesToday: data.totalToday ?? 0,
+                    totalActivitiesThisWeek: data.totalThisWeek ?? 0,
+                    totalActivitiesThisMonth: data.totalThisMonth ?? 0,
+                    averageHoursPerWeek: data.averageHoursPerWeek ?? 0
+                });            } catch (error) {
                 console.error('Fel vid hämtning av aktivitetsstatistik:', error);
-                setActivityStats({ totalActivitiesToday: 0, totalActivitiesThisWeek: 0, totalActivitiesThisMonth: 0, averageHoursPerWeek: 0 });
+                setActivityStats({
+                    totalActivitiesToday: 0,
+                    totalActivitiesThisWeek: 0,
+                    totalActivitiesThisMonth: 0,
+                    averageHoursPerWeek: 0
+                });
             }
         };
         getActivityStats();

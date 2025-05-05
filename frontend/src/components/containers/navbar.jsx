@@ -9,7 +9,6 @@ function Navbar() {
         { name: "Dagens agenda", link: "/today" },
         { name: "Kalender", link: "/today" },
         { name: "Task & ToDo", link: "#" },
-        { name: "Inställningar", link: "#" },
     ];
 
     return (
