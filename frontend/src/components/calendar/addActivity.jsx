@@ -14,10 +14,9 @@ import {
 import {useState} from "react";
 import CreateCategoryDialog from "../CreateCategoryDialog";
 
-const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit, mode, categories, onCreateCategory }) => {
+const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit, mode, categories, onCreateCategory}) => {
     const isEditMode = mode === "edit";
     const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
-
 
     return(
         <Dialog open={open} onClose={onClose}>

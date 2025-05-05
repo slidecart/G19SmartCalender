@@ -192,7 +192,6 @@ function WeeklyCalendar() {
                 const response = await fetchData("categories/all", "GET", "");
                 setCategories(response);
                 localStorage.setItem("categories", JSON.stringify(response));
-                console.log(response);
             } catch (error) {
                 console.error("Fel vid hämtning av kategorier: ", error.message);
             }
@@ -200,13 +199,17 @@ function WeeklyCalendar() {
         fetchCategories();
     }, []);
 
-    // JavaScript
-    const createCategory = async (newCategoryName) => {
+
+    const createCategory = async (name, color) => {
       try {
         // Create the category on the server
-        const newCategoryData = { name: newCategoryName };
+        const newCategoryData = {
+          name: name,
+          color: color,
+        };
+        console.log(newCategoryData);
         const response = await fetchData("categories/create", "POST", newCategoryData);
-
+        console.log(response);
         // Update the categories state and localStorage with the new category
         setCategories((prevCategories) => {
           const updatedCategories = [...prevCategories, response];
@@ -243,6 +246,7 @@ function WeeklyCalendar() {
             <TableContainer component ={Paper} elevation="2" sx={{height:"fit-content"}}>
                 <CalendarGrid
                     activities = {activities}
+                    categories = {categories}
                     weekdays = {weekdays}
                     timeSlots = {timeSlots}
                     onActivityClick = {handleActivityClick} // Shows activity when clicked
@@ -270,7 +274,7 @@ function WeeklyCalendar() {
                 handleSubmit={handleSubmit}
                 categories={categories}
                 onCreateCategory={createCategory}
-
+                mode={dialogMode} // "add" or "edit"
             />
 
             {/* Shows activity when clicked */}

@@ -4,7 +4,7 @@ import ActivityBox from "./activityBox";
 
 
 
-const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivityClick, onCellClick }) => {
+const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivityClick, onCellClick, categories }) => {
     return (
         <Table>
             <TableHead>
@@ -83,6 +83,7 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivi
                                             <ActivityBox
                                                 activities={hits}
                                                 onClick={() => onActivityClick(hits[0])} // Pass the first activity to the click handler
+                                                categories={categories}
                                             />
                                         )}
                                     </TableCell>

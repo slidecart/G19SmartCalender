@@ -1,7 +1,8 @@
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import dayjs from "dayjs";
+import {useState} from "react";
 
-const ActivityBox = ({ activities, onClick }) => {
+const ActivityBox = ({ activities, categories, onClick }) => {
     {/* */}
     if (!activities || activities.length === 0 ) return null;
 
@@ -22,6 +23,9 @@ const ActivityBox = ({ activities, onClick }) => {
                 const startTime = (start.minute());
                 const duration = (endMinutes - startMinutes)*(cellHeight/60);
 
+                const category = categories?.find(cat => cat.id === activity.categoryId);
+                const backgroundColor = category ? category.color : "#60f085";
+
                 return (
                     <Box key={i}
                          onClick={onClick}
@@ -29,7 +33,7 @@ const ActivityBox = ({ activities, onClick }) => {
                             position:"absolute", 
                             top:`${startTime}px`,
                             height: `${duration}px`,
-                            backgroundColor:"#60f085",
+                            backgroundColor,
                             boxShadow:1,
                             width:"80%",
                             cursor:"pointer",
