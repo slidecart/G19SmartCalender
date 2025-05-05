@@ -204,15 +204,6 @@ function TaskTodo(){
                 handleSubmit={handleSubmit}
             />
 
-            {selectedTask && (
-                <TaskDialog
-                    open={taskDialogOpen}
-                    onClose={() => setTaskDialogOpen(false)} // Closes task dialog
-                    task={selectedTask}
-                    onEdit={() => openEditDialog(selectedTask)} // Opens edit dialog
-                />
-            )}
-
 
             {/* Shows task when clicked */}
             {selectedTask && (

@@ -14,11 +14,14 @@ import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.TaskRepository;
 import com.smartcalender.app.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -116,12 +119,15 @@ public class TaskService {
      * @author Carl Lundholm, David Lexe
      */
     @Transactional
-    public void deleteTask(Long id, UserDetails currentUser) {
-        User user = getUser(currentUser);
-        long deletedCount = taskRepository.deleteByIdAndUser(id, user);
-        if (deletedCount == 0) {
-            throw new RuntimeException("Task not found");
+    public ResponseEntity<Boolean> deleteTask(Long id, UserDetails currentUser) {
+        User user = userRepository.findByUsername(currentUser.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        Optional<Task> taskOptional = taskRepository.findByIdAndUser(id, user);
+        if (taskOptional.isPresent()) {
+            taskRepository.delete(taskOptional.get());
+            return new ResponseEntity<>(true, HttpStatus.OK);
         }
+        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
     }
 
     /**
