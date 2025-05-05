@@ -75,7 +75,7 @@ const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit, mode
                                 ))}
                             <MenuItem value="create-category-option">
                                 <Box display="flex" justifyContent="center" alignItems="center" width="100%">
-                                    Create a category
+                                    Skapa ny kategori
                                 </Box>
                             </MenuItem>
                         </Select>
