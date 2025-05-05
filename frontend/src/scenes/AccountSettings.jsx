@@ -96,20 +96,10 @@ function AccountSettings() {
         const getActivityStats = async () => {
             try {
                 const data = await fetchData('user/me/stats/activities', 'GET');
-                console.log('Activity Stats Data:', data);
-                setActivityStats({
-                    totalActivitiesToday: data.totalToday ?? 0,
-                    totalActivitiesThisWeek: data.totalThisWeek ?? 0,
-                    totalActivitiesThisMonth: data.totalThisMonth ?? 0,
-                    averageHoursPerWeek: data.averageHoursPerWeek ?? 0
-                });            } catch (error) {
+                setActivityStats(data);
+            } catch (error) {
                 console.error('Fel vid hämtning av aktivitetsstatistik:', error);
-                setActivityStats({
-                    totalActivitiesToday: 0,
-                    totalActivitiesThisWeek: 0,
-                    totalActivitiesThisMonth: 0,
-                    averageHoursPerWeek: 0
-                });
+                setActivityStats({ totalActivitiesToday: 0, totalActivitiesThisWeek: 0, totalActivitiesThisMonth: 0, averageHoursPerWeek: 0 });
             }
         };
         getActivityStats();
@@ -345,19 +335,19 @@ function AccountSettings() {
                             </Typography>
                             {taskStats ? (
                                 <>
-                                    <Typography>Totala Uppgifter: {taskStats.totalTasks}</Typography>
-                                    <Typography>Slutförda Uppgifter: {taskStats.completedTasks}</Typography>
-                                    <Typography>Aktiva Uppgifter: {taskStats.activeTasks}</Typography>
+                                    <Typography>Totala Uppgifter: {taskStats.totalTasks ?? 0}</Typography>
+                                    <Typography>Slutförda Uppgifter: {taskStats.completedTasks ?? 0}</Typography>
+                                    <Typography>Aktiva Uppgifter: {taskStats.activeTasks ?? 0}</Typography>
                                 </>
                             ) : (
                                 <Typography>Laddar uppgiftsstatistik...</Typography>
                             )}
                             {activityStats ? (
                                 <>
-                                    <Typography>Totala Aktiviteter Idag: {activityStats.totalActivitiesToday}</Typography>
-                                    <Typography>Totala Aktiviteter Denna Veckan: {activityStats.totalActivitiesThisWeek}</Typography>
-                                    <Typography>Totala Aktiviteter Denna Månaden: {activityStats.totalActivitiesThisMonth}</Typography>
-                                    <Typography>Genomsnittliga timmar per vecka: {activityStats.averageHoursPerWeek}</Typography>
+                                    <Typography>Totala Aktiviteter Idag: {activityStats.totalActivitiesToday ?? 0}</Typography>
+                                    <Typography>Totala Aktiviteter Denna Veckan: {activityStats.totalActivitiesThisWeek ?? 0}</Typography>
+                                    <Typography>Totala Aktiviteter Denna Månaden: {activityStats.totalActivitiesThisMonth ?? 0}</Typography>
+                                    <Typography>Genomsnittliga timmar per vecka: {activityStats.averageHoursPerWeek ?? 0}</Typography>
                                 </>
                             ) : (
                                 <Typography>Laddar aktivitetsstatistik...</Typography>

@@ -1,32 +1,32 @@
 package com.smartcalender.app.dto;
 
 public class ActivityStatsDTO {
-    private int totalThisWeek;
-    private int totalThisMonth;
+    private int totalActivitiesThisWeek;
+    private int totalActivitiesThisMonth;
     private int averageHoursPerWeek;
-    private int totalToday;
+    private int totalActivitiesToday;
 
-    public ActivityStatsDTO(int totalToday, int totalThisWeek, int totalThisMonth, int averageHoursPerWeek) {
-        this.totalThisWeek = totalThisWeek;
-        this.totalThisMonth = totalThisMonth;
+    public ActivityStatsDTO(int totalActivitiesToday, int totalActivitiesThisWeek, int totalActivitiesThisMonth, int averageHoursPerWeek) {
+        this.totalActivitiesThisWeek = totalActivitiesThisWeek;
+        this.totalActivitiesThisMonth = totalActivitiesThisMonth;
         this.averageHoursPerWeek = averageHoursPerWeek;
-        this.totalToday = totalToday;
+        this.totalActivitiesToday = totalActivitiesToday;
     }
 
-    public int getTotalThisWeek() {
-        return totalThisWeek;
+    public int getTotalActivitiesThisWeek() {
+        return totalActivitiesThisWeek;
     }
 
-    public void setTotalThisWeek(int totalThisWeek) {
-        this.totalThisWeek = totalThisWeek;
+    public void setTotalActivitiesThisWeek(int totalActivitiesThisWeek) {
+        this.totalActivitiesThisWeek = totalActivitiesThisWeek;
     }
 
-    public int getTotalThisMonth() {
-        return totalThisMonth;
+    public int getTotalActivitiesThisMonth() {
+        return totalActivitiesThisMonth;
     }
 
-    public void setTotalThisMonth(int totalThisMonth) {
-        this.totalThisMonth = totalThisMonth;
+    public void setTotalActivitiesThisMonth(int totalActivitiesThisMonth) {
+        this.totalActivitiesThisMonth = totalActivitiesThisMonth;
     }
 
     public int getAverageHoursPerWeek() {
@@ -37,11 +37,11 @@ public class ActivityStatsDTO {
         this.averageHoursPerWeek = averageHoursPerWeek;
     }
 
-    public int getTotalToday() {
-        return totalToday;
+    public int getTotalActivitiesToday() {
+        return totalActivitiesToday;
     }
 
-    public void setTotalToday(int totalToday) {
-        this.totalToday = totalToday;
+    public void setTotalActivitiesToday(int totalActivitiesToday) {
+        this.totalActivitiesToday = totalActivitiesToday;
     }
 }
