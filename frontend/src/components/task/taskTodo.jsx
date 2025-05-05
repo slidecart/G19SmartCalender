@@ -17,6 +17,7 @@ import {useEffect, useState} from "react";
 import AddTask from "./addTask";
 import {fetchData} from "../../hooks/FetchData";
 import TaskDialog from "./TaskDialog";
+import ConfirmationDialog from "../ConfirmationDialog";
 
 function TaskTodo(){
 
@@ -113,16 +114,6 @@ function TaskTodo(){
             [name]:value,
         }));
     }
-
-    const handleDelete = async (taskId) => {
-        try {
-            await fetchData(`tasks/delete/${taskId}`, "DELETE", null); 
-            setTasks((prev) => prev.filter((task) => task.id !== taskId));
-        } catch (error) {
-            console.error("Fel vid borttagning: ", error.message);
-        }
-    }
-
     
     useEffect(() => {
         const fetchTasks = async() => {
@@ -138,6 +129,31 @@ function TaskTodo(){
         };
         fetchTasks();
     }, []);
+
+
+    {/* Delete function */}
+    const [confirmDeleteOpen, setConfirmationDeleteOpen] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState(null);
+    const requestDelete = (task) => {
+        setTaskToDelete(task);
+        setConfirmationDeleteOpen(true);
+    }
+
+    const handleDelete = async () => {
+        if (!taskToDelete) return;
+
+        try {
+            await fetchData(`tasks/delete/${taskToDelete.id}`, "DELETE");
+            setTasks(prev => prev.filter(a => a.id !== taskToDelete.id));
+
+        } catch (error) {
+            console.error("Fel vid borttagning: ", error.message);
+        } finally {
+            setConfirmationDeleteOpen(false);
+            setTaskToDelete(null);
+            setSelectedTask(null);
+        }
+    };
 
     return (
         <Container maxWidth="xs" sx={{ bgcolor: "#0077ff7e", p: 2, mt: 2, borderRadius: 2, fontFamily: "'Fira Code', 'Consolas', 'monospace'"}}>
@@ -160,7 +176,7 @@ function TaskTodo(){
                     Ny Task
                 </IconButton>
             </Box>
-            
+
             <Stack spacing={2}>
                 {tasks.map((task, index) => (
                 <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>
@@ -191,9 +207,33 @@ function TaskTodo(){
             {selectedTask && (
                 <TaskDialog
                     open={taskDialogOpen}
-                    onClose={() => setTaskDialogOpen(false)} // Closes activity dialog
+                    onClose={() => setTaskDialogOpen(false)} // Closes task dialog
                     task={selectedTask}
                     onEdit={() => openEditDialog(selectedTask)} // Opens edit dialog
+                />
+            )}
+
+
+            {/* Shows task when clicked */}
+            {selectedTask && (
+                <TaskDialog
+                    open={taskDialogOpen}
+                    onClose={() => setTaskDialogOpen(false)} // Closes task dialog
+                    task={selectedTask}
+                    onEdit={() => openEditDialog(selectedTask)} // Opens edit dialog
+                    onDelete={() => requestDelete(selectedTask)} // Deletes task
+                />
+            )}
+
+
+            {/* Shows confirmation dialog for delete */}
+            {confirmDeleteOpen && (
+                <ConfirmationDialog
+                    open={confirmDeleteOpen}
+                    onClose={() => setConfirmationDeleteOpen(false)}
+                    onConfirm={handleDelete}
+                    title="Bekräfta borttagning"
+                    content="Är du säker på att du vill ta bort ToDo?"
                 />
             )}
         </Container>
