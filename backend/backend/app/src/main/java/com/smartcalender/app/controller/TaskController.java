@@ -124,8 +124,8 @@ public class TaskController {
     public ResponseEntity<?> deleteTask(@PathVariable Long id) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
-            taskService.deleteTask(id, currentUser);
-            return ResponseEntity.ok("Task deleted successfully");
+
+            return taskService.deleteTask(id, currentUser);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
