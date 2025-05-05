@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/system';
 import Header from '../components/containers/header';
+import {useNavigate} from "react-router-dom";
 
 
 const ProfileIcon = styled('img')(({ selected }) => ({
@@ -49,6 +50,8 @@ function AccountSettings() {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleteMessage, setDeleteMessage] = useState('');
     const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+
+    const navigate = useNavigate();
 
     const availableIcons = [
         { id: 'icon1', src: '/userIcons/icon1.png' },

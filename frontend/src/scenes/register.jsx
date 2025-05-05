@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Box } from '@mui/material';
 import UserInput from '../components/userInput';
+import { Link } from 'react-router-dom';
 
 function Register() {
     const handleSubmit = (e) => {
