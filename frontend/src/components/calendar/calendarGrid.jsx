@@ -67,6 +67,7 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivi
                                         sx={{
                                             position:"relative",
                                             padding:"0",
+
                                             cursor: "pointer",
                                             backgroundColor: isToday ? "grey.200" : "inherit",
 
@@ -75,6 +76,7 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivi
                                             if (hits.length === 0) {
                                                 onCellClick(day.date, time);
                                             }
+
                                         }}
                                     > 
                                         {hits.length>0 && (

@@ -335,19 +335,19 @@ function AccountSettings() {
                             </Typography>
                             {taskStats ? (
                                 <>
-                                    <Typography>Totala Uppgifter: {taskStats.totalTasks}</Typography>
-                                    <Typography>Slutförda Uppgifter: {taskStats.completedTasks}</Typography>
-                                    <Typography>Aktiva Uppgifter: {taskStats.activeTasks}</Typography>
+                                    <Typography>Totala Uppgifter: {taskStats.totalTasks ?? 0}</Typography>
+                                    <Typography>Slutförda Uppgifter: {taskStats.completedTasks ?? 0}</Typography>
+                                    <Typography>Aktiva Uppgifter: {taskStats.activeTasks ?? 0}</Typography>
                                 </>
                             ) : (
                                 <Typography>Laddar uppgiftsstatistik...</Typography>
                             )}
                             {activityStats ? (
                                 <>
-                                    <Typography>Totala Aktiviteter Idag: {activityStats.totalActivitiesToday}</Typography>
-                                    <Typography>Totala Aktiviteter Denna Veckan: {activityStats.totalActivitiesThisWeek}</Typography>
-                                    <Typography>Totala Aktiviteter Denna Månaden: {activityStats.totalActivitiesThisMonth}</Typography>
-                                    <Typography>Genomsnittliga timmar per vecka: {activityStats.averageHoursPerWeek}</Typography>
+                                    <Typography>Totala Aktiviteter Idag: {activityStats.totalActivitiesToday ?? 0}</Typography>
+                                    <Typography>Totala Aktiviteter Denna Veckan: {activityStats.totalActivitiesThisWeek ?? 0}</Typography>
+                                    <Typography>Totala Aktiviteter Denna Månaden: {activityStats.totalActivitiesThisMonth ?? 0}</Typography>
+                                    <Typography>Genomsnittliga timmar per vecka: {activityStats.averageHoursPerWeek ?? 0}</Typography>
                                 </>
                             ) : (
                                 <Typography>Laddar aktivitetsstatistik...</Typography>

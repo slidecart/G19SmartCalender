@@ -8,8 +8,8 @@ function Navbar() {
     const navItems = [
         { name: "Dagens agenda", link: "/today" },
         { name: "Kalender", link: "/today" },
-        { name: "Task & ToDo", link: "#" },
-        { name: "Inställningar", link: "#" },
+        { name: "Task & ToDo", link: "/taskTodoPage" },
+
     ];
 
     return (
