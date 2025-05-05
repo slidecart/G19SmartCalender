@@ -16,14 +16,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {useEffect, useState} from "react";
 import AddTask from "../scenes/addTask";
 import {fetchData} from "../hooks/FetchData";
+import ActivityDialog from "../components/calendar/ActivityDialog";
 
 function TaskTodo(){
 
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState(null);
 
-
-    const [openDialog, setOpenDialog] = useState(false);
     const [formData, setFormData] = useState({
         name:"",
         description:"",
@@ -34,12 +33,55 @@ function TaskTodo(){
         completed:false
     })
 
+    const [selectedTask, setSelectedTask] = useState(null);
+    const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+
+
+    const handleTaskClick = (task) => {
+        setSelectedTask(task);
+        setTaskDialogOpen(true);
+    };
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [dialogMode, setDialogMode] = useState(null); // "add" or "edit"
+
+    const openAddDialog = () => {
+        setDialogMode("add");
+        setIsDialogOpen(true);
+    };
+
+    const openEditDialog = (task) => {
+        setFormData(task);
+        setDialogMode("edit");
+        setIsDialogOpen(true);
+        setTaskDialogOpen(false);
+    };
+
+    const handleCloseDialog = () => {
+        setIsDialogOpen(false);
+        setFormData({
+            name:"",
+            description:"",
+            location:"",
+            date:"",
+            categoryId:"",
+            id:"",
+            completed:false
+        });
+    };
+
+
     const handleSubmit = async () =>{
         try{
-            const response = await fetchData("tasks/create", "POST", formData);
+            console.log(selectedTask);
+            // Checks if the user is in edit mode or not
+            const apiPath = dialogMode === "edit" ? `tasks/edit/${selectedTask.id}` : "tasks/create";
+            const method = dialogMode === "edit" ? "PUT" : "POST";
+
+            const response = await fetchData(apiPath, method, formData);
             console.log(response);
 
-            setOpenDialog(false);
+            setIsDialogOpen(false);
             setFormData({
                 name:"",
                 description:"",
@@ -49,7 +91,16 @@ function TaskTodo(){
                 userId:"",
                 completed:false
             });
-            setTasks((prevTasks) => [...prevTasks, response]);
+
+            if (method === "POST") {
+                setTasks((prevTasks) => [...prevTasks, response]); // Adds the new task to the list
+            } else {
+                setTasks((prevTasks) =>
+                    prevTasks.map((task) =>
+                        task.id === response.id ? response : task
+                    )
+                ); // Updates the existing task in the list
+            }
         } catch (error){
             console.error(error);
         }
@@ -103,7 +154,7 @@ function TaskTodo(){
                 <IconButton
                     size="small"
                     sx={{ color: "black" }}
-                    onClick={() => setOpenDialog(true)}
+                    onClick={() => openAddDialog()}
                 >
                     <AddIcon />
                     Ny Task
@@ -111,13 +162,7 @@ function TaskTodo(){
             </Box>
 
 
-            <AddTask
-                open={openDialog}
-                onClose={() => setOpenDialog(false)}
-                formData={formData}
-                handleChange={handleChange}
-                handleSubmit={handleSubmit}
-            />
+
             <Stack spacing={2}>
                 {tasks.map((task, index) => (
                 <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>
@@ -136,6 +181,22 @@ function TaskTodo(){
                 ))}
             </Stack>
 
+            <AddTask
+                open={isDialogOpen}
+                onClose={handleCloseDialog}
+                formData={formData}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+            />
+
+            {selectedTask && (
+                <TaskDialog
+                    open={taskDialogOpen}
+                    onClose={() => setTaskDialogOpen(false)} // Closes activity dialog
+                    task={selectedTask}
+                    onEdit={() => openEditDialog(selectedTask)} // Opens edit dialog
+                />
+            )}
         </Container>
     );
 }
