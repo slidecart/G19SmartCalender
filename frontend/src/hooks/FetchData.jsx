@@ -7,9 +7,7 @@
 const API_BASE = process.env.REACT_APP_BACKEND_URL;
 
 async function makeRequest(path, method, body, token) {
-    const cleanPath = path.startsWith('/') ? path.slice(1) : path;
-    const url = `${API_BASE}${cleanPath}`;
-
+    const url = `${API_BASE}${path}`;
     const headers = { "Content-Type": "application/json" };
     if (token) headers.Authorization = `Bearer ${token}`;
 
@@ -67,6 +65,5 @@ export async function fetchData(path, method = "GET", body = null, isPublic = fa
     }
 
     // 4) Parse JSON and return
-    const text = await res.text();
-    return text ? JSON.parse(text) : null;
+    return res.json();
 }
