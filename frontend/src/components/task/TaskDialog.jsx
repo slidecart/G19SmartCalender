@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import React from "react";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
-function TaskDialog({ open, onClose, task, onEdit }){
+function TaskDialog({ open, onClose, task, onEdit, onDelete}){
     return (
         <Dialog
             open={open}
