@@ -25,6 +25,9 @@ public class User {
     @Column(name = "email_verified")
     private boolean emailVerified;
 
+    @Column(name = "profile_icon")
+    private String profileIcon = "icon1";
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
@@ -76,6 +79,14 @@ public class User {
 
     public void setEmailVerified(boolean emailVerified) {
         this.emailVerified = emailVerified;
+    }
+
+    public String getProfileIcon() {
+        return profileIcon;
+    }
+
+    public void setProfileIcon(String profileIcon) {
+        this.profileIcon = profileIcon;
     }
 
     public List<RefreshToken> getRefreshTokens() {

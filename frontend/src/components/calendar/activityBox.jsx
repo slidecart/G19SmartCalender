@@ -1,12 +1,12 @@
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import dayjs from "dayjs";
 
-const ActivityBox = ({ activities }) => {
+const ActivityBox = ({ activities, onClick }) => {
     {/* */}
     if (!activities || activities.length === 0 ) return null;
 
     // Height of every cell in calendarGrid
-    const cellHeight = 50;
+    const cellHeight = 60;
     return (
         <>
             {activities.map((activity, i) => {
@@ -19,17 +19,25 @@ const ActivityBox = ({ activities }) => {
                 const endMinutes = (end.hour() -8 ) * 60+ end.minute();
 
                 // Where activity box is going to start and end based on time from calendarGrid
+                const startTime = (start.minute());
                 const duration = (endMinutes - startMinutes)*(cellHeight/60);
 
                 return (
-                    <Box key={i} sx={{ 
+                    <Box key={i}
+                         onClick={onClick}
+                         sx={{
                             position:"absolute", 
-                            mt:"-25px",
+                            top:`${startTime}px`,
                             height: `${duration}px`,
                             backgroundColor:"#60f085",
                             boxShadow:1,
                             width:"80%",
-                            align:"center"
+                            cursor:"pointer",
+                            align:"center",
+                             transition: "background-color 0.3s ease",
+                             "&:hover": {
+                                 backgroundColor: "primary.main", // Slightly darkens the background
+                             },
                         }}>
                             <Typography variant="subtitle2">
                                 {activity.name}

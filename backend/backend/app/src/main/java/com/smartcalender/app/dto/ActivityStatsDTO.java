@@ -4,11 +4,13 @@ public class ActivityStatsDTO {
     private int totalThisWeek;
     private int totalThisMonth;
     private int averageHoursPerWeek;
+    private int totalToday;
 
-    public ActivityStatsDTO(int totalThisWeek, int totalThisMonth, int averageHoursPerWeek) {
+    public ActivityStatsDTO(int totalToday, int totalThisWeek, int totalThisMonth, int averageHoursPerWeek) {
         this.totalThisWeek = totalThisWeek;
         this.totalThisMonth = totalThisMonth;
         this.averageHoursPerWeek = averageHoursPerWeek;
+        this.totalToday = totalToday;
     }
 
     public int getTotalThisWeek() {
@@ -33,5 +35,13 @@ public class ActivityStatsDTO {
 
     public void setAverageHoursPerWeek(int averageHoursPerWeek) {
         this.averageHoursPerWeek = averageHoursPerWeek;
+    }
+
+    public int getTotalToday() {
+        return totalToday;
+    }
+
+    public void setTotalToday(int totalToday) {
+        this.totalToday = totalToday;
     }
 }

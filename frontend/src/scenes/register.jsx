@@ -1,6 +1,7 @@
 import React from 'react';
 import { Container, Box } from '@mui/material';
 import UserInput from '../components/userInput';
+import { Link } from 'react-router-dom';
 
 function Register() {
     const handleSubmit = (e) => {
@@ -81,6 +82,9 @@ function Register() {
                     buttonText="Registrera"
                     onSubmit={handleSubmit}
                 />
+                <Box sx={{ textAlign: "center", mt: 2 }}>
+                    <p>Har du redan ett konto? <Link to="/login">Logga in här</Link></p>
+                </Box>
             </Box>
         </Container>
     );
