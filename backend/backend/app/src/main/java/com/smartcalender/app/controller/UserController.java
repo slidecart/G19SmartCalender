@@ -1,15 +1,11 @@
 package com.smartcalender.app.controller;
 
-import com.smartcalender.app.auth.SecurityUtils;
-import com.smartcalender.app.dto.ActivityStatsDTO;
-import com.smartcalender.app.dto.UserDTO;
 import com.smartcalender.app.dto.TaskStatsDTO;
 import com.smartcalender.app.entity.User;
 import com.smartcalender.app.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,60 +19,10 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/me")
-    public ResponseEntity<?> getCurrentUserInformation() {
-        UserDetails currentUser = SecurityUtils.getCurrentUser();
-
-        if (currentUser != null) {
-            UserDTO user = userService.getUser(currentUser);
-            return ResponseEntity.status(HttpStatus.OK).body(user);
-        }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-
-    }
-
     @GetMapping("/me/stats/tasks")
-    public ResponseEntity<?> getTaskStats() {
-        UserDetails currentUser = SecurityUtils.getCurrentUser();
-
-        if (currentUser != null) {
-            TaskStatsDTO taskStatsDTO = userService.getTaskStats(currentUser);
-            return ResponseEntity.status(HttpStatus.OK).body(taskStatsDTO);
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
-
-    @GetMapping("/me/stats/activities")
-    public ResponseEntity<?> getActivityStats() {
-        UserDetails currentUser = SecurityUtils.getCurrentUser();
-
-        if (currentUser != null) {
-            ActivityStatsDTO activityStatsDTO = userService.getActivityStats(currentUser);
-            return ResponseEntity.status(HttpStatus.OK).body(activityStatsDTO);
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
-
-    @GetMapping("/me/profile-icon")
-    public ResponseEntity<?> getProfileIcon() {
-        UserDetails currentUser = SecurityUtils.getCurrentUser();
-
-        if (currentUser != null) {
-            UserDTO profileIcon = userService.getProfileIcon(currentUser);
-            return ResponseEntity.status(HttpStatus.OK).body(profileIcon);
-        }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
-
-    @PutMapping("/me/profile-icon")
-    public ResponseEntity<?> setProfileIcon(@RequestBody UserDTO user) {
-        UserDetails currentUser = SecurityUtils.getCurrentUser();
-        if (currentUser != null) {
-            UserDTO updatedIcon = userService.setProfileIcon(currentUser, user.getProfileIcon());
-            return ResponseEntity.status(HttpStatus.OK).body(updatedIcon);
-        }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<TaskStatsDTO> getTaskStats() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        TaskStatsDTO taskStatsDTO = userService.getTaskStats(username);
+        return new ResponseEntity<>(taskStatsDTO, HttpStatus.OK);
     }
 }
