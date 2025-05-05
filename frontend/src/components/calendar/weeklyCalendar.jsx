@@ -183,6 +183,40 @@ function WeeklyCalendar() {
             setSelectedActivity(null);
         }
     };
+
+    {/* Categories */}
+    const [categories, setCategories] = useState([]);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetchData("categories/all", "GET", "");
+                setCategories(response);
+                localStorage.setItem("categories", JSON.stringify(response));
+                console.log(response);
+            } catch (error) {
+                console.error("Fel vid hämtning av kategorier: ", error.message);
+            }
+        };
+        fetchCategories();
+    }, []);
+
+    // JavaScript
+    const createCategory = async (newCategoryName) => {
+      try {
+        // Create the category on the server
+        const newCategoryData = { name: newCategoryName };
+        const response = await fetchData("categories/create", "POST", newCategoryData);
+
+        // Update the categories state and localStorage with the new category
+        setCategories((prevCategories) => {
+          const updatedCategories = [...prevCategories, response];
+          localStorage.setItem("categories", JSON.stringify(updatedCategories));
+          return updatedCategories;
+        });
+      } catch (error) {
+        console.error("Error creating category: ", error.message);
+      }
+    };
         
     return(
         <Container sx={{my:2}}>
@@ -234,6 +268,8 @@ function WeeklyCalendar() {
                 formData={formData}
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
+                categories={categories}
+                onCreateCategory={createCategory}
 
             />
 

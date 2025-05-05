@@ -1,7 +1,23 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import {
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    TextField,
+    Button,
+    Box,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem
+} from "@mui/material";
+import {useState} from "react";
+import CreateCategoryDialog from "../CreateCategoryDialog";
 
 const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit, mode, categories, onCreateCategory }) => {
     const isEditMode = mode === "edit";
+    const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
+
 
     return(
         <Dialog open={open} onClose={onClose}>
@@ -42,28 +58,26 @@ const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit, mode
                             id="category-select"
                             name="categoryId"
                             value={formData.categoryId}
-                            onChange={handleChange}
                             label="Kategori"
+                            onChange={(e) => {
+                                if (e.target.value === "create-category-option") {
+                                    setOpenCreateCategoryDialog(true);
+                                } else {
+                                    handleChange(e);
+                                }
+                            }}
                         >
-                            {categories && categories.length > 0 ?
-                                categories.map(category => (
+                            {categories &&
+                                categories.map((category) => (
                                     <MenuItem key={category.id} value={category.id}>
                                         {category.name}
                                     </MenuItem>
-                                ))
-                                :
-                                <MenuItem disabled value="">
-                                    <Box display="flex" justifyContent="space-between" alignItems="center" width="100%">
-                                        <span>No categories created</span>
-                                        <span
-                                            style={{color:"blue", textDecoration:"underline", cursor:"pointer"}}
-                                            onClick={onCreateCategory}
-                                        >
-                                            Create a category
-                                        </span>
-                                    </Box>
-                                </MenuItem>
-                            }
+                                ))}
+                            <MenuItem value="create-category-option">
+                                <Box display="flex" justifyContent="center" alignItems="center" width="100%">
+                                    Create a category
+                                </Box>
+                            </MenuItem>
                         </Select>
                     </FormControl>
                 </Box>
@@ -105,6 +119,11 @@ const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit, mode
                 <Button onClick={onClose}>Avbryt</Button>
                 <Button onClick={handleSubmit} variant="contained">Spara</Button>
             </DialogActions>
+            <CreateCategoryDialog
+                open={openCreateCategoryDialog}
+                onClose={() => setOpenCreateCategoryDialog(false)}
+                onCreate={onCreateCategory}
+            />
         </Dialog>
     );
 };
