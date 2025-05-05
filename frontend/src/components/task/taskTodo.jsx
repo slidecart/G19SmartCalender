@@ -168,7 +168,7 @@ function TaskTodo(){
                 <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>
                     <CardContent>
                         <Box
-                            onClick={handleTaskClick}
+                            onClick={() => handleTaskClick(task)}
                             display="flex" justifyContent="space-between" alignItems="center">
                             <Box>
                                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>{task.name}</Typography>
