@@ -8,7 +8,6 @@ import AuthProvider, {PrivateRoute} from "./hooks/AuthContext";
 import VerifyEmail from "./scenes/VerifyEmail";
 import ResetPassword from "./scenes/ResetPassword";
 import Register from "./scenes/register";
-import AccountSettings from "./scenes/AccountSettings";
 
 function App() {
   return (
@@ -17,12 +16,11 @@ function App() {
               <Route path="/" element={<Navigate to="/login" replace/>} />
               <Route path="/login" element={<LogIn/>} />
               <Route path="/verify-email" element={<VerifyEmail/>} />
-              <Route path="/reset-password" element={<ResetPassword/>} />
+                <Route path="/reset-password" element={<ResetPassword/>} />
               <Route path="/register" element={<Register/>} />
               <Route element={<PrivateRoute />}>
                   <Route path="/today" element={<TodaysAgenda/>} />
                   <Route path="/taskTodoPage" element={<TaskTodo/>} />
-                  <Route path="/account-settings" element={<AccountSettings/>} />
                   {/* Tillägg av andra länkar senare när sidorna har byggts på*/}
               </Route>
           </Routes>

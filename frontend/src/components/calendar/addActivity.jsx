@@ -1,14 +1,12 @@
 import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Box } from "@mui/material";
 
-const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit, mode }) => {
-    const isEditMode = mode === "edit";
-
+const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit }) => {
     return(
         <Dialog open={open} onClose={onClose}>
 
             {/* Title for the dialog */}
             <DialogTitle m={1}>
-                {isEditMode ? "Redigera aktivitet" : "Lägg till aktivitet"}
+                Lägg till aktivitet
             </DialogTitle>
 
             {/* Dialog content allowing the user to enter information about created activity */}

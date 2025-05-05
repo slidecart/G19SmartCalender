@@ -11,7 +11,6 @@ public class ActivityMapper {
 
     public ActivityDTO toDto(Activity activity) {
         ActivityDTO dto = new ActivityDTO();
-        dto.setId(activity.getId());
         dto.setName(activity.getName());
         dto.setDescription(activity.getDescription());
         dto.setLocation(activity.getLocation());
