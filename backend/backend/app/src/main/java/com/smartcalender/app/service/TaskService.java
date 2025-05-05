@@ -125,9 +125,9 @@ public class TaskService {
         Optional<Task> taskOptional = taskRepository.findByIdAndUser(id, user);
         if (taskOptional.isPresent()) {
             taskRepository.delete(taskOptional.get());
-            return new ResponseEntity<>(true, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(true);
         }
-        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
     }
 
     /**
