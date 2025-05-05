@@ -3,7 +3,7 @@ import {  Routes, Route, Navigate } from "react-router-dom";
 
 import LogIn from "./scenes/login";
 import TodaysAgenda from "./scenes/todaysAgenda";
-import TaskTodo from "./scenes/taskTodo";
+import TaskTodo from "./components/task/taskTodo";
 import AuthProvider, {PrivateRoute} from "./hooks/AuthContext";
 import VerifyEmail from "./scenes/VerifyEmail";
 import ResetPassword from "./scenes/ResetPassword";

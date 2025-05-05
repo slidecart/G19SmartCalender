@@ -14,9 +14,9 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {useEffect, useState} from "react";
-import AddTask from "../scenes/addTask";
-import {fetchData} from "../hooks/FetchData";
-import ActivityDialog from "../components/calendar/ActivityDialog";
+import AddTask from "./addTask";
+import {fetchData} from "../../hooks/FetchData";
+import TaskDialog from "./TaskDialog";
 
 function TaskTodo(){
 
@@ -167,14 +167,15 @@ function TaskTodo(){
                 {tasks.map((task, index) => (
                 <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>
                     <CardContent>
-                        <Box display="flex" justifyContent="space-between" alignItems="center">
+                        <Box
+                            onClick={handleTaskClick}
+                            display="flex" justifyContent="space-between" alignItems="center">
                             <Box>
                                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>{task.name}</Typography>
                                 <Typography>{task.description}</Typography>
                             </Box>
-                            <IconButton onClick={() => handleDelete(task.id)} aria-label="delete" sx={{ color: "red" }}>
-                                <DeleteIcon />
-                            </IconButton>
+
+
                         </Box>
                     </CardContent>
                 </Card>
