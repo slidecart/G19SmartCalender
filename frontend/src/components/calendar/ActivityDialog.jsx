@@ -75,6 +75,9 @@ function ActivityDialog({ open, onClose, activity, onEdit, onDelete }) {
               <strong>Plats:</strong> {activity?.location || "Ingen plats angiven."}
             </Typography>
             <Typography variant="body1" sx={{ color: "text.secondary" }}>
+              <strong>Kategori:</strong> {activity?.categoryName || "Ingen kategori angiven."}
+            </Typography>
+            <Typography variant="body1" sx={{ color: "text.secondary" }}>
               <strong>Datum:</strong> {activity?.date || "Inget datum angivet."}
             </Typography>
             <Typography variant="body1" sx={{ color: "text.secondary" }}>
