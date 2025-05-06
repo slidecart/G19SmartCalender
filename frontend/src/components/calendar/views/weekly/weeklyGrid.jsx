@@ -1,9 +1,9 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography, Box } from "@mui/material";
 import dayjs from "dayjs";
-import ActivityBox from "./activityBox";
+import ActivityBox from "../../activityBox";
 
 
-const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivityClick }) => {
+const WeeklyGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivityClick }) => {
     return (
         <Table>
             <TableHead>
@@ -68,34 +68,6 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivi
                                     </TableCell>
                                 );
                         })}
-
-                        {/* One cell for every weekday and checks if any activity exists in this time-span */}
-                        {/* {weekdays.map((day) => {
-                            const matchingActivity = activities.find((activity) => {
-                                const startTime = dayjs(`1970-01-01T${activity.startTime}`);
-                                const startDate = dayjs(activity.date);
-                                return (
-                                    startDate.format("YYYY-MM-DD") === day.date &&
-                                    startTime.format("HH:mm") === time
-
-                                );
-                            });
-
-                            console.log(matchingActivity); 
-                            return (
-                                <TableCell 
-                                    key={`${day.name}-${time}`}
-                                    align="center"
-
-                                >
-                                    <Box>
-                                        <Typography>
-                                            hej
-                                        </Typography>
-                                    </Box>
-                                </TableCell>
-                            );
-                        })} */}
                     </TableRow>
                 ))}
             </TableBody>
@@ -103,4 +75,4 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivi
     );
 };
 
-export default CalendarGrid;
+export default WeeklyGrid;

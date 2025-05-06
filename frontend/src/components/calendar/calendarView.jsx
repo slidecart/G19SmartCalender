@@ -1,39 +1,15 @@
-import { Box, Typography, TableContainer, Paper, Button, Container } from "@mui/material";
-import dayjs from "dayjs";
 import { useEffect, useState } from "react";
-import CalendarGrid from "./../calendar/calendarGrid"
-import AddActivity from "./../calendar/addActivity";
-import {fetchData} from "../../hooks/FetchData";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { Box, ButtonGroup, Button, Paper } from "@mui/material";
+import WeeklyCalendar from "./views/weekly/weeklyCalendar";
+import AddActivity from "./addActivity";
 import ActivityDialog from "./ActivityDialog";
+import { fetchData } from "../../hooks/FetchData";
 
+function CalendarView(){
 
-
-function WeeklyCalendar() {
-
-    // Constant variables for dates
-    const today = dayjs();
-    const currentYear = today.year();
-    const [startOfWeek, setStartOfWeek] = useState(dayjs().startOf("week").add(1,"day")); //First day of the week is monday
-
-    //const startOfWeek = today.startOf("week").add(1, "day"); // First day of the week is monday
-
-    // Array over weekdays from monday to sunday with actual dates from local computer
-    const weekdays = Array.from ({ length: 7 }, (_, i) => ({
-        name: ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag", "Söndag"][i],
-        date: startOfWeek.clone().add(i, "day").format("YYYY-MM-DD") //Format from JSON-file
-    }));
-
-    // Array with time from 08:00 to 20:00 
-    const timeSlots = Array.from({ length: 13}, (_,i) => {
-        const hour = 8 + i;
-        return `${hour.toString().padStart(2, '0')}:00`;
-    });
-
-
-    // State for activities
+    // State for view and activities
     // Activity permissions and error handling
+    const [currentView, setCurrentView] = useState("week");
     const [activities, setActivities] = useState([]);
     const [error, setError] = useState(null);
 
@@ -148,37 +124,39 @@ function WeeklyCalendar() {
         };
         fetchActivities();
     }, []);
-        
-    return(
-        <Container sx={{my:2}}>
-            <Box display="flex" justifyContent={"space-between"} mb={1}>
-                {/* Button changing visible week to previous */}
-                <Button variant="contained"  size="small" onClick={() => setStartOfWeek(prev => prev.subtract(1, "week"))}>
-                    <ArrowBackIcon fontSize="small"/>
-                </Button>
 
-                {/* Headtitle for calender */}
-                <Typography variant="h6" sx={{textAlign:"center"}}>
-                    Veckokalender - {startOfWeek.format("YYYY")} {/* Shows year based on week */}
-                </Typography>
+    return (
+        <Paper elevation={3} sx={{ p:2 }}>
+            <Box display="flex" justifyContent={"flex-end"} mb={2}>
 
-                {/* Button changing visible week to next */}
-                <Button variant ="contained" size="small" onClick={() => setStartOfWeek(prev => prev.add(1, "week"))}>
-                    <ArrowForwardIcon fontSize="small"/>
-                </Button>
-
+                {/* Buttons for changing views */}
+                <ButtonGroup variant="contained" size="small">
+                    <Button onClick={() => setCurrentView("week")} color={currentView === "week" ? "primary" : "inherit"}>
+                        Veckovy
+                    </Button>
+                    <Button onClick={() => setCurrentView("month")} color={currentView === "month" ? "primary" : "inherit"}>
+                        Månadsvy
+                    </Button>
+                </ButtonGroup>
             </Box>
 
-
-            {/* Shows calendar */}
-            <TableContainer component ={Paper} elevation="2" sx={{height:"fit-content"}}>
-                <CalendarGrid
-                    activities = {activities}
-                    weekdays = {weekdays}
-                    timeSlots = {timeSlots}
-                    onActivityClick = {handleActivityClick} // Shows activity when clicked
+            {/* Sets view to week */}
+            {currentView === "week" && (
+                <WeeklyCalendar
+                    activities={activities}
+                    onActivityClick={handleActivityClick}
+                    openAddDialog={openAddDialog}
                 />
-            </TableContainer>
+            )}
+
+            {/* SKA LÄGGAS TILL
+            {currentView === "month" && (
+                <MonthlyCalendar
+                    activities={activities}
+                    onActivityClick={handleActivityClick}
+                    openAddDialog={openAddDialog}
+                />
+            )} */}
 
             {/* Button for adding activites */}
             <Box display="flex" justifycontent="flex-end" mt={2}>
@@ -210,10 +188,8 @@ function WeeklyCalendar() {
                     onEdit={() => openEditDialog(selectedActivity)} // Opens edit dialog
                 />
             )}
+        </Paper>
+    )
+}
 
-            {/* Shows error message if any */}
-        </Container>
-    );
-};
-
-export default WeeklyCalendar;
+export default CalendarView;
