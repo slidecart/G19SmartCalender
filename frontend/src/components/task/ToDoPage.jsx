@@ -14,6 +14,8 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import {useEffect, useState} from "react";
 import AddTask from "./AddTask";
 import {fetchData} from "../../hooks/FetchData";
@@ -126,6 +128,7 @@ function ToDoPage(){
             [name]:value,
         }));
     }
+
     
     useEffect(() => {
         const fetchTasks = async() => {
@@ -217,41 +220,46 @@ function ToDoPage(){
                                 transition: "opacity 0.3s ease",
                             }}
                         >
-                            <CardContent>
+                            {/* Checkbox tasks */}
+                            <CardContent sx={{ position: "relative" }}>
+                                <Checkbox
+                                    checked={task.completed}
+                                    onChange={(e) => {
+                                        e.stopPropagation();
+                                        handleToggleCompleted(task);
+                                    }}
+                                    sx={{
+                                        position: "absolute",
+                                        top: 8,
+                                        right: 8,
+                                    }}
+                                />
+
                                 <Box
-                                    display="flex"
-                                    alignItems="center"
                                     onClick={() => handleTaskClick(task)}
                                     sx={{ cursor: "pointer" }}
                                 >
-                                    <Checkbox
-                                        checked={task.completed}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleToggleCompleted(task);
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            fontWeight: "bold",
+                                            textDecoration: task.completed ? "line-through" : "none",
+                                            color: task.completed ? "gray" : "black",
                                         }}
-                                    />
-                                    <Box>
-                                        <Typography
-                                            variant="h6"
-                                            sx={{
-                                                fontWeight: "bold",
-                                                textDecoration: task.completed ? "line-through" : "none",
-                                                color: task.completed ? "gray" : "black",
-                                            }}
                                         >
-                                            {task.name}
+                                        {task.name}
                                         </Typography>
                                         <Typography
-                                            sx={{
-                                                color: task.completed ? "gray" : "black",
-                                            }}
+                                        sx={{
+                                            textDecoration: task.completed ? "line-through" : "none",
+                                            color: task.completed ? "gray" : "black",
+                                        }}
                                         >
-                                            {task.description}
-                                        </Typography>
-                                    </Box>
+                                        {task.description}
+                                    </Typography>
                                 </Box>
                             </CardContent>
+
                         </Card>
                     ))}
 
