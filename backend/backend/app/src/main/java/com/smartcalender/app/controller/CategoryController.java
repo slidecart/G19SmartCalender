@@ -4,6 +4,7 @@ import com.smartcalender.app.auth.SecurityUtils;
 import com.smartcalender.app.dto.CategoryDTO;
 import com.smartcalender.app.dto.CreateCategoryRequest;
 import com.smartcalender.app.service.CategoryService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -72,7 +73,7 @@ public class CategoryController {
      *         or an HTTP 401 Unauthorized response if the user is not authenticated
      */
     @PostMapping("/create")
-    public ResponseEntity<?> createCategory(@RequestBody CreateCategoryRequest request) {
+    public ResponseEntity<?> createCategory(@Valid @RequestBody CreateCategoryRequest request) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(request, currentUser));

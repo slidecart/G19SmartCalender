@@ -1,6 +1,6 @@
 import { Box, Typography, TableContainer, Paper, Button, Container } from "@mui/material";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import CalendarGrid from "./../calendar/calendarGrid"
 import AddActivity from "./../calendar/addActivity";
 import {fetchData} from "../../hooks/FetchData";
@@ -8,6 +8,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ActivityDialog from "./ActivityDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
+import Sidebar from "../containers/Sidebar";
 
 
 
@@ -101,14 +102,11 @@ function WeeklyCalendar() {
     // Function to handle form to be able to add activities
     const handleSubmit = async () =>{
         try{
-            console.log(selectedActivity);
             // Checks if the user is in edit mode or not
             const apiPath = dialogMode === "edit" ? `activities/edit/${selectedActivity.id}` : "activities/create";
             const method = dialogMode === "edit" ? "PUT" : "POST";
 
-
             const response = await fetchData(apiPath, method, formData);
-            console.log(response);
 
             // Closes the dialog och resets the form
             setIsDialogOpen(false);
@@ -150,7 +148,6 @@ function WeeklyCalendar() {
             try {
                 const response = await fetchData("activities/all", "GET", ""); // Tar emot aktiviteter från backend
 
-
                 setActivities(response); // Användarens aktiviteter
             } catch (error) {
                 console.error("Fel vid hämtning: ", error.message);
@@ -183,6 +180,42 @@ function WeeklyCalendar() {
             setSelectedActivity(null);
         }
     };
+
+    {/* Categories */}
+    const [categories, setCategories] = useState([]);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetchData("categories/all", "GET", "");
+                setCategories(response);
+                localStorage.setItem("categories", JSON.stringify(response));
+            } catch (error) {
+                console.error("Fel vid hämtning av kategorier: ", error.message);
+            }
+        };
+        fetchCategories();
+    }, []);
+
+
+    const createCategory = async (name, color) => {
+      try {
+        // Create the category on the server
+        const newCategoryData = {
+          name: name,
+          color: color,
+        };
+
+        const response = await fetchData("categories/create", "POST", newCategoryData);
+        // Update the categories state and localStorage with the new category
+        setCategories((prevCategories) => {
+          const updatedCategories = [...prevCategories, response];
+          localStorage.setItem("categories", JSON.stringify(updatedCategories));
+          return updatedCategories;
+        });
+      } catch (error) {
+        console.error("Error creating category: ", error.message);
+      }
+    };
         
     return(
         <Container sx={{my:2}}>
@@ -209,6 +242,7 @@ function WeeklyCalendar() {
             <TableContainer component ={Paper} elevation="2" sx={{height:"fit-content"}}>
                 <CalendarGrid
                     activities = {activities}
+                    categories = {categories}
                     weekdays = {weekdays}
                     timeSlots = {timeSlots}
                     onActivityClick = {handleActivityClick} // Shows activity when clicked
@@ -216,7 +250,7 @@ function WeeklyCalendar() {
                 />
             </TableContainer>
 
-            {/* Button for adding activites */}
+            {/* Button for adding activities */}
             <Box display="flex" justifycontent="flex-end" mt={2}>
                 <Button
                     variant="contained"
@@ -234,7 +268,9 @@ function WeeklyCalendar() {
                 formData={formData}
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
-
+                categories={categories}
+                onCreateCategory={createCategory}
+                mode={dialogMode} // "add" or "edit"
             />
 
             {/* Shows activity when clicked */}
@@ -258,10 +294,9 @@ function WeeklyCalendar() {
                     content="Är du säker på att du vill ta bort aktiviteten?"
                 />
             )}
-
             {/* Shows error message if any */}
         </Container>
     );
-};
+}
 
 export default WeeklyCalendar;
