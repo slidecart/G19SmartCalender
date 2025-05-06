@@ -1,6 +1,6 @@
 import { Box, Typography, TableContainer, Paper, Button, Container } from "@mui/material";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import {useEffect, useMemo, useState} from "react";
 import CalendarGrid from "./../calendar/calendarGrid"
 import AddActivity from "./../calendar/addActivity";
 import {fetchData} from "../../hooks/FetchData";
@@ -8,6 +8,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ActivityDialog from "./ActivityDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
+import Sidebar from "../containers/Sidebar";
 
 
 
@@ -101,14 +102,11 @@ function WeeklyCalendar() {
     // Function to handle form to be able to add activities
     const handleSubmit = async () =>{
         try{
-            console.log(selectedActivity);
             // Checks if the user is in edit mode or not
             const apiPath = dialogMode === "edit" ? `activities/edit/${selectedActivity.id}` : "activities/create";
             const method = dialogMode === "edit" ? "PUT" : "POST";
 
-
             const response = await fetchData(apiPath, method, formData);
-            console.log(response);
 
             // Closes the dialog och resets the form
             setIsDialogOpen(false);
@@ -149,7 +147,6 @@ function WeeklyCalendar() {
         const fetchActivities = async() => {
             try {
                 const response = await fetchData("activities/all", "GET", ""); // Tar emot aktiviteter från backend
-
 
                 setActivities(response); // Användarens aktiviteter
             } catch (error) {
@@ -207,9 +204,8 @@ function WeeklyCalendar() {
           name: name,
           color: color,
         };
-        console.log(newCategoryData);
+
         const response = await fetchData("categories/create", "POST", newCategoryData);
-        console.log(response);
         // Update the categories state and localStorage with the new category
         setCategories((prevCategories) => {
           const updatedCategories = [...prevCategories, response];
@@ -254,7 +250,7 @@ function WeeklyCalendar() {
                 />
             </TableContainer>
 
-            {/* Button for adding activites */}
+            {/* Button for adding activities */}
             <Box display="flex" justifycontent="flex-end" mt={2}>
                 <Button
                     variant="contained"
@@ -298,10 +294,9 @@ function WeeklyCalendar() {
                     content="Är du säker på att du vill ta bort aktiviteten?"
                 />
             )}
-
             {/* Shows error message if any */}
         </Container>
     );
-};
+}
 
 export default WeeklyCalendar;
