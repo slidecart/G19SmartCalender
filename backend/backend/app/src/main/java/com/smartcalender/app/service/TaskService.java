@@ -199,7 +199,7 @@ public class TaskService {
         }
 
         activityRepository.save(activity);
-        return new ActivityDTO(activity);
+        return new ActivityDTO(activity, null);
     }
 
     /**

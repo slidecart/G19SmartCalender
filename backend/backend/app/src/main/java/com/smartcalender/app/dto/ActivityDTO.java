@@ -1,7 +1,6 @@
 package com.smartcalender.app.dto;
 
 import com.smartcalender.app.entity.Activity;
-import jakarta.validation.constraints.AssertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -27,11 +26,7 @@ public class ActivityDTO {
     private Boolean validTimeRange;
     private List<String> warnings;
 
-    public ActivityDTO() {
-        this.warnings = new ArrayList<>();
-    }
-
-    public ActivityDTO(Activity activity) {
+    public ActivityDTO(Activity activity, List <String> warnings) {
         this.id = activity.getId();
         this.name = activity.getName();
         this.description = activity.getDescription();
@@ -45,15 +40,7 @@ public class ActivityDTO {
         this.onGoing = activity.isOnGoing();
         this.future = activity.isFuture();
         this.validTimeRange = activity.isValidTimeRange();
-        this.warnings = new ArrayList<>();
-    }
-
-    @AssertTrue(message = "Start time must be before end time")
-    public boolean isValidTimeRange() {
-        if (startTime == null || endTime == null) {
-            return false;
-        }
-        return startTime.isBefore(endTime);
+        this.warnings = warnings != null ? warnings : new ArrayList<>();
     }
 
     public Long getId() {
