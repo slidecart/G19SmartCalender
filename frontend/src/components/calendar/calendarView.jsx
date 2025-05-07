@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, ButtonGroup, Button, Paper } from "@mui/material";
 import WeeklyCalendar from "./views/weekly/weeklyCalendar";
+import MonthlyCalendar from "./views/monthly/monthlyCalendar";
 import AddActivity from "./addActivity";
 import ActivityDialog from "./ActivityDialog";
 import { fetchData } from "../../hooks/FetchData";
@@ -149,14 +150,14 @@ function CalendarView(){
                 />
             )}
 
-            {/* SKA LÄGGAS TILL
+            
             {currentView === "month" && (
                 <MonthlyCalendar
                     activities={activities}
                     onActivityClick={handleActivityClick}
                     openAddDialog={openAddDialog}
                 />
-            )} */}
+            )} 
 
             {/* Button for adding activites */}
             <Box display="flex" justifycontent="flex-end" mt={2}>

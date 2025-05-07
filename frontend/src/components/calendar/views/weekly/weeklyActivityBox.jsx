@@ -1,7 +1,7 @@
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import dayjs from "dayjs";
 
-const ActivityBox = ({ activities, onClick }) => {
+const WeeklyActivityBox = ({ activities, onClick }) => {
     {/* */}
     if (!activities || activities.length === 0 ) return null;
 
@@ -52,4 +52,4 @@ const ActivityBox = ({ activities, onClick }) => {
     );
 };
 
-export default ActivityBox;
+export default WeeklyActivityBox;

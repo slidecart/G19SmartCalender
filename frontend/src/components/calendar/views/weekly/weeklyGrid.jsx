@@ -1,11 +1,13 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography, Box } from "@mui/material";
 import dayjs from "dayjs";
-import ActivityBox from "../../activityBox";
+import WeeklyActivityBox from "./weeklyActivityBox";
 
 
 const WeeklyGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivityClick }) => {
     return (
         <Table>
+
+            {/* TableHead for all the weekdays */}
             <TableHead>
                 <TableRow>
                     {/* Empty cell, only for the time-column */}
@@ -25,6 +27,8 @@ const WeeklyGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivity
                     ))}
                 </TableRow>
             </TableHead>
+
+            {/* TableBody for the time and cells */}
             <TableBody>
                 {/* Maps out times from 08:00 - 20:00 for every row in the first column */ }
                 {timeSlots.map((time) => (
@@ -60,7 +64,7 @@ const WeeklyGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivity
                                         }}
                                     > 
                                         {hits.length>0 && (
-                                            <ActivityBox
+                                            <WeeklyActivityBox
                                                 activities={hits}
                                                 onClick={() => onActivityClick(hits[0])} // Pass the first activity to the click handler
                                             />

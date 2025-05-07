@@ -32,8 +32,9 @@ function WeeklyCalendar({activities, onActivityClick, openAddDialog}) {
     });
 
     return(
-        <Container sx={{my:2}}>
+        <Container sx={{ my:2 }}>
             <Box display="flex" justifyContent={"space-between"} mb={1}>
+
                 {/* Button changing visible week to previous */}
                 <Button variant="contained"  size="small" onClick={() => setStartOfWeek(prev => prev.subtract(1, "week"))}>
                     <ArrowBackIcon fontSize="small"/>
@@ -53,7 +54,7 @@ function WeeklyCalendar({activities, onActivityClick, openAddDialog}) {
 
 
             {/* Shows calendar */}
-            <TableContainer component ={Paper} elevation="2" sx={{height:"fit-content"}}>
+            <TableContainer component ={Paper} elevation={2} sx={{height:"fit-content"}}>
                 <WeeklyGrid
                     activities = {activities}
                     weekdays = {weekdays}
