@@ -11,12 +11,29 @@ import {
     Select,
     MenuItem
 } from "@mui/material";
-import {useState} from "react";
+import React from "react";
 import CreateCategoryDialog from "../CreateCategoryDialog";
+import {useCalendarContext} from "../../context/CalendarContext";
 
-const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit, mode, categories, onCreateCategory}) => {
+const AddActivity = ({ open, onClose, mode, formData, }) => {
     const isEditMode = mode === "edit";
-    const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
+    const {
+        handleChange,
+        createOrUpdateActivity,
+        categories,
+    } = useCalendarContext();
+
+    const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = React.useState(false);
+
+    const handleSave = async () => {
+        try {
+            await createOrUpdateActivity(formData, mode, );
+            onClose();           // ◀︎ only close after success
+        } catch (err) {
+            console.error("Couldn’t save:", err);
+            alert("Något gick fel vid sparandet");
+        }
+    };
 
     return(
         <Dialog open={open} onClose={onClose}>
@@ -116,12 +133,13 @@ const AddActivity = ({ open, onClose, formData, handleChange, handleSubmit, mode
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>Avbryt</Button>
-                <Button onClick={handleSubmit} variant="contained">Spara</Button>
+                <Button
+                    onClick={handleSave}
+                    variant="contained">Spara</Button>
             </DialogActions>
             <CreateCategoryDialog
                 open={openCreateCategoryDialog}
                 onClose={() => setOpenCreateCategoryDialog(false)}
-                onCreate={onCreateCategory}
             />
         </Dialog>
     );

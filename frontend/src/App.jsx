@@ -4,7 +4,7 @@ import {  Routes, Route, Navigate } from "react-router-dom";
 import LogIn from "./scenes/login";
 import TodaysAgenda from "./scenes/todaysAgenda";
 import ToDoPage from "./components/task/ToDoPage";
-import AuthProvider, {PrivateRoute} from "./hooks/AuthContext";
+import AuthProvider, {PrivateRoute} from "./context/AuthContext";
 import VerifyEmail from "./scenes/VerifyEmail";
 import ResetPassword from "./scenes/ResetPassword";
 import Register from "./scenes/register";

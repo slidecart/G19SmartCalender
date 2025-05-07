@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../hooks/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { fetchData } from '../hooks/FetchData';
 import {
     Box,
