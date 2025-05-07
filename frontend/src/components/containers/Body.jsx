@@ -1,6 +1,6 @@
-import { Box } from "@mui/material";
-import Header from "./../containers/header";
-import Footer from "./../containers/footer";
+import {Box} from "@mui/material";
+import Header from "./Header";
+import Footer from "./Footer";
 
 function Body({children, showSidebar = false}){
     // showSidebar is used to determine if the sidebar should be shown or not

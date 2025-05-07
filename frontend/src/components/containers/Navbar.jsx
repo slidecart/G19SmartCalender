@@ -1,7 +1,6 @@
-import {Box, List, ListItem, Button, IconButton} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {Box, List, ListItem} from "@mui/material";
+import {useNavigate} from "react-router-dom";
 import ProfileIcon from "./ProfilePopUpFrame";
-import {useAuth} from "../../context/AuthContext";
 
 function Navbar() {
     const navigate = useNavigate();

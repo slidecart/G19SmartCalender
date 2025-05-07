@@ -1,9 +1,9 @@
-import { Box, Typography, TableContainer, Paper, Button, Container } from "@mui/material";
+import {Box, Button, Container, Paper, TableContainer, Typography} from "@mui/material";
 import dayjs from "dayjs";
-import { useState } from "react";
+import {useState} from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import MonthlyGrid from "./monthlyGrid";
+import MonthlyGrid from "./MonthlyGrid";
 
 const daysInWeek =["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
 

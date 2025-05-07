@@ -1,8 +1,8 @@
-import { Sidebar as ProSidebar, Menu, SubMenu, MenuItem } from "react-pro-sidebar";
-import { Box, Checkbox, FormControlLabel, IconButton, Typography } from "@mui/material";
-import MenuOutlinedIcon   from "@mui/icons-material/MenuOutlined";
-import FilterListIcon     from "@mui/icons-material/FilterList";
-import { useCalendarContext } from "../../context/CalendarContext";
+import {Menu, MenuItem, Sidebar as ProSidebar, SubMenu} from "react-pro-sidebar";
+import {Box, Checkbox, FormControlLabel, IconButton, Typography} from "@mui/material";
+import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import {useCalendarContext} from "../../context/CalendarContext";
 import React from "react";
 
 const Sidebar = () => {

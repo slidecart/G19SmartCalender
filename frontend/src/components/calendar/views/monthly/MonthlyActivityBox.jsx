@@ -1,4 +1,4 @@
-import { Box, Typography, Paper } from "@mui/material";
+import {Box, Paper, Typography} from "@mui/material";
 
 const MonthlyActivityBox = ({ activities, onClick }) => {
     if (!activities || activities.length === 0 ) return null;

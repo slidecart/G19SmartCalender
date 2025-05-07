@@ -1,6 +1,5 @@
-import { Box, Typography, Card, CardContent } from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import dayjs from "dayjs";
-import {useState} from "react";
 import {useCalendarContext} from "../../../../context/CalendarContext";
 
 const WeeklyActivityBox = ({ activities, onClick }) => {

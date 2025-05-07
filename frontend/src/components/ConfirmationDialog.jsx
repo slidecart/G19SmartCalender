@@ -1,5 +1,5 @@
-import React from  "react";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from "@mui/material";
+import React from "react";
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography} from "@mui/material";
 
 function ConfirmationDialog({ open, onClose, onConfirm, title, content }) {
   return (

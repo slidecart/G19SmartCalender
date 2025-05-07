@@ -1,7 +1,7 @@
 import {useEffect, useRef, useState} from "react";
-import { useSearchParams } from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 import {Box, Button, CircularProgress, Typography} from "@mui/material";
-import { fetchData } from "../hooks/FetchData";
+import {fetchData} from "../hooks/FetchData";
 
 function VerifyEmail() {
     const [searchParams] = useSearchParams();

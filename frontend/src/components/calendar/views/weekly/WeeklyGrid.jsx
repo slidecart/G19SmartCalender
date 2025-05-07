@@ -1,7 +1,7 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, Typography, Box } from "@mui/material";
+import {Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import dayjs from "dayjs";
 
-import WeeklyActivityBox from "./weeklyActivityBox";
+import WeeklyActivityBox from "./WeeklyActivityBox";
 import {useCalendarContext} from "../../../../context/CalendarContext";
 
 

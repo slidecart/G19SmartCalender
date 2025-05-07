@@ -1,15 +1,15 @@
 import {
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
-    TextField,
-    Button,
     Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     FormControl,
     InputLabel,
+    MenuItem,
     Select,
-    MenuItem
+    TextField
 } from "@mui/material";
 import React from "react";
 import CreateCategoryDialog from "../CreateCategoryDialog";
@@ -73,7 +73,7 @@ const AddActivity = ({ open, onClose, mode, formData, }) => {
                             labelId="category-select-label"
                             id="category-select"
                             name="categoryId"
-                            value={formData.categoryId}
+                            value={formData.categoryId || ""}
                             label="Kategori"
                             onChange={(e) => {
                                 if (e.target.value === "create-category-option") {
@@ -83,6 +83,11 @@ const AddActivity = ({ open, onClose, mode, formData, }) => {
                                 }
                             }}
                         >
+
+                            <MenuItem value="">
+                                <em>Ingen kategori</em>
+                            </MenuItem>
+
                             {categories &&
                                 categories.map((category) => (
                                     <MenuItem key={category.id} value={category.id}>

@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { Box, ButtonGroup, Button, Paper } from "@mui/material";
-import WeeklyCalendar from "./views/weekly/weeklyCalendar";
-import MonthlyCalendar from "./views/monthly/monthlyCalendar";
+import {useState} from "react";
+import {Box, Button, ButtonGroup, Paper} from "@mui/material";
+import WeeklyCalendar from "./views/weekly/WeeklyCalendar";
+import MonthlyCalendar from "./views/monthly/MonthlyCalendar";
 import AddActivity from "./AddActivity";
 import ActivityDialog from "./ActivityDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
-import { useCalendarContext } from "../../context/CalendarContext";
+import {useCalendarContext} from "../../context/CalendarContext";
 
 function CalendarView(){
     const {

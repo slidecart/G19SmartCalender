@@ -1,5 +1,5 @@
-import { Box, Typography } from "@mui/material";
-import Navbar from "./navbar";
+import {Box, Typography} from "@mui/material";
+import Navbar from "./Navbar";
 
 function Header(){
     

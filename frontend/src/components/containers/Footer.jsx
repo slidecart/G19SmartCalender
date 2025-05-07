@@ -1,4 +1,4 @@
-import { Box, Typography, List, ListItem } from "@mui/material";
+import {Box, List, ListItem, Typography} from "@mui/material";
 
 function Footer() {
 

@@ -1,7 +1,7 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
+import {Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import dayjs from "dayjs";
 import weekOfYear from "dayjs/plugin/weekOfYear";
-import MonthlyActivityBox from "./monthlyActivityBox";
+import MonthlyActivityBox from "./MonthlyActivityBox";
 import {useCalendarContext} from "../../../../context/CalendarContext";
 
 dayjs.extend(weekOfYear);
@@ -72,7 +72,7 @@ const MonthlyGrid = ({ weeks = [], }) => {
                                     {dailyActivities.length > 0 && (
                                         <MonthlyActivityBox
                                             activities={dailyActivities}
-                                            onClick={() => openViewDialog(dailyActivities)}
+                                            onClick={openViewDialog}
                                         />
                                     )}
                                 </TableCell>

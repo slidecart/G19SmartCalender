@@ -1,6 +1,6 @@
-import {useState, useEffect, useMemo, useCallback} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import dayjs from "dayjs";
-import { fetchData } from "../FetchData";
+import {fetchData} from "../FetchData";
 
 export function useCalendar() {
     /* ---------- Dates ---------- */
@@ -75,6 +75,12 @@ export function useCalendar() {
         setIsAddEditDialogOpen(false);
         setIsViewDialogOpen(true);
     }, []);
+
+    useEffect(() => {
+        if (selectedActivity) {
+            console.log("Selected activity:", selectedActivity);
+        }
+    }, [selectedActivity]);
 
     // Function to open the edit dialog
     const openEditDialog = useCallback((selectedActivity) => {

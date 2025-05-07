@@ -1,13 +1,9 @@
-import { Box, Typography, TableContainer, Paper, Button, Container } from "@mui/material";
+import {Box, Button, Container, Paper, TableContainer, Typography} from "@mui/material";
 import dayjs from "dayjs";
-import { useState } from "react";
-import WeeklyGrid from "./weeklyGrid"
-import AddActivity from "../../AddActivity";
-import {fetchData} from "../../../../hooks/FetchData";
+import {useState} from "react";
+import WeeklyGrid from "./WeeklyGrid"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import ActivityDialog from "../../ActivityDialog";
-
 
 
 function WeeklyCalendar({}) {
