@@ -20,19 +20,16 @@ public class CreateCategoryRequest {
         this.color = color;
     }
 
-    public @NotNull String getName() {
+    public String getName() {
         return name;
     }
-
-    public @NotNull void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
-
-    public @NotNull String getColor() {
+    public String getColor() {
         return color;
     }
-
-    public @NotNull void setColor(String color) {
+    public void setColor(String color) {
         this.color = color;
     }
 }

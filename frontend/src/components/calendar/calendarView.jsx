@@ -5,132 +5,37 @@ import MonthlyCalendar from "./views/monthly/monthlyCalendar";
 import AddActivity from "./addActivity";
 import ActivityDialog from "./ActivityDialog";
 import { fetchData } from "../../hooks/FetchData";
+import ConfirmationDialog from "../ConfirmationDialog";
+import { useCalendarContext } from "../../context/CalendarContext";
 
 function CalendarView(){
-
-    // State for view and activities
-    // Activity permissions and error handling
-    const [currentView, setCurrentView] = useState("week");
-    const [activities, setActivities] = useState([]);
-    const [error, setError] = useState(null);
-
-    const [formData, setFormData] = useState({
-        name:"",
-        description:"",
-        location:"",
-        date:"",
-        startTime:"",
-        endTime:"",
-        categoryId:"",
-        userId:""
-    });
-
-    {/* Consts and functions to handle activity dialog*/}
-    const [selectedActivity, setSelectedActivity] = useState(null);
-    const [activityDialogOpen, setActivityDialogOpen] = useState(false);
-
-    const handleActivityClick = (activity) => {
-        setSelectedActivity(activity);
-        setActivityDialogOpen(true);
-    };
-
-    {/* Functions for adding and editing activities */}
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [dialogMode, setDialogMode] = useState(null); // "add" or "edit"
-
-    const openAddDialog = () => {
-        setDialogMode("add");
-        setIsDialogOpen(true);
-    };
-
-    const openEditDialog = (activity) => {
-        setFormData(activity);
-        setDialogMode("edit");
-        setIsDialogOpen(true);
-        setActivityDialogOpen(false);
-    };
-
-    const handeCloseDialog = () => {
-        setIsDialogOpen(false);
-        setFormData({
-            name: "",
-            description: "",
-            location: "",
-            date: "",
-            startTime: "",
-            endTime: "",
-            categoryId: "",
-        });
-    };
-
-    const handleCellClick = (date, time) => {
-        setFormData((prev) => ({
-            ...prev,
-                date: date,
-                startTime: time
-        }));
-        setDialogMode("add");
-        setIsDialogOpen(true);
-    }
+    const {
+        /* dates */
+        startOfWeek,
+        setStartOfWeek,
 
 
-    // Function to handle form to be able to add activities
-    const handleSubmit = async () =>{
-        try{
-            // Checks if the user is in edit mode or not
-            const apiPath = dialogMode === "edit" ? `activities/edit/${selectedActivity.id}` : "activities/create";
-            const method = dialogMode === "edit" ? "PUT" : "POST";
+        /* activities */
+        selectedActivity,
+        setSelectedActivity,
 
-            const response = await fetchData(apiPath, method, formData);
+        /* form data */
+        formData,
 
-            // Closes the dialog och resets the form
-            setIsDialogOpen(false);
-            setFormData({
-                name:"",
-                description:"",
-                location:"",
-                date:"",
-                startTime:"",
-                endTime:"",
-            });
+        /* dialogs */
+        handleCloseDialog,
+        dialogMode,
+        confirmDeleteOpen,
+        setConfirmDeleteOpen,
+        openAddDialog,
+        openEditDialog,
+        deleteActivity,
+        isAddEditDialogOpen,
+        isViewDialogOpen,
 
-            if (method === "POST") {
-                setActivities((prevActivities) => [...prevActivities, response]); // Adds the new activity to the list
-            } else {
-                setActivities((prevActivities) =>
-                    prevActivities.map((activity) =>
-                        activity.id === response.id ? response : activity
-                    )
-                ); // Updates the existing activity in the list
-            }
-        } catch (error){
-            console.error(error);
-        }
-    };
+    } = useCalendarContext();
 
-    // Function to handle edits for activities
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]:value,
-        }));
-    }
 
-    // Receives activities from API
-    useEffect(() => {
-        const fetchActivities = async() => {
-            try {
-                const response = await fetchData("activities/all", "GET", ""); // Tar emot aktiviteter från backend
-
-                setActivities(response); // Användarens aktiviteter
-            } catch (error) {
-                console.error("Fel vid hämtning: ", error.message);
-                setError(error.message); // Visar eventuella fel
-            }
-        };
-        fetchActivities();
-    }, []);
 
     return (
         <Paper elevation={3} sx={{ p:2 }}>
@@ -165,50 +70,39 @@ function CalendarView(){
                 />
             )}
 
-            {/* Button for adding activities */}
-            <Box display="flex" justifycontent="flex-end" mt={2}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => openAddDialog()} // Dialog appears
-                >
+            <Box display="flex" justifyContent="flex-end" mt={2}>
+                <Button variant="contained" onClick={() => openAddDialog()}>
                     Lägg till
                 </Button>
             </Box>
 
-            {/* Shows dialog in create mode*/}
+            {/* dialogs */}
             <AddActivity
-                open={isDialogOpen}
-                onClose={handeCloseDialog}
+                open={isAddEditDialogOpen}
                 formData={formData}
-                handleChange={handleChange}
-                handleSubmit={handleSubmit}
-                categories={categories}
-                onCreateCategory={createCategory}
-                mode={dialogMode} // "add" or "edit"
+                mode={dialogMode}
+                onClose={handleCloseDialog}
             />
 
-            {/* Shows activity when clicked */}
-            {selectedActivity && (
-                <ActivityDialog
-                    open={activityDialogOpen}
-                    onClose={() => setActivityDialogOpen(false)} // Closes activity dialog
-                    activity={selectedActivity}
-                    onEdit={() => openEditDialog(selectedActivity)} // Opens edit dialog
-                />
-            )}
+            <ActivityDialog
+                open={isViewDialogOpen}
+                activity={selectedActivity}
+                onClose={handleCloseDialog}
+                onEdit={() => {openEditDialog(selectedActivity)}}
+                onDelete={() => setConfirmDeleteOpen(true)}
+            />
 
-            {/* Shows confirmation dialog for delete */}
-            {confirmDeleteOpen && (
-                <ConfirmationDialog
-                    open={confirmDeleteOpen}
-                    onClose={() => setConfirmationDeleteOpen(false)}
-                    onConfirm={handleDelete}
-                    title="Bekräfta borttagning"
-                    content="Är du säker på att du vill ta bort aktiviteten?"
-                />
-            )}
-            {/* Shows error message if any */}
+            <ConfirmationDialog
+                open={confirmDeleteOpen}
+                title="Bekräfta borttagning"
+                content="Är du säker på att du vill ta bort aktiviteten?"
+                onClose={() => setConfirmDeleteOpen(false)}
+                onConfirm={() => {
+                    deleteActivity(selectedActivity.id);
+                    setConfirmDeleteOpen(false);
+                    setSelectedActivity(null);
+                }}
+            />
         </Paper>
     )
 }

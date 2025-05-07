@@ -1,5 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography, Box } from "@mui/material";
 import dayjs from "dayjs";
+
 import WeeklyActivityBox from "./weeklyActivityBox";
 
 
@@ -77,7 +78,7 @@ const WeeklyGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivity
                                         }}
                                         onClick={() => {
                                             if (hits.length === 0) {
-                                                onCellClick(day.date, time);
+                                                handleCellClick(day.date, time);
                                             }
 
                                         }}
@@ -85,7 +86,7 @@ const WeeklyGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivity
                                         {hits.length>0 && (
                                             <WeeklyActivityBox
                                                 activities={hits}
-                                                onClick={() => onActivityClick(hits[0])} // Pass the first activity to the click handler
+                                                onClick={() => openViewDialog(hits[0])} // Pass the first activity to the click handler
                                                 categories={categories}
                                             />
                                         )}

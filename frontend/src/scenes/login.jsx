@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Box, Typography, Button, TextField, CircularProgress, Snackbar, Alert } from "@mui/material";
 import { Link } from "react-router-dom";
 import UserInput from "../components/userInput";
-import { useAuth } from "../hooks/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { fetchData } from "../hooks/FetchData";
 
 function LogIn() {
