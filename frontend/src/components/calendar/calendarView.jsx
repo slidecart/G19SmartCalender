@@ -63,18 +63,25 @@ function CalendarView(){
         });
     };
 
+    const handleCellClick = (date, time) => {
+        setFormData((prev) => ({
+            ...prev,
+                date: date,
+                startTime: time
+        }));
+        setDialogMode("add");
+        setIsDialogOpen(true);
+    }
+
 
     // Function to handle form to be able to add activities
     const handleSubmit = async () =>{
         try{
-            console.log(selectedActivity);
             // Checks if the user is in edit mode or not
             const apiPath = dialogMode === "edit" ? `activities/edit/${selectedActivity.id}` : "activities/create";
             const method = dialogMode === "edit" ? "PUT" : "POST";
 
-
             const response = await fetchData(apiPath, method, formData);
-            console.log(response);
 
             // Closes the dialog och resets the form
             setIsDialogOpen(false);
@@ -116,7 +123,6 @@ function CalendarView(){
             try {
                 const response = await fetchData("activities/all", "GET", ""); // Tar emot aktiviteter från backend
 
-
                 setActivities(response); // Användarens aktiviteter
             } catch (error) {
                 console.error("Fel vid hämtning: ", error.message);
@@ -150,16 +156,16 @@ function CalendarView(){
                 />
             )}
 
-            
+
             {currentView === "month" && (
                 <MonthlyCalendar
                     activities={activities}
                     onActivityClick={handleActivityClick}
                     openAddDialog={openAddDialog}
                 />
-            )} 
+            )}
 
-            {/* Button for adding activites */}
+            {/* Button for adding activities */}
             <Box display="flex" justifycontent="flex-end" mt={2}>
                 <Button
                     variant="contained"
@@ -177,7 +183,9 @@ function CalendarView(){
                 formData={formData}
                 handleChange={handleChange}
                 handleSubmit={handleSubmit}
-
+                categories={categories}
+                onCreateCategory={createCategory}
+                mode={dialogMode} // "add" or "edit"
             />
 
             {/* Shows activity when clicked */}
@@ -189,6 +197,18 @@ function CalendarView(){
                     onEdit={() => openEditDialog(selectedActivity)} // Opens edit dialog
                 />
             )}
+
+            {/* Shows confirmation dialog for delete */}
+            {confirmDeleteOpen && (
+                <ConfirmationDialog
+                    open={confirmDeleteOpen}
+                    onClose={() => setConfirmationDeleteOpen(false)}
+                    onConfirm={handleDelete}
+                    title="Bekräfta borttagning"
+                    content="Är du säker på att du vill ta bort aktiviteten?"
+                />
+            )}
+            {/* Shows error message if any */}
         </Paper>
     )
 }

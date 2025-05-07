@@ -124,9 +124,9 @@ public class ActivityService {
         Optional<Activity> activityOptional = activityRepository.findByIdAndUser(id, user);
         if (activityOptional.isPresent()) {
             activityRepository.delete(activityOptional.get());
-            return new ResponseEntity<>(true, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(true);
         }
-        return new ResponseEntity<>(false, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
     }
 
     /**
