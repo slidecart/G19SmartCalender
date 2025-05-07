@@ -55,7 +55,7 @@ function MonthlyCalendar({ activities, onActivityClick, openAddDialog}) {
             </Box>
 
             {/* Shows calendar */}
-            <TableContainer component={Paper} elevation={2} sx={{height:"fit-content"}}>
+            <TableContainer component={Paper} elevation={2} sx={{height:"650px"}}>
                 <MonthlyGrid
                     activities={activities}
                     weeks={calendar}

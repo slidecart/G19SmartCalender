@@ -1,5 +1,6 @@
 import { Box, Typography, TableContainer, Paper, Button, Container } from "@mui/material";
 import dayjs from "dayjs";
+import weekOfYear from "dayjs/plugin/weekOfYear";
 import { useState } from "react";
 import WeeklyGrid from "./weeklyGrid"
 import AddActivity from "../../addActivity";
@@ -8,7 +9,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ActivityDialog from "../../ActivityDialog";
 
-
+dayjs.extend(weekOfYear); // Recieves week
 
 function WeeklyCalendar({activities, onActivityClick, openAddDialog}) {
 
@@ -16,6 +17,7 @@ function WeeklyCalendar({activities, onActivityClick, openAddDialog}) {
     const today = dayjs();
     const currentYear = today.year();
     const [startOfWeek, setStartOfWeek] = useState(dayjs().startOf("week").add(1,"day")); //First day of the week is monday
+
 
     //const startOfWeek = today.startOf("week").add(1, "day"); // First day of the week is monday
 
@@ -32,7 +34,7 @@ function WeeklyCalendar({activities, onActivityClick, openAddDialog}) {
     });
 
     return(
-        <Container sx={{ my:2 }}>
+        <Container sx={{ my:2, transform:"scale(0.85)", transform:"top left", width:"100%" }}>
             <Box display="flex" justifyContent={"space-between"} mb={1}>
 
                 {/* Button changing visible week to previous */}
@@ -42,7 +44,7 @@ function WeeklyCalendar({activities, onActivityClick, openAddDialog}) {
 
                 {/* Headtitle for calender */}
                 <Typography variant="h6" sx={{textAlign:"center"}}>
-                    Veckokalender - {currentYear} {/* Shows year based on week */}
+                    Vecka {startOfWeek.week()} - {currentYear} {/* Shows year based on week */}
                 </Typography>
 
                 {/* Button changing visible week to next */}
@@ -52,9 +54,8 @@ function WeeklyCalendar({activities, onActivityClick, openAddDialog}) {
 
             </Box>
 
-
             {/* Shows calendar */}
-            <TableContainer component ={Paper} elevation={2} sx={{height:"fit-content"}}>
+            <TableContainer component ={Paper} elevation={2} sx={{ height:"650px" }}>
                 <WeeklyGrid
                     activities = {activities}
                     weekdays = {weekdays}

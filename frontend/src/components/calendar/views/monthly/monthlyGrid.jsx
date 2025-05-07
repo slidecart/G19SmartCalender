@@ -1,7 +1,9 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@mui/material";
 import dayjs from "dayjs";
+import weekOfYear from "dayjs/plugin/weekOfYear";
 import MonthlyActivityBox from "./monthlyActivityBox";
 
+dayjs.extend(weekOfYear);
 const weekdays = ["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
 
 const MonthlyGrid = ({ activities = [], weeks = [], onActivityClick }) => {
@@ -35,8 +37,9 @@ const MonthlyGrid = ({ activities = [], weeks = [], onActivityClick }) => {
                     <TableRow key={rowIndex}>
 
                         {/* Empty cell for week */}
-                        <TableCell sx={{ border:"1px solid #ccc", backgroundColor:"#fafafa", height:"80px"}}/>
-
+                        <TableCell sx={{ border:"1px solid #ccc", fontWeight:"bold", height:"80px"}}>
+                            V.{week[0].week()}
+                        </TableCell>
                         {week.map((day, colIndex) => {
                             const formattedDate = day.format("YYYY-MM-DD");
 
