@@ -1,24 +1,14 @@
 import { Table, TableBody, TableCell, TableHead, TableRow, Typography, Box } from "@mui/material";
 import dayjs from "dayjs";
-import ActivityBox from "./activityBox";
-import {useCalendarContext} from "../../context/CalendarContext";
+
+import WeeklyActivityBox from "./weeklyActivityBox";
 
 
-
-const CalendarGrid = () => {
-    const {
-        activities,
-        weekdays,
-        timeSlots,
-        openAddDialog,
-        openViewDialog,
-        categories,
-        handleCellClick,
-    } = useCalendarContext();
-
-
+const WeeklyGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivityClick }) => {
     return (
         <Table>
+
+            {/* TableHead for all the weekdays */}
             <TableHead>
                 <TableRow>
                     {/* Empty cell, only for the time-column */}
@@ -47,6 +37,8 @@ const CalendarGrid = () => {
                     })}
                 </TableRow>
             </TableHead>
+
+            {/* TableBody for the time and cells */}
             <TableBody>
                 {/* Maps out times from 08:00 - 20:00 for every row in the first column */ }
                 {timeSlots.map((time) => (
@@ -92,7 +84,7 @@ const CalendarGrid = () => {
                                         }}
                                     > 
                                         {hits.length>0 && (
-                                            <ActivityBox
+                                            <WeeklyActivityBox
                                                 activities={hits}
                                                 onClick={() => openViewDialog(hits[0])} // Pass the first activity to the click handler
                                                 categories={categories}
@@ -108,4 +100,4 @@ const CalendarGrid = () => {
     );
 };
 
-export default CalendarGrid;
+export default WeeklyGrid;

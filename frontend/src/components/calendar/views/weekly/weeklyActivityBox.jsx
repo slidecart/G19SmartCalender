@@ -2,7 +2,7 @@ import { Box, Typography, Card, CardContent } from "@mui/material";
 import dayjs from "dayjs";
 import {useState} from "react";
 
-const ActivityBox = ({ activities, categories, onClick }) => {
+const WeeklyActivityBox = ({ activities, categories, onClick }) => {
     {/* */}
     if (!activities || activities.length === 0 ) return null;
 
@@ -56,4 +56,4 @@ const ActivityBox = ({ activities, categories, onClick }) => {
     );
 };
 
-export default ActivityBox;
+export default WeeklyActivityBox;

@@ -1,24 +1,14 @@
-import React from "react";
-import {
-    Box,
-    Button,
-    Container,
-    Paper,
-    TableContainer,
-    Typography
-} from "@mui/material";
-import ArrowBackIcon  from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-
-import CalendarGrid     from "./CalendarGrid";
-import AddActivity      from "./AddActivity";
-import ActivityDialog   from "./ActivityDialog";
+import { useEffect, useState } from "react";
+import { Box, ButtonGroup, Button, Paper } from "@mui/material";
+import WeeklyCalendar from "./views/weekly/weeklyCalendar";
+import MonthlyCalendar from "./views/monthly/monthlyCalendar";
+import AddActivity from "./addActivity";
+import ActivityDialog from "./ActivityDialog";
+import { fetchData } from "../../hooks/FetchData";
 import ConfirmationDialog from "../ConfirmationDialog";
-import Sidebar          from "./AppSidebar";
-
 import { useCalendarContext } from "../../context/CalendarContext";
 
-const WeeklyCalendar = () => {
+function CalendarView(){
     const {
         /* dates */
         startOfWeek,
@@ -46,40 +36,39 @@ const WeeklyCalendar = () => {
     } = useCalendarContext();
 
 
-    /* ---------- render ---------- */
+
     return (
-        <Container sx={{ my: 2 }}>
-            {/* week nav */}
-            <Box display="flex" justifyContent="space-between" mb={1}>
-                <Button
-                    variant="contained"
-                    size="small"
-                    onClick={() => setStartOfWeek((d) => d.subtract(1, "week"))}
-                >
-                    <ArrowBackIcon fontSize="small" />
-                </Button>
+        <Paper elevation={3} sx={{ p:2 }}>
+            <Box display="flex" justifyContent={"flex-end"} mb={2}>
 
-                <Typography variant="h6" textAlign="center">
-                    Veckokalender – {startOfWeek.format("YYYY")}
-                </Typography>
-
-                <Button
-                    variant="contained"
-                    size="small"
-                    onClick={() => setStartOfWeek((d) => d.add(1, "week"))}
-                >
-                    <ArrowForwardIcon fontSize="small" />
-                </Button>
+                {/* Buttons for changing views */}
+                <ButtonGroup variant="contained" size="small">
+                    <Button onClick={() => setCurrentView("week")} color={currentView === "week" ? "primary" : "inherit"}>
+                        Veckovy
+                    </Button>
+                    <Button onClick={() => setCurrentView("month")} color={currentView === "month" ? "primary" : "inherit"}>
+                        Månadsvy
+                    </Button>
+                </ButtonGroup>
             </Box>
 
-            {/* calendar */}
-            <Box display="flex" gap={2}>
-                <Box flexGrow={1}>
-                    <TableContainer component={Paper} elevation={2}>
-                        <CalendarGrid />
-                    </TableContainer>
-                </Box>
-            </Box>
+            {/* Sets view to week */}
+            {currentView === "week" && (
+                <WeeklyCalendar
+                    activities={activities}
+                    onActivityClick={handleActivityClick}
+                    openAddDialog={openAddDialog}
+                />
+            )}
+
+
+            {currentView === "month" && (
+                <MonthlyCalendar
+                    activities={activities}
+                    onActivityClick={handleActivityClick}
+                    openAddDialog={openAddDialog}
+                />
+            )}
 
             <Box display="flex" justifyContent="flex-end" mt={2}>
                 <Button variant="contained" onClick={() => openAddDialog()}>
@@ -114,8 +103,8 @@ const WeeklyCalendar = () => {
                     setSelectedActivity(null);
                 }}
             />
-        </Container>
-    );
-};
+        </Paper>
+    )
+}
 
-export default WeeklyCalendar;
+export default CalendarView;
