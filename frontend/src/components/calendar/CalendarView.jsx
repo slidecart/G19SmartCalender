@@ -27,38 +27,23 @@ function CalendarView(){
         isAddEditDialogOpen,
         isViewDialogOpen,
 
-    } = useCalendarContext();
+        //view
+        currentView,
 
-    const [currentView, setCurrentView] = useState("week");
+    } = useCalendarContext();
 
 
     return (
         <Paper elevation={3} sx={{ p:2 }}>
-            <Box display="flex" justifyContent={"flex-end"} mb={2}>
-
-                {/* Buttons for changing views */}
-                <ButtonGroup variant="contained" size="small">
-                    <Button onClick={() => setCurrentView("week")} color={currentView === "week" ? "primary" : "inherit"}>
-                        Veckovy
-                    </Button>
-                    <Button onClick={() => setCurrentView("month")} color={currentView === "month" ? "primary" : "inherit"}>
-                        Månadsvy
-                    </Button>
-                </ButtonGroup>
-            </Box>
 
             {/* Sets view to week */}
             {currentView === "week" && (
-                <WeeklyCalendar
-
-                />
+                <WeeklyCalendar/>
             )}
 
 
             {currentView === "month" && (
-                <MonthlyCalendar
-
-                />
+                <MonthlyCalendar/>
             )}
 
             <Box display="flex" justifyContent="flex-end" mt={2}>
