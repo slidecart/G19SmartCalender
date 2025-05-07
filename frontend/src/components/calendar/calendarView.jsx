@@ -2,19 +2,13 @@ import { useEffect, useState } from "react";
 import { Box, ButtonGroup, Button, Paper } from "@mui/material";
 import WeeklyCalendar from "./views/weekly/weeklyCalendar";
 import MonthlyCalendar from "./views/monthly/monthlyCalendar";
-import AddActivity from "./addActivity";
+import AddActivity from "./AddActivity";
 import ActivityDialog from "./ActivityDialog";
-import { fetchData } from "../../hooks/FetchData";
 import ConfirmationDialog from "../ConfirmationDialog";
 import { useCalendarContext } from "../../context/CalendarContext";
 
 function CalendarView(){
     const {
-        /* dates */
-        startOfWeek,
-        setStartOfWeek,
-
-
         /* activities */
         selectedActivity,
         setSelectedActivity,
@@ -35,6 +29,7 @@ function CalendarView(){
 
     } = useCalendarContext();
 
+    const [currentView, setCurrentView] = useState("week");
 
 
     return (
@@ -55,18 +50,14 @@ function CalendarView(){
             {/* Sets view to week */}
             {currentView === "week" && (
                 <WeeklyCalendar
-                    activities={activities}
-                    onActivityClick={handleActivityClick}
-                    openAddDialog={openAddDialog}
+
                 />
             )}
 
 
             {currentView === "month" && (
                 <MonthlyCalendar
-                    activities={activities}
-                    onActivityClick={handleActivityClick}
-                    openAddDialog={openAddDialog}
+
                 />
             )}
 

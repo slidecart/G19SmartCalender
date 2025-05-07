@@ -1,10 +1,15 @@
 import { Box, Typography, Card, CardContent } from "@mui/material";
 import dayjs from "dayjs";
 import {useState} from "react";
+import {useCalendarContext} from "../../../../context/CalendarContext";
 
-const WeeklyActivityBox = ({ activities, categories, onClick }) => {
+const WeeklyActivityBox = ({ activities, onClick }) => {
+    const {
+        categories,
+    } = useCalendarContext();
     {/* */}
     if (!activities || activities.length === 0 ) return null;
+
 
     // Height of every cell in calendarGrid
     const cellHeight = 60;

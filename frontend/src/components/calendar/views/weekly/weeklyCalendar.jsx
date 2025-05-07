@@ -2,7 +2,7 @@ import { Box, Typography, TableContainer, Paper, Button, Container } from "@mui/
 import dayjs from "dayjs";
 import { useState } from "react";
 import WeeklyGrid from "./weeklyGrid"
-import AddActivity from "../../addActivity";
+import AddActivity from "../../AddActivity";
 import {fetchData} from "../../../../hooks/FetchData";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -10,7 +10,8 @@ import ActivityDialog from "../../ActivityDialog";
 
 
 
-function WeeklyCalendar({activities, onActivityClick, openAddDialog}) {
+function WeeklyCalendar({}) {
+
 
     // Constant variables for dates
     const today = dayjs();
@@ -55,10 +56,9 @@ function WeeklyCalendar({activities, onActivityClick, openAddDialog}) {
             {/* Shows calendar */}
             <TableContainer component ={Paper} elevation="2" sx={{height:"fit-content"}}>
                 <WeeklyGrid
-                    activities = {activities}
                     weekdays = {weekdays}
                     timeSlots = {timeSlots}
-                    onActivityClick = {onActivityClick} // Shows activity when clicked
+                     // Shows activity when clicked
                 />
             </TableContainer>
 

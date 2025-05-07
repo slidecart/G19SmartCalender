@@ -2,12 +2,16 @@ import { Table, TableBody, TableCell, TableHead, TableRow, Typography } from "@m
 import dayjs from "dayjs";
 import weekOfYear from "dayjs/plugin/weekOfYear";
 import MonthlyActivityBox from "./monthlyActivityBox";
+import {useCalendarContext} from "../../../../context/CalendarContext";
 
 dayjs.extend(weekOfYear);
 const weekdays = ["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
 
-const MonthlyGrid = ({ activities = [], weeks = [], onActivityClick }) => {
-
+const MonthlyGrid = ({ weeks = [], }) => {
+    const {
+        activities,
+        openViewDialog,
+    } = useCalendarContext();
     return (
         <Table>
 
@@ -68,7 +72,7 @@ const MonthlyGrid = ({ activities = [], weeks = [], onActivityClick }) => {
                                     {dailyActivities.length > 0 && (
                                         <MonthlyActivityBox
                                             activities={dailyActivities}
-                                            onClick={() => onActivityClick(dailyActivities)}
+                                            onClick={() => openViewDialog(dailyActivities)}
                                         />
                                     )}
                                 </TableCell>

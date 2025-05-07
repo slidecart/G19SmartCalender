@@ -2,12 +2,18 @@ import { Table, TableBody, TableCell, TableHead, TableRow, Typography, Box } fro
 import dayjs from "dayjs";
 
 import WeeklyActivityBox from "./weeklyActivityBox";
+import {useCalendarContext} from "../../../../context/CalendarContext";
 
 
-const WeeklyGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivityClick }) => {
+const WeeklyGrid = ({ weekdays = [], timeSlots = [], }) => {
+    const {
+        activities,
+        openViewDialog,
+        categories,
+        handleCellClick,
+    } = useCalendarContext();
     return (
         <Table>
-
             {/* TableHead for all the weekdays */}
             <TableHead>
                 <TableRow>

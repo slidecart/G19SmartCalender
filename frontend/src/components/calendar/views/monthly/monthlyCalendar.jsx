@@ -7,7 +7,7 @@ import MonthlyGrid from "./monthlyGrid";
 
 const daysInWeek =["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
 
-function MonthlyCalendar({ activities, onActivityClick, openAddDialog}) {
+function MonthlyCalendar() {
 
     // Dates
     const today = dayjs();
@@ -57,9 +57,7 @@ function MonthlyCalendar({ activities, onActivityClick, openAddDialog}) {
             {/* Shows calendar */}
             <TableContainer component={Paper} elevation={2} sx={{height:"650px"}}>
                 <MonthlyGrid
-                    activities={activities}
                     weeks={calendar}
-                    onActivityClick={onActivityClick}
                 />
             </TableContainer>   
 
