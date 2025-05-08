@@ -21,10 +21,10 @@ export function useCalendar() {
         [startOfWeek]
     );
 
-    // Array with time from 08:00 to 20:00
+    // Array with time from 00:00 to 23:00
     const timeSlots = useMemo(
-        () => Array.from({ length: 13 }, (_, i) =>
-            `${8 + i}:00`.padStart(5, "0")),
+        () => Array.from({ length: 24 }, (_, i) =>
+            `${i}:00`.padStart(5, "0")),
         []
     );
 
