@@ -6,7 +6,7 @@ import {useCalendarContext} from "../context/CalendarContext";
 const CreateCategoryDialog = ({ open, onClose, }) => {
     const [categoryName, setCategoryName] = useState("");
     const [selectedColor, setSelectedColor] = useState("#60f085");
-    const createCategory = useCalendarContext();
+    const {createCategory}  = useCalendarContext();
 
     const handleCreate = () => {
         if (!categoryName) {

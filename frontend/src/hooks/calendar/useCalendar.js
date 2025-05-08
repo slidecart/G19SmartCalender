@@ -141,7 +141,7 @@ export function useCalendar() {
 
     useEffect(() => {
         loadActivities();
-    }, [loadActivities]);
+    }, []);
 
 
     /* ----------  Categories + UI filters ---------- */
@@ -175,7 +175,7 @@ export function useCalendar() {
 
     useEffect(() => {
         loadCategories();
-    }, [loadCategories]);
+    }, []);
 
     useEffect(() => {
         setSelectedCategories(prev =>
@@ -198,7 +198,6 @@ export function useCalendar() {
             [name]:value,
         }));
     }
-
 
     const handleCellClick = (date, time) => {
         openAddDialog({date, startTime: time});

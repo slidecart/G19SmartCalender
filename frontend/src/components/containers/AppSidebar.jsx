@@ -1,5 +1,5 @@
 // Sidebar.jsx (in /components/containers/)
-import { useState } from "react";
+import React, { useState } from "react";
 import { Sidebar as ProSidebar, Menu, MenuItem, SubMenu } from "react-pro-sidebar";
 import {
     Box,
@@ -19,6 +19,7 @@ import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUnc
 
 
 import {useCalendarContext} from "../../context/CalendarContext";
+import CreateCategoryDialog from "../CreateCategoryDialog";
 
 
 
@@ -31,6 +32,8 @@ export default function Sidebar() {
         currentView,
         openAddDialog,
     } = useCalendarContext();
+
+    const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
 
     const theme = useTheme();
     const [collapsed, setCollapsed] = useState(false);
@@ -72,15 +75,16 @@ export default function Sidebar() {
                 },
             }}
         >
-            <ProSidebar collapsed={collapsed}>
+            <ProSidebar collapsed={collapsed} width={"170px"} collapsedWidth={"50px"}>
                 <Menu iconShape="square">
                     {/* LOGO AND MENU ICON */}
                     <MenuItem
                         onClick={toggleSidebar}
                         icon={collapsed ? <MenuOutlinedIcon /> : undefined}
                         style={{
-                            margin: "10px 0 20px 0",
+                            margin: "10px 15px 20px 0",
                             color: colors.grey[800],
+                            p: 1,
                         }}
                     >
                         {!collapsed && (
@@ -88,7 +92,8 @@ export default function Sidebar() {
                                 display="flex"
                                 justifyContent="space-between"
                                 alignItems="center"
-                                ml="15px"
+                                ml="0px"
+                                mr="15px"
                             >
                                 <IconButton onClick={toggleSidebar}>
                                     <MenuOutlinedIcon />
@@ -176,9 +181,19 @@ export default function Sidebar() {
                                 />
                             )
                         )}
+                        <Divider />
+                        <MenuItem
+                            onClick={() => {
+                                setOpenCreateCategoryDialog(true);
+                            }}
+                        >
+                            <Box display="flex" justifyContent="center" alignItems="center" width="100%">
+                                Skapa ny kategori
+                            </Box>
+                        </MenuItem>
                     </SubMenu>
-                    <Divider />
                 </Menu>
+                <Divider />
                 {/* spacer pushes the add‐button to the bottom */}
                 <Box sx={{ flexGrow: 1 }} />
 
@@ -214,6 +229,10 @@ export default function Sidebar() {
                         </Tooltip>
                     </Menu>
                 </Box>
+                <CreateCategoryDialog
+                    open={openCreateCategoryDialog}
+                    onClose={() => setOpenCreateCategoryDialog(false)}
+                />
             </ProSidebar>
         </Box>
     );
