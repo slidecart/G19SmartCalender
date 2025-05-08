@@ -49,9 +49,7 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <ThemeProvider theme={theme}>
-          <CalendarProvider>
             <App />
-          </CalendarProvider>
         </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>

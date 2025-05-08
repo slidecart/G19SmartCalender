@@ -107,10 +107,11 @@ export function useCalendar() {
     const loadActivities = useCallback(async () => {
         try {
             const response = await fetchData("activities/all", "GET", ""); // Tar emot aktiviteter från backend
-            setActivities(response); // Användarens aktiviteter
+            setActivities(response || []); // Användarens aktiviteter
         } catch (error) {
             console.error("Fel vid hämtning: ", error.message);
             setError(error.message); // Visar eventuella fel
+            setActivities([])
         }
     }, []);
 
@@ -149,8 +150,14 @@ export function useCalendar() {
     const [selectedCategories, setSelectedCategories] = useState([]);
 
     const loadCategories = useCallback(async () => {
-        const cats = await fetchData("categories/all", "GET", "");
-        setCategories(cats);
+        try {
+            const cats = await fetchData("categories/all", "GET", "");
+            // Set default empty array if no categories are fetched
+            setCategories(cats || []);
+        } catch (error) {
+            console.error("Error fetching categories:", error.message);
+            setCategories([]);
+        }
     }, []);
 
     // Function to create a new category

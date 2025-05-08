@@ -74,7 +74,13 @@ function LogIn() {
 
         setIsLoading(true);
         try {
-            const data = await fetchData(`auth/forgot-password?email=${encodeURIComponent(emailInput)}`, "POST", null, true);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}auth/forgot-password?email=${encodeURIComponent(emailInput)}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+            const data = await response.json();
             setSnackbar({
                 open: true,
                 message: data.message || "Länk för återställning av lösenord skickas till din e-post.",
@@ -110,7 +116,13 @@ function LogIn() {
 
         setIsLoading(true);
         try {
-            const data = await fetchData(`auth/resend-verification?email=${encodeURIComponent(emailInput)}`, "POST", null, true);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}auth/resend-verification?email=${encodeURIComponent(emailInput)}`, {
+            method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                }
+             });
+        const data = await response.json();
             console.error("fetchData response:", data);
             setSnackbar({
                 open: true,
