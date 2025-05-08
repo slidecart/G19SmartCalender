@@ -1,10 +1,13 @@
-// Body.jsx
 import { Box } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
-import Sidebar from "./AppSidebar"; // Adjust the import path as necessary
+import TopBar from "./TopBar";
 
-function Body({ children, withSidebar = false }) {
+/**
+ * Body component now includes a TopBar (horizontal) below the Header.
+ * Removed the old sidebar logic. The TopBar is always rendered.
+ */
+function Body({ children }) {
     return (
         <Box
             sx={{
@@ -13,38 +16,17 @@ function Body({ children, withSidebar = false }) {
                 minHeight: "100vh",
             }}
         >
-            <Header/>
+            <Header />
 
-            {withSidebar ? (
-                // <-- new wrapper around main + sidebar
-                <Box sx={{ display: "flex", flexGrow: 1 }}>
-                    {/* 1) main content */}
-                    <Box sx={{ flexGrow: 1, p: 2 }}>
-                        {children}
-                    </Box>
+            {/* Horizontal TopBar under the navbar */}
+            <TopBar />
 
-                    {/* 2) sidebar: sticky, fixed width when expanded, thin when collapsed */}
-                    <Box
-                        sx={{
-                            flexShrink: 0,
-                            position: "sticky",
-                            top: "64px",        // match your header height
-                            bottom: 0,
-                            height: "calc(100vh - 64px)",
-                            // width will be controlled inside Sidebar via its `collapsed` state
-                        }}
-                    >
-                        <Sidebar />
-                    </Box>
-                </Box>
-            ) : (
-                // no sidebar
-                <Box sx={{ flexGrow: 1, p: 2 }}>
-                    {children}
-                </Box>
-            )}
+            {/* Main content area */}
+            <Box sx={{ flexGrow: 1, p: 2 }}>
+                {children}
+            </Box>
 
-            <Footer/>
+            <Footer />
         </Box>
     );
 }
