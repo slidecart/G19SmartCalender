@@ -20,7 +20,7 @@ const weekdays = ["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
  * where the last row sits flush at the bottom.
  */
 const MonthlyGrid = ({ weeks = [] }) => {
-    const { filteredActivities, openViewDialog } = useCalendarContext();
+    const { filteredActivities, openViewDialog, handleActivityClick } = useCalendarContext();
     // compute each row's height as a percentage of container
     const rowHeight = `${100 / weeks.length}%`;
 
@@ -123,7 +123,7 @@ const MonthlyGrid = ({ weeks = [] }) => {
                                     {dailyActivities.length > 0 && (
                                         <MonthlyActivityBox
                                             filteredActivities={dailyActivities}
-                                            onClick={openViewDialog}
+                                            onClick={(e) => handleActivityClick(e, dailyActivities, colIndex)}
                                         />
                                     )}
                                 </TableCell>

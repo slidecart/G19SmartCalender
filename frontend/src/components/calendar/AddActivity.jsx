@@ -269,7 +269,7 @@ export default function AddActivity({ open, onClose, mode }) {
                             label="Heldag"
                         />
                         <Box>
-                            <Button>
+
                             <FormControlLabel
                                 control={
                                     <IconButton onClick={() => setRecurring(prev => !prev)}>
@@ -278,7 +278,7 @@ export default function AddActivity({ open, onClose, mode }) {
                                 }
                                 label="Återkommande"
                             />
-                            </Button>
+
                         </Box>
                     </Box>
                     <Divider />

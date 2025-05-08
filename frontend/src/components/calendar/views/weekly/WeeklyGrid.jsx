@@ -12,6 +12,7 @@ const WeeklyGrid = ({ weekdays= [] }) => {
         categories,
         handleCellClick,
         timeSlots,
+        handleActivityClick,
     } = useCalendarContext();
     return (
         <Table stickyHeader>
@@ -102,7 +103,7 @@ const WeeklyGrid = ({ weekdays= [] }) => {
                                         {hits.length>0 && (
                                             <WeeklyActivityBox
                                                 filteredActivities={hits}
-                                                onClick={() => openViewDialog(hits[0])} // Pass the first activity to the click handler
+                                                onClick={(e) => handleActivityClick(e, hits[0], idx)} // Pass the first activity to the click handler
                                                 categories={categories}
                                             />
                                         )}

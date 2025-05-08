@@ -1,113 +1,95 @@
 import React from "react";
-import {Box, Button, Dialog, DialogContent, DialogTitle, Typography} from "@mui/material";
+import Popover from "@mui/material/Popover";
+import { Box, Button, Typography, IconButton } from "@mui/material";
 import dayjs from "dayjs";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
-function ActivityDialog({ open, onClose, activity, onEdit, onDelete }) {
-  return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="md"
-      fullWidth
-      PaperProps={{
-        sx: {
-          backgroundColor: "background.paper", // Matches theme background
-          borderRadius: 2, // Rounded corners
-          boxShadow: 3, // Subtle shadow
-        },
-      }}
-    >
-      {/* Delete button in the top right */}
-        <Button
-            onClick={onDelete}
-            variant="text"
-            sx={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                textTransform: "none",
-                color: "error.main",
-                display: "flex",
-                alignItems: "center",
-                p: 0.5,
-                transition: "all 0.3s ease",
-                "& .hoverText": {
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                    width: 0,
-                    opacity: 0,
-                    transition: "all 0.3s ease",
-                },
-                "&:hover .hoverText": {
-                    width: "auto",
-                    opacity: 1,
-                    mr: 1,
-                },
+
+function ActivityDialog({
+                            anchorEl,
+                            open,
+                            onClose,
+                            activity,
+                            placement = 'right',
+                            onEdit,
+                            onDelete
+                        }) {
+    if (!anchorEl || !activity) return null;
+
+    return (
+        <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={onClose}
+            anchorOrigin={{
+                vertical: 'center',
+                horizontal: placement === 'right' ? 'right' : 'left'
+            }}
+            transformOrigin={{
+                vertical: 'center',
+                horizontal: placement === 'right' ? 'left' : 'right'
+            }}
+            PaperProps={{
+                sx: {
+                    overflow: 'visible',
+                    p: 2,
+                    width: 320,
+                    borderRadius: 2,
+                    boxShadow: 3,
+                    '&:before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: '50%',
+                        [placement === 'right' ? 'left' : 'right']: -8,
+                        transform: 'translateY(-50%)',
+                        border: '8px solid transparent',
+                        ...(placement === 'right'
+                            ? { borderRightColor: 'background.paper' }
+                            : { borderLeftColor: 'background.paper' }),
+                    }
+                }
             }}
         >
-            <span className="hoverText">Ta bort</span>
-            <DeleteOutlineOutlinedIcon />
-        </Button>
+            {/* Delete Icon */}
+            <IconButton
+                onClick={() => {
+                    onDelete(activity);
+                    onClose();
+                }}
+                sx={{ position: 'absolute', top: 8, right: 8, color: 'error.main' }}
+                size="small"
+            >
+                <DeleteOutlineOutlinedIcon />
+            </IconButton>
 
+            {/* Content */}
+            <Box sx={{ mt: 1 }}>
+                <Typography variant="subtitle1" fontWeight="bold">
+                    {activity.name}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                    {activity.date} • {dayjs(`1970-01-01T${activity.startTime}`).format('HH:mm')} – {dayjs(`1970-01-01T${activity.endTime}`).format('HH:mm')}
+                </Typography>
+                <Typography variant="body2" sx={{ mt: 1 }} noWrap>
+                    {activity.description || 'Ingen beskrivning'}
+                </Typography>
+            </Box>
 
-      <Box sx={{display: "flex", flexDirection: "column", p: 3}}>
-        {/* Title Section */}
-        <DialogTitle
-          sx={{
-            textAlign: "left",
-            fontWeight: "bold",
-            fontSize: "1.8rem",
-            color: "text.primary",
-            pb: 1,
-          }}
-        >
-          {activity?.name || "Titel"}
-        </DialogTitle>
-
-        {/* Content Section */}
-        <DialogContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <Typography variant="body1" sx={{ color: "text.secondary" }}>
-              <strong>Beskrivning:</strong> {activity?.description || "Ingen beskrivning tillgänglig."}
-            </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary" }}>
-              <strong>Plats:</strong> {activity?.location || "Ingen plats angiven."}
-            </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary" }}>
-              <strong>Kategori:</strong> {activity?.categoryName || "Ingen kategori angiven."}
-            </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary" }}>
-              <strong>Datum:</strong> {activity?.date || "Inget datum angivet."}
-            </Typography>
-            <Typography variant="body1" sx={{ color: "text.secondary" }}>
-              <strong>Tid:</strong> {dayjs(`1970-01-01T${activity?.startTime}`).format("HH:mm")} - {dayjs(`1970-01-01T${activity?.endTime}`).format("HH:mm")}
-            </Typography>
-          </Box>
-        </DialogContent>
-
-        {/* Actions Section */}
-        <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3, gap: 2 }}>
-          <Button
-            onClick={onEdit}
-            variant="outlined"
-            color="primary"
-            sx={{ textTransform: "none", px: 3 }}
-          >
-            Redigera
-          </Button>
-          <Button
-            onClick={onClose}
-            variant="contained"
-            color="primary"
-            sx={{ textTransform: "none", px: 3 }}
-          >
-            Stäng
-          </Button>
-        </Box>
-      </Box>
-    </Dialog>
-  );
+            {/* Actions */}
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
+                <Button
+                    size="small"
+                    variant="text"
+                    onClick={() => {
+                        onEdit(activity);
+                        onClose();
+                    }}
+                >
+                    Redigera
+                </Button>
+            </Box>
+        </Popover>
+    );
 }
 
 export default ActivityDialog;

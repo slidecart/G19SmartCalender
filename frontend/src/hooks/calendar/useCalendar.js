@@ -45,10 +45,21 @@ export function useCalendar() {
     const [isViewDialogOpen, setIsViewDialogOpen]       = useState(false);
     const [dialogMode, setDialogMode]                   = useState("add"); // or "edit"
 
-    const [selectedActivity, setSelectedActivity]       = useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedActivity, setSelectedActivity] = useState(null);
+    const [placement, setPlacement] = useState("right");
+
+    const handleActivityClick = useCallback((event, activity, index) => {
+        const newPlacement = index < 4 ? "right" : "left";
+        setPlacement(newPlacement);
+        setSelectedActivity(activity);
+        setAnchorEl(event.currentTarget);
+    }, []);
+
 
     const handleCloseDialog = useCallback(() => {
         setIsAddEditDialogOpen(false);
+        setAnchorEl(null);
         setIsViewDialogOpen(false);
         setFormData({});
     }, []);
@@ -84,6 +95,7 @@ export function useCalendar() {
 
     // Function to open the edit dialog
     const openEditDialog = useCallback((selectedActivity) => {
+        console.log("Hello from openEditDialog", selectedActivity);
         setDialogMode("edit");
         // *here’s the critical bit*—you must _fill_ the formData
         // from the activity you passed in, instead of leaving it blank:
@@ -98,7 +110,7 @@ export function useCalendar() {
         });
         setIsViewDialogOpen(false);
         setIsAddEditDialogOpen(true);
-    }, []);
+    }, [selectedActivity]);
 
     /* ----------  Activities ---------- */
     const [activities, setActivities] = useState([]);
@@ -147,7 +159,7 @@ export function useCalendar() {
 
     /* ----------  Categories + UI filters ---------- */
     const [categories, setCategories] = useState([]);
-    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState(categories || []);
 
     const loadCategories = useCallback(async () => {
         try {
@@ -185,16 +197,14 @@ export function useCalendar() {
     }, []);
 
     useEffect(() => {
-        setSelectedCategories(prev =>
-            prev.filter(id => categories.some(cat => cat.id === id))
-        );
+        // Default state: all categories are selected.
+        setSelectedCategories(categories.map(cat => cat.id));
     }, [categories]);
 
-    const filteredActivities =
-        selectedCategories.length === 0
-            ? activities
-            : activities.filter((a) => selectedCategories.includes(a.categoryId));
-
+    const filteredActivities = activities.filter((a) =>
+        // Always show activities with no category
+        !a.categoryId || selectedCategories.includes(a.categoryId)
+    );
 
     /* ---------- Form data and handlers ---------- */
 
@@ -211,6 +221,10 @@ export function useCalendar() {
     }
 
     const [currentView, setCurrentView] = useState("week");
+
+    useEffect(() => {
+        console.log(selectedActivity)
+    }, [selectedActivity]);
 
     // —————— expose everything ——————
     return {
@@ -239,6 +253,9 @@ export function useCalendar() {
         confirmDeleteOpen,
         setConfirmDeleteOpen,
         handleCloseDialog,
+        handleActivityClick,
+        anchorEl,
+        placement,
 
         // categories & filter
         categories,
