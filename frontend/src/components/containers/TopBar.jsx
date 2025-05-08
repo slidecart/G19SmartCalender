@@ -86,11 +86,8 @@ export default function TopBar() {
                     onClose={handleFilterClose}
                 >
                     {categories.map((cat) => (
-                        <MenuItem key={cat.id}>
-                            <IconButton
-                                onClick={() => toggleCategory(cat.id)}
-                                sx={{ p: 0 }}
-                            >
+                        <MenuItem key={cat.id} onClick={() => toggleCategory(cat.id)}>
+                            <IconButton sx={{ p: 0 }}>
                                 <Checkbox
                                     icon={<RadioButtonUncheckedOutlinedIcon sx={{ color: cat.color }} />}
                                     checkedIcon={<CheckCircleOutlinedIcon sx={{ color: cat.color }} />}

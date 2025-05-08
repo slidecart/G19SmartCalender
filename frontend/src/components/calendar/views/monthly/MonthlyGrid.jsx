@@ -67,7 +67,7 @@ const MonthlyGrid = ({ weeks = [] }) => {
                 sx={{
                     display: "flex",
                     flexDirection: "column",
-                    height: "calc(100% - 48px)", // subtract header height (48px)
+                    height: "100%", // subtract header height (48px)
                     p: 0,
                     m: 0
                 }}

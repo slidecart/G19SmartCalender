@@ -35,7 +35,7 @@ function MonthlyCalendar({ chromeHeight }) {
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, height: totalAvailable }}>
-            <Box display="flex" justifyContent={"space-between"} mb={2}>
+            <Box display="flex" justifyContent={"space-between"} mb={0}>
 
                 {/* Button changing visible month to previous */}
                 <Button variant="contained" size="small" onClick={() => setCurrentMonth(prev => prev.subtract(1, "month"))}>
@@ -62,6 +62,7 @@ function MonthlyCalendar({ chromeHeight }) {
                                 display: "flex",
                                 flexDirection: "column",
                                 overflow: "hidden",
+                                p: 0,
                             }}>
                 <MonthlyGrid
                     weeks={calendar}
