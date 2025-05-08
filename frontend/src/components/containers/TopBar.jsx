@@ -3,12 +3,15 @@ import {
     Box,
     ToggleButtonGroup,
     ToggleButton,
-    FormControlLabel,
-    Checkbox,
-    Button,
     IconButton,
+    Menu,
+    MenuItem,
+    Checkbox,
+    ListItemIcon,
+    ListItemText,
+    Button,
     Tooltip,
-    useTheme
+    useTheme, Divider
 } from "@mui/material";
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
@@ -16,6 +19,8 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import { useCalendarContext } from "../../context/CalendarContext";
 import CreateCategoryDialog from "../CreateCategoryDialog";
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
+import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUncheckedOutlined';
 
 export default function TopBar() {
     const theme = useTheme();
@@ -29,10 +34,11 @@ export default function TopBar() {
     } = useCalendarContext();
 
     const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
+    const [filterAnchorEl, setFilterAnchorEl] = useState(null);
 
-    const handleViewChange = (_e, nextView) => {
-        if (nextView) setCurrentView(nextView);
-    };
+    const handleFilterOpen = (e) => setFilterAnchorEl(e.currentTarget);
+    const handleFilterClose = () => setFilterAnchorEl(null);
+    const handleViewChange = (_e, nextView) => nextView && setCurrentView(nextView);
 
     return (
         <Box
@@ -41,7 +47,7 @@ export default function TopBar() {
                 display: 'flex',
                 alignItems: 'center',
                 px: 2,
-                py: 1,
+                py: 0,
                 borderBottom: `1px solid ${theme.palette.divider}`,
                 backgroundColor: theme.palette.background.paper,
                 gap: 2,
@@ -65,44 +71,57 @@ export default function TopBar() {
                 </ToggleButton>
             </ToggleButtonGroup>
 
-            {/* Categories filter */}
-            <Box
-                sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    flexWrap: 'nowrap'
-                }}
-            >
-                {categories.map(cat => (
-                    <FormControlLabel
-                        key={cat.id}
-                        control={
-                            <Tooltip title={cat.name} arrow>
+            <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+
+            {/* Categories filter menu */}
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Tooltip title="Filter Categories" arrow>
+                    <IconButton onClick={handleFilterOpen}>
+                        <FilterListOutlinedIcon />
+                    </IconButton>
+                </Tooltip>
+                <Menu
+                    anchorEl={filterAnchorEl}
+                    open={Boolean(filterAnchorEl)}
+                    onClose={handleFilterClose}
+                >
+                    {categories.map((cat) => (
+                        <MenuItem key={cat.id}>
+                            <IconButton
+                                onClick={() => toggleCategory(cat.id)}
+                                sx={{ p: 0 }}
+                            >
                                 <Checkbox
+                                    icon={<RadioButtonUncheckedOutlinedIcon sx={{ color: cat.color }} />}
+                                    checkedIcon={<CheckCircleOutlinedIcon sx={{ color: cat.color }} />}
                                     checked={selectedCategories.includes(cat.id)}
-                                    onChange={() => toggleCategory(cat.id)}
+                                    size="small"
                                     sx={{
-                                        color: cat.color,
-                                        '&.Mui-checked': { color: cat.color }
+                                        pl: 0,
+                                        justifyContent: "flex-start",
+                                        alignItems: "center",
+                                        display: "flex",
                                     }}
                                 />
-                            </Tooltip>
-                        }
-                        label={cat.name}
-                        sx={{ whiteSpace: 'nowrap' }}
-                    />
-                ))}
-                <Button
-                    startIcon={<FilterListOutlinedIcon />}
-                    onClick={() => setOpenCreateCategoryDialog(true)}
-                    size="small"
-                >
-                    Skapa kategori
-                </Button>
+                            </IconButton>
+                            <ListItemText primary={cat.name} />
+                        </MenuItem>
+                    ))}
+                    <MenuItem
+                        onClick={() => {
+                            setOpenCreateCategoryDialog(true);
+                            handleFilterClose();
+                        }}
+                    >
+                        <ListItemIcon>
+                            <AddCircleOutlineOutlinedIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Skapa kategori" />
+                    </MenuItem>
+                </Menu>
+                Filter
             </Box>
 
-            {/* Spacer pushes add button to the right */}
             <Box sx={{ flexGrow: 1 }} />
 
             {/* Add Activity button */}

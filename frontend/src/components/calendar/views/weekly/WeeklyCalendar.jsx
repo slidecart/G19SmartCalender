@@ -1,13 +1,13 @@
 import {Box, Button, Container, Paper, TableContainer, Typography} from "@mui/material";
 import dayjs from "dayjs";
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import WeeklyGrid from "./WeeklyGrid"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import {useCalendarContext} from "../../../../context/CalendarContext";
 
 
-function WeeklyCalendar({}) {
-
+function WeeklyCalendar() {
 
     // Constant variables for dates
     const today = dayjs();
@@ -22,14 +22,25 @@ function WeeklyCalendar({}) {
         date: startOfWeek.clone().add(i, "day").format("YYYY-MM-DD") //Format from JSON-file
     }));
 
-    // Array with time from 08:00 to 20:00
-    const timeSlots = Array.from({ length: 13}, (_,i) => {
-        const hour = 8 + i;
-        return `${hour.toString().padStart(2, '0')}:00`;
-    });
+    // Set visible hours
+    const {timeSlots} = useCalendarContext();
+    const ROW_HEIGHT_PX = 60;
+    const PRE_HOURS = 3;
+
+    const scrollRef = useRef(null);
+
+    // On mount, scroll so current hour row is PRE_HOURS rows from the top
+    useEffect(() => {
+        const nowHour = dayjs().hour();
+        const index = timeSlots.findIndex((time) => parseInt(time, 10) === nowHour);
+        if (index > 0 && scrollRef.current) {
+            const offSet = (index - PRE_HOURS) * ROW_HEIGHT_PX;
+            scrollRef.current.scrollTop = offSet > 0 ? offSet : 0;
+        }
+    }, [timeSlots]);
 
     return(
-        <Container sx={{my:2}}>
+        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, overflow: "hidden" }}>
             <Box display="flex" justifyContent={"space-between"} mb={1}>
                 {/* Button changing visible week to previous */}
                 <Button variant="contained"  size="small" onClick={() => setStartOfWeek(prev => prev.subtract(1, "week"))}>
@@ -50,17 +61,20 @@ function WeeklyCalendar({}) {
 
 
             {/* Shows calendar */}
-            <TableContainer component ={Paper} elevation="2" sx={{height:"fit-content"}}>
+            <TableContainer
+                component ={Paper}
+                elevation="2"
+                sx={{height:"visibleHeight" + "px", overflowY:"auto"}}
+                ref={scrollRef}
+            >
                 <WeeklyGrid
-                    weekdays = {weekdays}
-                    timeSlots = {timeSlots}
-                     // Shows activity when clicked
+                    weekdays={weekdays}
                 />
             </TableContainer>
 
             {/* Shows error message if any */}
-        </Container>
+        </Box>
     );
-};
+}
 
 export default WeeklyCalendar;

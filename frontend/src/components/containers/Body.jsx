@@ -2,6 +2,8 @@ import { Box } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
 import TopBar from "./TopBar";
+import Sidebar from "./Sidebar";
+import Navbar from "./Navbar";
 
 /**
  * Body component now includes a TopBar (horizontal) below the Header.
@@ -9,24 +11,31 @@ import TopBar from "./TopBar";
  */
 function Body({ children }) {
     return (
-        <Box
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                minHeight: "100vh",
-            }}
-        >
-            <Header />
+        <Box sx={{ display:"flex", flexDirection:"column", height:"100vh", overflow:"hidden" }}>
 
-            {/* Horizontal TopBar under the navbar */}
-            <TopBar />
+            <Navbar/>
+            {/* Main area: content + sidebar */}
+            <Box sx={{ display: "flex", flexGrow: 1, width: "100%" }}>
+                {/* Left column: TopBar + page content */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        flexGrow: 1,
+                        pr: "56px", // Padding to avoid overlap with the fixed sidebar
+                    }}>
+                    {/* Horizontal TopBar under the navbar, constrained to left */}
+                    <TopBar />
 
-            {/* Main content area */}
-            <Box sx={{ flexGrow: 1, p: 2 }}>
-                {children}
+                    {/* Page content area with padding */}
+                    <Box sx={{ flexGrow: 1, p: 2 }}>
+                        {children}
+                    </Box>
+                </Box>
+
+                {/* Fixed sidebar on the right */}
+                <Sidebar />
             </Box>
-
-            <Footer />
         </Box>
     );
 }

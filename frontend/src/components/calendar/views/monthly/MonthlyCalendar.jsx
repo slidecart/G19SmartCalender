@@ -7,8 +7,8 @@ import MonthlyGrid from "./MonthlyGrid";
 
 const daysInWeek =["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
 
-function MonthlyCalendar() {
-
+function MonthlyCalendar({ chromeHeight }) {
+    const totalAvailable = `calc(100vh - ${chromeHeight}px - 56px)`;
     // Dates
     const today = dayjs();
     const currentYear = today.year();
@@ -34,7 +34,7 @@ function MonthlyCalendar() {
     });
 
     return (
-        <Container sx={{ my:2 }}>
+        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, height: totalAvailable }}>
             <Box display="flex" justifyContent={"space-between"} mb={2}>
 
                 {/* Button changing visible month to previous */}
@@ -55,13 +55,20 @@ function MonthlyCalendar() {
             </Box>
 
             {/* Shows calendar */}
-            <TableContainer component={Paper} elevation={2} sx={{height:"650px"}}>
+            <TableContainer component={Paper}
+                            elevation={2}
+                            sx={{
+                                flexGrow: 1,
+                                display: "flex",
+                                flexDirection: "column",
+                                overflow: "hidden",
+                            }}>
                 <MonthlyGrid
                     weeks={calendar}
                 />
             </TableContainer>   
 
-        </Container>
+        </Box>
     )
 }
 
