@@ -1,5 +1,5 @@
 import React from "react";
-import { Dialog, DialogTitle, DialogContent, Box, Typography, Button } from "@mui/material";
+import {Box, Button, Dialog, DialogContent, DialogTitle, Typography} from "@mui/material";
 import dayjs from "dayjs";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
@@ -58,7 +58,7 @@ function ActivityDialog({ open, onClose, activity, onEdit, onDelete }) {
             textAlign: "left",
             fontWeight: "bold",
             fontSize: "1.8rem",
-            color: "text.primary", // Matches theme text color
+            color: "text.primary",
             pb: 1,
           }}
         >

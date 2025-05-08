@@ -1,24 +1,11 @@
-import {
-    Container,
-    Accordion,
-    AccordionSummary,
-    AccordionDetails,
-    Typography,
-    Stack,
-    Button,
-    IconButton,
-    Box,
-    Card, CardContent
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {Box, Card, CardContent, Container, IconButton, Stack, Typography} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import {useEffect, useState} from "react";
 import AddTask from "./AddTask";
 import {fetchData} from "../../hooks/FetchData";
 import TaskDialog from "./TaskDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
-import Body from "../containers/body"
+import Body from "../containers/Body"
 
 function ToDoPage(){
 

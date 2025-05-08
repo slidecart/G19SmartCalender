@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Box, Button, CircularProgress, TextField, Typography } from "@mui/material";
-import { fetchData } from "../hooks/FetchData";
+import {useEffect, useState} from "react";
+import {useSearchParams} from "react-router-dom";
+import {Box, Button, CircularProgress, TextField, Typography} from "@mui/material";
+import {fetchData} from "../hooks/FetchData";
 
 function ResetPassword() {
     const [searchParams] = useSearchParams();

@@ -1,12 +1,20 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, Typography, Box } from "@mui/material";
+import {Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import dayjs from "dayjs";
-import ActivityBox from "./activityBox";
+
+import WeeklyActivityBox from "./WeeklyActivityBox";
+import {useCalendarContext} from "../../../../context/CalendarContext";
 
 
-
-const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivityClick, onCellClick, categories }) => {
+const WeeklyGrid = ({ weekdays = [], timeSlots = [], }) => {
+    const {
+        filteredActivities,
+        openViewDialog,
+        categories,
+        handleCellClick,
+    } = useCalendarContext();
     return (
         <Table>
+            {/* TableHead for all the weekdays */}
             <TableHead>
                 <TableRow>
                     {/* Empty cell, only for the time-column */}
@@ -35,6 +43,8 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivi
                     })}
                 </TableRow>
             </TableHead>
+
+            {/* TableBody for the time and cells */}
             <TableBody>
                 {/* Maps out times from 08:00 - 20:00 for every row in the first column */ }
                 {timeSlots.map((time) => (
@@ -50,7 +60,7 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivi
                             const cellEnd = cellStart.add(1, "hour");
 
 
-                            const hits = activities.filter((a) => {
+                            const hits = filteredActivities.filter((a) => {
                                 const activityDate = dayjs(a.date).format("YYYY-MM-DD");
                                 const start = dayjs(`1970-01-01T${a.startTime}`);
                                 const end = start.add(1, "minute")
@@ -74,15 +84,15 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivi
                                         }}
                                         onClick={() => {
                                             if (hits.length === 0) {
-                                                onCellClick(day.date, time);
+                                                handleCellClick(day.date, time);
                                             }
 
                                         }}
                                     > 
                                         {hits.length>0 && (
-                                            <ActivityBox
-                                                activities={hits}
-                                                onClick={() => onActivityClick(hits[0])} // Pass the first activity to the click handler
+                                            <WeeklyActivityBox
+                                                filteredActivities={hits}
+                                                onClick={() => openViewDialog(hits[0])} // Pass the first activity to the click handler
                                                 categories={categories}
                                             />
                                         )}
@@ -96,4 +106,4 @@ const CalendarGrid = ({ activities = [], weekdays = [], timeSlots = [], onActivi
     );
 };
 
-export default CalendarGrid;
+export default WeeklyGrid;

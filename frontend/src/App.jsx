@@ -1,13 +1,12 @@
+import {Navigate, Route, Routes} from "react-router-dom";
 
-import {  Routes, Route, Navigate } from "react-router-dom";
-
-import LogIn from "./scenes/login";
-import TodaysAgenda from "./scenes/todaysAgenda";
+import LogIn from "./scenes/LogIn";
+import TodaysAgenda from "./scenes/TodaysAgenda";
 import ToDoPage from "./components/task/ToDoPage";
-import AuthProvider, {PrivateRoute} from "./hooks/AuthContext";
+import AuthProvider, {PrivateRoute} from "./context/AuthContext";
 import VerifyEmail from "./scenes/VerifyEmail";
 import ResetPassword from "./scenes/ResetPassword";
-import Register from "./scenes/register";
+import Register from "./scenes/Register";
 import AccountSettings from "./scenes/AccountSettings";
 
 function App() {

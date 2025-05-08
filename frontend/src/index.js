@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from "react-router-dom";
+import {BrowserRouter} from "react-router-dom";
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import AuthProvider from "./hooks/AuthContext";
+import {createTheme, ThemeProvider} from '@mui/material/styles';
+import AuthProvider from "./context/AuthContext";
+import {CalendarProvider} from "./context/CalendarContext";
 
 const theme = createTheme({
   palette: {
@@ -48,7 +49,9 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <ThemeProvider theme={theme}>
-          <App />
+          <CalendarProvider>
+            <App />
+          </CalendarProvider>
         </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>

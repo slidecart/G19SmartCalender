@@ -1,18 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/AuthContext';
-import { fetchData } from '../../hooks/FetchData';
-import {
-    Dialog,
-    DialogContent,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText,
-    IconButton,
-    Box,
-} from '@mui/material';
-import { styled } from '@mui/system';
+import {useEffect, useRef, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {useAuth} from '../../context/AuthContext';
+import {fetchData} from '../../hooks/FetchData';
+import {Box, Dialog, DialogContent, IconButton, List, ListItem, ListItemButton, ListItemText,} from '@mui/material';
+import {styled} from '@mui/system';
 
 const ProfileIcon = styled('img')({
     width: 40,

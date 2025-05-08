@@ -1,5 +1,4 @@
-import { Box, Container, FormControl, Button, TextField, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import {Box, Button, Container, FormControl, TextField, Typography} from "@mui/material";
 
 {/* Denna ska skicka tillbaka formuläret för att logga in och registera
     ex, boxarna för att skriva in användarnamn, lösernord etc. Registrera kanske 
