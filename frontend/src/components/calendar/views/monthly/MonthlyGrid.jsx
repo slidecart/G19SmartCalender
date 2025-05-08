@@ -115,7 +115,6 @@ const MonthlyGrid = ({ weeks = [] }) => {
                                         flexDirection: "column",
                                         boxSizing: "border-box"
                                     }}
-                                    onClick={() => openViewDialog(formattedDate)}
                                 >
                                     <Typography variant="caption" sx={{ mb: 0.5 }}>
                                         {day.format("DD")}
