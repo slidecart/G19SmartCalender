@@ -58,7 +58,7 @@ function AccountSettings() {
         { id: 'icon2', src: '/userIcons/icon2.png' },
         { id: 'icon3', src: '/userIcons/icon3.png' },
         { id: 'icon4', src: '/userIcons/icon4.png' },
-        //{ id: 'icon5', src: '/userIcons/icon5.png' },
+        { id: 'icon5', src: '/userIcons/icon5.png' },
         //{ id: 'icon6', src: '/userIcons/icon6.png' },
         //{ id: 'icon7', src: '/userIcons/icon7.png' },
         //{ id: 'icon8', src: '/userIcons/icon8.png' },
