@@ -1,11 +1,11 @@
 import {Box, Paper, Typography} from "@mui/material";
 
-const MonthlyActivityBox = ({ activities, onClick }) => {
-    if (!activities || activities.length === 0 ) return null;
+const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
+    if (!filteredActivities || filteredActivities.length === 0 ) return null;
 
     return (
         <Box sx={{ display:"flex", flexDirection:"column", gap:0.5 }}>
-            {activities.map((activity, i) => (
+            {filteredActivities.map((activity, i) => (
                 <Paper  
                     key={i}
                     elevation={1}

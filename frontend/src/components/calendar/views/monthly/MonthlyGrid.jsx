@@ -9,7 +9,7 @@ const weekdays = ["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
 
 const MonthlyGrid = ({ weeks = [], }) => {
     const {
-        activities,
+        filteredActivities,
         openViewDialog,
     } = useCalendarContext();
     return (
@@ -47,7 +47,7 @@ const MonthlyGrid = ({ weeks = [], }) => {
                         {week.map((day, colIndex) => {
                             const formattedDate = day.format("YYYY-MM-DD");
 
-                            const dailyActivities = activities.filter(
+                            const dailyActivities = filteredActivities.filter(
                                 (a) => dayjs(a.date).format("YYYY-MM-DD") === formattedDate
                             );
 
@@ -71,7 +71,7 @@ const MonthlyGrid = ({ weeks = [], }) => {
                                     {/* Activities displayed if any */}
                                     {dailyActivities.length > 0 && (
                                         <MonthlyActivityBox
-                                            activities={dailyActivities}
+                                            filteredActivities={dailyActivities}
                                             onClick={openViewDialog}
                                         />
                                     )}

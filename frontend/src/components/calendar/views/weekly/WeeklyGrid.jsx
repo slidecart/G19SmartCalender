@@ -7,7 +7,7 @@ import {useCalendarContext} from "../../../../context/CalendarContext";
 
 const WeeklyGrid = ({ weekdays = [], timeSlots = [], }) => {
     const {
-        activities,
+        filteredActivities,
         openViewDialog,
         categories,
         handleCellClick,
@@ -60,7 +60,7 @@ const WeeklyGrid = ({ weekdays = [], timeSlots = [], }) => {
                             const cellEnd = cellStart.add(1, "hour");
 
 
-                            const hits = activities.filter((a) => {
+                            const hits = filteredActivities.filter((a) => {
                                 const activityDate = dayjs(a.date).format("YYYY-MM-DD");
                                 const start = dayjs(`1970-01-01T${a.startTime}`);
                                 const end = start.add(1, "minute")
@@ -91,7 +91,7 @@ const WeeklyGrid = ({ weekdays = [], timeSlots = [], }) => {
                                     > 
                                         {hits.length>0 && (
                                             <WeeklyActivityBox
-                                                activities={hits}
+                                                filteredActivities={hits}
                                                 onClick={() => openViewDialog(hits[0])} // Pass the first activity to the click handler
                                                 categories={categories}
                                             />

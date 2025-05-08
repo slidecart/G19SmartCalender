@@ -1,24 +1,52 @@
-import {Box} from "@mui/material";
+// Body.jsx
+import { Box } from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
+import Sidebar from "./AppSidebar"; // Adjust the import path as necessary
 
-function Body({children, showSidebar = false}){
-    // showSidebar is used to determine if the sidebar should be shown or not
-    {/* 
-        Base structure used for everypage. 
-        Allows every page to have the header with navbar and footer
-        while still allowing children inside the structure.
-    */}
-
-    return(
-        <Box sx={{display:"flex", justifyContent:"space-between", flexDirection:"column", minHeight:"108vh"}}> 
+function Body({ children, withSidebar = false }) {
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                minHeight: "100vh",
+            }}
+        >
             <Header/>
-            {children}
-            
+
+            {withSidebar ? (
+                // <-- new wrapper around main + sidebar
+                <Box sx={{ display: "flex", flexGrow: 1 }}>
+                    {/* 1) main content */}
+                    <Box sx={{ flexGrow: 1, p: 2 }}>
+                        {children}
+                    </Box>
+
+                    {/* 2) sidebar: sticky, fixed width when expanded, thin when collapsed */}
+                    <Box
+                        sx={{
+                            flexShrink: 0,
+                            position: "sticky",
+                            top: "64px",        // match your header height
+                            bottom: 0,
+                            height: "calc(100vh - 64px)",
+                            // width will be controlled inside Sidebar via its `collapsed` state
+                        }}
+                    >
+                        <Sidebar />
+                    </Box>
+                </Box>
+            ) : (
+                // no sidebar
+                <Box sx={{ flexGrow: 1, p: 2 }}>
+                    {children}
+                </Box>
+            )}
+
             <Footer/>
         </Box>
-    )
-    
+    );
 }
 
 export default Body;

@@ -60,7 +60,7 @@ export function useCalendar() {
             name:        preFill.name        || "",
             description: preFill.description || "",
             location:    preFill.location    || "",
-            date:        preFill.date        || "",
+            date:        preFill.date        || today.format("YYYY-MM-DD"),
             startTime:   preFill.startTime   || "",
             endTime:     preFill.endTime     || "",
             categoryId:  preFill.categoryId  || ""
@@ -141,7 +141,7 @@ export function useCalendar() {
 
     useEffect(() => {
         loadActivities();
-    }, [loadActivities]);
+    }, []);
 
 
     /* ----------  Categories + UI filters ---------- */
@@ -166,19 +166,28 @@ export function useCalendar() {
 
     // toggle one on/off:
     const toggleCategory = useCallback((id) => {
-        setSelectedCategories((prev) =>
-            prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+        setSelectedCategories(prev =>
+            prev.includes(id)
+                ? prev.filter(x => x !== id)
+                : [...prev, id]
         );
     }, []);
 
     useEffect(() => {
         loadCategories();
-    }, [loadCategories]);
+    }, []);
+
+    useEffect(() => {
+        setSelectedCategories(prev =>
+            prev.filter(id => categories.some(cat => cat.id === id))
+        );
+    }, [categories]);
 
     const filteredActivities =
         selectedCategories.length === 0
             ? activities
             : activities.filter((a) => selectedCategories.includes(a.categoryId));
+
 
     /* ---------- Form data and handlers ---------- */
 
@@ -190,11 +199,11 @@ export function useCalendar() {
         }));
     }
 
-
     const handleCellClick = (date, time) => {
         openAddDialog({date, startTime: time});
     }
 
+    const [currentView, setCurrentView] = useState("week");
 
     // —————— expose everything ——————
     return {
@@ -236,6 +245,10 @@ export function useCalendar() {
         handleChange,
         formData,
         setFormData,
+
+        // view
+        currentView,
+        setCurrentView,
 
     };
 }
