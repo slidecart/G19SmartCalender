@@ -1,9 +1,9 @@
-import { useState } from "react";
-import { Box, Typography, Button, TextField, CircularProgress, Snackbar, Alert } from "@mui/material";
-import { Link } from "react-router-dom";
+import {useState} from "react";
+import {Alert, Box, Button, CircularProgress, Snackbar, TextField, Typography} from "@mui/material";
+import {Link} from "react-router-dom";
 import UserInput from "../components/userInput";
-import { useAuth } from "../hooks/AuthContext";
-import { fetchData } from "../hooks/FetchData";
+import {useAuth} from "../context/AuthContext";
+import {fetchData} from "../hooks/FetchData";
 
 function LogIn() {
     const auth = useAuth();
@@ -74,7 +74,13 @@ function LogIn() {
 
         setIsLoading(true);
         try {
-            const data = await fetchData(`auth/forgot-password?email=${encodeURIComponent(emailInput)}`, "POST", null, true);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}auth/forgot-password?email=${encodeURIComponent(emailInput)}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+            const data = await response.json();
             setSnackbar({
                 open: true,
                 message: data.message || "Länk för återställning av lösenord skickas till din e-post.",
@@ -110,7 +116,13 @@ function LogIn() {
 
         setIsLoading(true);
         try {
-            const data = await fetchData(`auth/resend-verification?email=${encodeURIComponent(emailInput)}`, "POST", null, true);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}auth/resend-verification?email=${encodeURIComponent(emailInput)}`, {
+            method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                }
+             });
+        const data = await response.json();
             console.error("fetchData response:", data);
             setSnackbar({
                 open: true,

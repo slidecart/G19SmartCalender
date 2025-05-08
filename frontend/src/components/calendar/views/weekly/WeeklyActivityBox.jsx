@@ -1,15 +1,20 @@
-import { Box, Typography, Card, CardContent } from "@mui/material";
+import {Box, Typography} from "@mui/material";
 import dayjs from "dayjs";
+import {useCalendarContext} from "../../../../context/CalendarContext";
 
-const ActivityBox = ({ activities, onClick }) => {
+const WeeklyActivityBox = ({ filteredActivities, onClick }) => {
+    const {
+        categories,
+    } = useCalendarContext();
     {/* */}
-    if (!activities || activities.length === 0 ) return null;
+    if (!filteredActivities || filteredActivities.length === 0 ) return null;
+
 
     // Height of every cell in calendarGrid
     const cellHeight = 60;
     return (
         <>
-            {activities.map((activity, i) => {
+            {filteredActivities.map((activity, i) => {
                 // Get start- and endtime
                 const start = dayjs(`1970-01-01T${activity.startTime}`);
                 const end = dayjs(`1970-01-01T${activity.endTime}`);
@@ -22,6 +27,9 @@ const ActivityBox = ({ activities, onClick }) => {
                 const startTime = (start.minute());
                 const duration = (endMinutes - startMinutes)*(cellHeight/60);
 
+                const category = categories?.find(cat => cat.id === activity.categoryId);
+                const backgroundColor = category ? category.color : "#60f085";
+
                 return (
                     <Box key={i}
                          onClick={onClick}
@@ -29,7 +37,7 @@ const ActivityBox = ({ activities, onClick }) => {
                             position:"absolute", 
                             top:`${startTime}px`,
                             height: `${duration}px`,
-                            backgroundColor:"#60f085",
+                            backgroundColor,
                             boxShadow:1,
                             width:"80%",
                             cursor:"pointer",
@@ -52,4 +60,4 @@ const ActivityBox = ({ activities, onClick }) => {
     );
 };
 
-export default ActivityBox;
+export default WeeklyActivityBox;
