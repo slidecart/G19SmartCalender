@@ -50,7 +50,7 @@ function WeeklyCalendar({}) {
 
 
             {/* Shows calendar */}
-            <TableContainer component ={Paper} elevation="2" sx={{height:"fit-content"}}>
+            <TableContainer component ={Paper} elevation="2" sx={{height:"650px"}}>
                 <WeeklyGrid
                     weekdays = {weekdays}
                     timeSlots = {timeSlots}
