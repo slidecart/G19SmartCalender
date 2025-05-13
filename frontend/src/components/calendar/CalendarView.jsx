@@ -18,6 +18,7 @@ function CalendarView(){
 
         /* dialogs */
         handleCloseDialog,
+        handleClosePopover,
         dialogMode,
         confirmDeleteOpen,
         setConfirmDeleteOpen,
@@ -65,7 +66,7 @@ function CalendarView(){
                 open={Boolean(anchorEl)}
                 placement={placement}
                 activity={selectedActivity}
-                onClose={handleCloseDialog}
+                onClose={handleClosePopover}
                 onEdit={() => {openEditDialog(selectedActivity)}}
                 onDelete={() => setConfirmDeleteOpen(true)}
             />

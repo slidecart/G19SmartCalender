@@ -1,8 +1,9 @@
 import React from "react";
 import Popover from "@mui/material/Popover";
-import { Box, Button, Typography, IconButton } from "@mui/material";
+import {Box, Button, Typography, IconButton, Divider} from "@mui/material";
 import dayjs from "dayjs";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 
 function ActivityDialog({
@@ -50,17 +51,6 @@ function ActivityDialog({
                 }
             }}
         >
-            {/* Delete Icon */}
-            <IconButton
-                onClick={() => {
-                    onDelete(activity);
-                    onClose();
-                }}
-                sx={{ position: 'absolute', top: 8, right: 8, color: 'error.main' }}
-                size="small"
-            >
-                <DeleteOutlineOutlinedIcon />
-            </IconButton>
 
             {/* Content */}
             <Box sx={{ mt: 1 }}>
@@ -74,19 +64,41 @@ function ActivityDialog({
                     {activity.description || 'Ingen beskrivning'}
                 </Typography>
             </Box>
+            <Divider sx={{ my: 2 }} />
 
-            {/* Actions */}
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
-                <Button
-                    size="small"
-                    variant="text"
-                    onClick={() => {
-                        onEdit(activity);
-                        onClose();
-                    }}
-                >
-                    Redigera
-                </Button>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                gap: 2,
+                mt: 2,
+                p: 1,
+                borderRadius: 1,
+              }}
+            >
+              <Button
+                size="small"
+                variant="contained"
+                startIcon={<EditOutlinedIcon fontSize="small" />}
+                onClick={() => {
+                  onEdit(activity);
+                  onClose();
+                }}
+              >
+                Redigera
+              </Button>
+              <Button
+                size="small"
+                variant="contained"
+                color="error"
+                startIcon={<DeleteOutlineOutlinedIcon fontSize="small" />}
+                onClick={() => {
+                  onDelete(activity);
+                  onClose();
+                }}
+              >
+                Ta bort
+              </Button>
             </Box>
         </Popover>
     );

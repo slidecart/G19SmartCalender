@@ -30,7 +30,8 @@ export default function TopBar() {
         toggleCategory,
         currentView,
         setCurrentView,
-        openAddDialog
+        openAddDialog,
+        resetFilter,
     } = useCalendarContext();
 
     const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
@@ -85,6 +86,17 @@ export default function TopBar() {
                     open={Boolean(filterAnchorEl)}
                     onClose={handleFilterClose}
                 >
+                    <MenuItem onClick={resetFilter}>
+                        <ListItemIcon>
+                            <Checkbox
+                                icon={<RadioButtonUncheckedOutlinedIcon />}
+                                >
+
+                            </Checkbox>
+                        </ListItemIcon>
+                        <ListItemText primary="Rensa filter" />
+                    </MenuItem>
+                    <Divider />
                     {categories.map((cat) => (
                         <MenuItem key={cat.id} onClick={() => toggleCategory(cat.id)}>
                             <IconButton sx={{ p: 0 }}>

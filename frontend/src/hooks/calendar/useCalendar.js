@@ -59,10 +59,13 @@ export function useCalendar() {
 
     const handleCloseDialog = useCallback(() => {
         setIsAddEditDialogOpen(false);
-        setAnchorEl(null);
-        setIsViewDialogOpen(false);
+        setSelectedActivity(null);
         setFormData({});
     }, []);
+
+    const handleClosePopover = useCallback(() => {
+        setAnchorEl(null);
+    } , []);
 
     // Function to open the add dialog
     const openAddDialog = useCallback((preFill = {}) => {
@@ -97,8 +100,6 @@ export function useCalendar() {
     const openEditDialog = useCallback((selectedActivity) => {
         console.log("Hello from openEditDialog", selectedActivity);
         setDialogMode("edit");
-        // *here’s the critical bit*—you must _fill_ the formData
-        // from the activity you passed in, instead of leaving it blank:
         setFormData({
             name:        selectedActivity.name,
             description: selectedActivity.description,
@@ -108,6 +109,7 @@ export function useCalendar() {
             endTime:     selectedActivity.endTime,
             categoryId:  selectedActivity.categoryId
         });
+
         setIsViewDialogOpen(false);
         setIsAddEditDialogOpen(true);
     }, [selectedActivity]);
@@ -192,6 +194,10 @@ export function useCalendar() {
         );
     }, []);
 
+    const resetFilter = useCallback(() => {
+        setSelectedCategories(categories.map(cat => cat.id));
+    }, [categories])
+
     useEffect(() => {
         loadCategories();
     }, []);
@@ -210,14 +216,19 @@ export function useCalendar() {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]:value,
-        }));
-    }
+        setFormData((prev) => {
+            const updated = { ...prev, [name]: value };
+            // When startTime changes, set default endTime to one hour later.
+            if (name === "startTime") {
+                updated.endTime = dayjs(value, "HH:mm").add(1, "hour").format("HH:mm");
+            }
+            return updated;
+        });
+    };
 
     const handleCellClick = (date, time) => {
-        openAddDialog({date, startTime: time});
+        const defaultEndTime = dayjs(time, "HH:mm").add(1, "hour").format("HH:mm");
+        openAddDialog({ date, startTime: time, endTime: defaultEndTime });
     }
 
     const [currentView, setCurrentView] = useState("week");
@@ -253,6 +264,7 @@ export function useCalendar() {
         confirmDeleteOpen,
         setConfirmDeleteOpen,
         handleCloseDialog,
+        handleClosePopover,
         handleActivityClick,
         anchorEl,
         placement,
@@ -264,6 +276,7 @@ export function useCalendar() {
         toggleCategory,
         createCategory,
         filteredActivities,
+        resetFilter,
 
         // form data
         handleChange,
