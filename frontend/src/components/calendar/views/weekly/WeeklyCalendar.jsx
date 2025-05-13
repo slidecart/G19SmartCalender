@@ -67,6 +67,7 @@ function WeeklyCalendar() {
                 sx={{height:"visibleHeight" + "px", overflowY:"auto"}}
                 ref={scrollRef}
             >
+
                 <WeeklyGrid
                     weekdays={weekdays}
                 />

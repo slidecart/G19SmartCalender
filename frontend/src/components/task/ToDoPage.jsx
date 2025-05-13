@@ -1,4 +1,10 @@
-import {Box, Card, CardContent, Container, IconButton, Stack, Typography} from "@mui/material";
+import {Checkbox,
+    Container,
+    Typography,
+    Stack,
+    IconButton,
+    Box,
+    Card, CardContent} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import {useEffect, useState} from "react";
 import AddTask from "./AddTask";
@@ -40,7 +46,17 @@ function ToDoPage(){
     };
 
     const openEditDialog = (task) => {
-        setFormData(task);
+        const normalizedTask = {
+            name: task.name || "",
+            description: task.description || "",
+            location: task.location || "",
+            date: task.date || "",
+            categoryId: task.categoryId || "",
+            id: task.id || "",
+            completed: task.completed ?? false,
+        };
+
+        setFormData(normalizedTask);
         setDialogMode("edit");
         setIsDialogOpen(true);
         setTaskDialogOpen(false);
@@ -143,6 +159,19 @@ function ToDoPage(){
         }
     };
 
+    const handleToggleCompleted = async (task) => {
+        try {
+            const updated = await fetchData(`tasks/${task.id}/complete`, "PUT");
+
+
+            setTasks(prevTasks =>
+                prevTasks.map(t => (t.id === task.id ? updated : t))
+            );
+        } catch (error) {
+            console.error("Error toggling completion:", error.message);
+        }
+    };
+
     return (
         <Body>
             <Container maxWidth="xs" sx={{ bgcolor: "#0077ff7e", p: 2, mt: 2, borderRadius: 2, fontFamily: "'Fira Code', 'Consolas', 'monospace'"}}>
@@ -167,18 +196,56 @@ function ToDoPage(){
                 </Box>
 
                 <Stack spacing={2}>
-                    {tasks.map((task, index) => (
-                    <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>
-                        <CardContent>
-                            <Box
-                                onClick={() => handleTaskClick(task)}
-                                display="flex" justifyContent="space-between" alignItems="center">
-                                <Box>
-                                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>{task.name}</Typography>
-                                    <Typography>{task.description}</Typography>
-                                </Box>
+                    {/* Sort tasks: incomplete first */}
+                    {[...tasks].sort((a, b) => a.completed - b.completed).map((task) => (
+                        <Card
+                            key={task.id}
+                            sx={{
+                                bgcolor: "white",
+                                p: 2,
+                                borderRadius: 2,
+                                mb: 1,
+                                opacity: task.completed ? 0.6 : 1,
+                                transition: "opacity 0.3s ease",
+                            }}
+                        >
+                            {/* Checkbox tasks */}
+                            <CardContent sx={{ position: "relative" }}>
+                                <Checkbox
+                                    checked={task.completed}
+                                    onChange={(e) => {
+                                        e.stopPropagation();
+                                        handleToggleCompleted(task);
+                                    }}
+                                    sx={{
+                                        position: "absolute",
+                                        top: 8,
+                                        right: 8,
+                                    }}
+                                />
 
-
+                                <Box
+                                    onClick={() => handleTaskClick(task)}
+                                    sx={{ cursor: "pointer" }}
+                                >
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            fontWeight: "bold",
+                                            textDecoration: task.completed ? "line-through" : "none",
+                                            color: task.completed ? "gray" : "black",
+                                        }}
+                                    >
+                                        {task.name}
+                                    </Typography>
+                                    <Typography
+                                        sx={{
+                                            textDecoration: task.completed ? "line-through" : "none",
+                                            color: task.completed ? "gray" : "black",
+                                        }}
+                                    >
+                                        {task.description}
+                                    </Typography>
                             </Box>
                         </CardContent>
                     </Card>
