@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { useCalendarContext } from "../../../../context/CalendarContext";
 import WeeklyActivityBox from "../weekly/WeeklyActivityBox";
 
-export function DailyCalendar({ date, startTime, endTime, draftActivity }) {
+export function DailyCalendar({ date, draftActivity }) {
     const { activities, handleCellClick, handleActivityClick, categories } = useCalendarContext();
     const containerRef = useRef(null);
     const ROW_HEIGHT = 60;
@@ -46,7 +46,8 @@ export function DailyCalendar({ date, startTime, endTime, draftActivity }) {
                         // Find activities overlapping current timeslot.
                         const hits = activitiesToRender.filter(activity => {
                             const actStart = dayjs(`1970-01-01T${activity.startTime}`);
-                            const actEnd = dayjs(`1970-01-01T${activity.endTime}`);
+                            const actEnd = actStart.add(1, "minute")
+
                             return actEnd.isAfter(cellStart) && actStart.isBefore(cellEnd);
                         });
                         return (

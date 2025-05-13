@@ -49,7 +49,7 @@ function WeeklyCalendar() {
 
                 {/* Headtitle for calender */}
                 <Typography variant="h6" sx={{textAlign:"center"}}>
-                    Veckokalender - {currentYear} {/* Shows year based on week */}
+                    Vecka {startOfWeek.week()} - {currentYear} {/* Shows year based on week */}
                 </Typography>
 
                 {/* Button changing visible week to next */}

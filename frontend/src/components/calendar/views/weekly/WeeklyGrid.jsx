@@ -8,7 +8,6 @@ import {useCalendarContext} from "../../../../context/CalendarContext";
 const WeeklyGrid = ({ weekdays= [] }) => {
     const {
         filteredActivities,
-        openViewDialog,
         categories,
         handleCellClick,
         timeSlots,
@@ -91,7 +90,9 @@ const WeeklyGrid = ({ weekdays= [] }) => {
                                             cursor: "pointer",
                                             backgroundColor: isToday ? "grey.200" : "inherit",
                                             borderLeft: idx > 0 ? "1px solid #ccc" : "none",
-
+                                            "&:hover": {
+                                                backgroundColor: isToday ? "grey.300" : "grey.100",
+                                            },
                                         }}
                                         onClick={() => {
                                             if (hits.length === 0) {
