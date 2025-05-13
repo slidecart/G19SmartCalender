@@ -1,28 +1,36 @@
-import React from 'react';
-import {Box, Container} from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Container, Snackbar, Alert } from '@mui/material';
 import UserInput from '../components/userInput';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 function Register() {
+    const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
         const formData = new FormData(e.target);
-
 
         const username = formData.get('username');
         const email = formData.get('emailAdress');
         const password = formData.get('password');
         const checkPassword = formData.get('checkPassword');
 
-
         if (!username || !email || !password || !checkPassword) {
-            alert("Alla fält måste fyllas i.");
+            setSnackbar({
+                open: true,
+                message: "Alla fält måste fyllas i.",
+                severity: "error"
+            });
             return;
         }
 
         if (password !== checkPassword) {
-            alert("Lösenorden matchar inte.");
+            setSnackbar({
+                open: true,
+                message: "Lösenorden matchar inte.",
+                severity: "error"
+            });
             return;
         }
 
@@ -32,7 +40,7 @@ function Register() {
             password
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND_URL}auth/register`,{
+        fetch(`${process.env.REACT_APP_BACKEND_URL}auth/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -42,21 +50,39 @@ function Register() {
             .then(response => {
                 if (!response.ok) {
                     if (response.status === 409) {
-                        alert("Användarnamn eller email finns redan.");
+                        setSnackbar({
+                            open: true,
+                            message: "Användarnamn eller email finns redan.",
+                            severity: "error"
+                        });
                     } else {
-                        alert("Registreringen misslyckades. Försök igen.");
+                        setSnackbar({
+                            open: true,
+                            message: "Registreringen misslyckades. Försök igen.",
+                            severity: "error"
+                        });
                     }
                     throw new Error("Registration failed");
                 }
                 return response.json();
             })
             .then(data => {
-                alert("Registrering lyckades! Välkommen, " + data.username);
-                 window.location.href = "/login";
+                setSnackbar({
+                    open: true,
+                    message: `Registrering lyckades! Välkommen, ${data.username}`,
+                    severity: "success"
+                });
+                setTimeout(() => {
+                    window.location.href = "/login";
+                }, 2000);
             })
             .catch(error => {
                 console.error("Fel vid registrering:", error);
-                alert("Ett fel uppstod. Kunde inte kontakta servern.");
+                setSnackbar({
+                    open: true,
+                    message: "Ett fel uppstod. Kunde inte kontakta servern.",
+                    severity: "error"
+                });
             });
     };
 
@@ -86,6 +112,16 @@ function Register() {
                     <p>Har du redan ett konto? <Link to="/login">Logga in här</Link></p>
                 </Box>
             </Box>
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 }
