@@ -12,6 +12,7 @@ const WeeklyGrid = ({ weekdays= [] }) => {
         categories,
         handleCellClick,
         timeSlots,
+        handleActivityClick,
     } = useCalendarContext();
     return (
         <Table stickyHeader>
@@ -55,7 +56,7 @@ const WeeklyGrid = ({ weekdays= [] }) => {
 
             {/* TableBody for the time and cells */}
             <TableBody>
-                {/* Maps out times from 08:00 - 20:00 for every row in the first column */ }
+                {/* Maps out times from 00:00 - 23:00 for every row in the first column */ }
                 {timeSlots.map((time) => (
                     <TableRow key={time} sx={{ height:"60px" }}>
                         <TableCell sx={{  borderRight:"1px solid #ccc", padding:"15px"}}>
@@ -102,7 +103,7 @@ const WeeklyGrid = ({ weekdays= [] }) => {
                                         {hits.length>0 && (
                                             <WeeklyActivityBox
                                                 filteredActivities={hits}
-                                                onClick={() => openViewDialog(hits[0])} // Pass the first activity to the click handler
+                                                onClick={(e) => handleActivityClick(e, hits[0], idx)} // Pass the first activity to the click handler
                                                 categories={categories}
                                             />
                                         )}
