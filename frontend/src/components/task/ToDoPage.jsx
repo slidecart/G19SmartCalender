@@ -246,6 +246,18 @@ function ToDoPage(){
                                     >
                                         {task.description}
                                     </Typography>
+
+                                {task.date && (
+                                   <Typography
+                                        variant="caption"
+                                        sx={{fontStyle: "italic",
+                                        color: task.completed ? "gray" : "black",
+                                        }}
+                                    >
+                                        Ska utföras innan: 
+                                        {task.date}
+                                    </Typography>
+                                )}    
                             </Box>
                         </CardContent>
                     </Card>
