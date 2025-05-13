@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import React from "react";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
-function TaskDialog({ open, onClose, task, onEdit, onDelete}){
+function TaskDialog({ open, onClose, task, onEdit, onDelete, onConvert}){
     return (
         <Dialog
             open={open}
@@ -84,6 +84,14 @@ function TaskDialog({ open, onClose, task, onEdit, onDelete}){
 
                 {/* Actions Section */}
                 <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3, gap: 2 }}>
+                <Button
+                        onClick={onConvert}
+                        variant="outlined"
+                        color="primary"
+                        sx={{ textTransform: "none", px: 3 }}
+                    >
+                        Gör om till aktivitet 
+                    </Button>
                     <Button
                         onClick={onEdit}
                         variant="outlined"

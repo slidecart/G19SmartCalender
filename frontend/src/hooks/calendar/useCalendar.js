@@ -154,6 +154,20 @@ export function useCalendar() {
         handleCloseDialog();
     }, []);
 
+    const [selectedTask, setSelectedTask] = useState(null);
+    
+    const openConvertDialog = useCallback((task) => {
+        setDialogMode("edit");
+        setFormData({
+            name:        task.name,
+            description: task.description,
+            location:    task.location,
+            date:        task.date,
+            categoryId:  task.categoryId
+        });
+        setIsAddEditDialogOpen(true);
+    },[selectedTask]);
+
     useEffect(() => {
         loadActivities();
     }, []);
@@ -286,6 +300,9 @@ export function useCalendar() {
         // view
         currentView,
         setCurrentView,
+
+        //tasks 
+        openConvertDialog,
 
     };
 }

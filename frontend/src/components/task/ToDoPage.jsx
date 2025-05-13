@@ -11,12 +11,17 @@ import AddTask from "./AddTask";
 import {fetchData} from "../../hooks/FetchData";
 import TaskDialog from "./TaskDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
-import Body from "../containers/Body"
+import Body from "../containers/Body";
+import ActivityDialog from "../calendar/ActivityDialog";
+import AddActivity from "../calendar/AddActivity";
+import { useCalendarContext } from "../../context/CalendarContext";
+
 
 function ToDoPage(){
 
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState(null);
+    const {openConvertDialog, isAddEditDialogOpen} = useCalendarContext();
 
     const [formData, setFormData] = useState({
         name:"",
@@ -30,6 +35,7 @@ function ToDoPage(){
 
     const [selectedTask, setSelectedTask] = useState(null);
     const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+    const [activityDialogOpen, setActivityDialogOpen] = useState(false);
 
 
     const handleTaskClick = (task) => {
@@ -59,7 +65,23 @@ function ToDoPage(){
         setFormData(normalizedTask);
         setDialogMode("edit");
         setIsDialogOpen(true);
-        setTaskDialogOpen(false);
+        setTaskDialogOpen(true);
+    };
+
+    const requestConvert = (task) => {
+        const convertableTask = {
+            name: task.name || "",
+            description: task.description || "",
+            location: task.location || "",
+            date: task.date || "",
+            categoryId: task.categoryId || "",
+            id: task.id || "",
+            completed: task.completed ?? false,
+        };
+
+        setFormData(convertableTask);
+        setDialogMode("edit");
+        setActivityDialogOpen(true);
     };
 
     const handleCloseDialog = () => {
@@ -281,8 +303,20 @@ function ToDoPage(){
                         task={selectedTask}
                         onEdit={() => openEditDialog(selectedTask)} // Opens edit dialog
                         onDelete={() => requestDelete(selectedTask)} // Deletes task
+                        onConvert={() => requestConvert(selectedTask)} //Converts task 
                     />
                 )}
+
+                {/* Shows task when clicked */}
+                {selectedTask && activityDialogOpen && (
+                    <AddActivity
+                        open={activityDialogOpen}
+                        onClose={() => setActivityDialogOpen(false)} // Closes task dialog
+                        task={selectedTask} 
+                    />
+                )}
+
+
 
 
                 {/* Shows confirmation dialog for delete */}
