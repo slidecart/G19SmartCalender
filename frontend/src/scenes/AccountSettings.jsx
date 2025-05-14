@@ -17,6 +17,9 @@ import {
 import {styled} from '@mui/system';
 import Header from '../components/containers/Header';
 import {useNavigate} from "react-router-dom";
+import TopBar from "../components/containers/TopBar";
+import Navbar from "../components/containers/Navbar";
+import Sidebar from "../components/containers/Sidebar";
 
 
 const ProfileIcon = styled('img')(({ selected }) => ({
@@ -205,7 +208,7 @@ function AccountSettings() {
 
     return (
         <Box>
-            <Header /> {/* Add Header */}
+            <Navbar /> {/* Add Header */}
             <Box sx={{ p: 3, maxWidth: 1200, mx: 'auto' }}>
                 <Typography variant="h4" gutterBottom>
                     Kontoinställningar
@@ -415,6 +418,7 @@ function AccountSettings() {
                     </Grid>
                 </Grid>
             </Box>
+            <Sidebar />
         </Box>
     );
 }
