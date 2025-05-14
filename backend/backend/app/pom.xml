@@ -93,9 +93,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.mashape.unirest</groupId>
-			<artifactId>unirest-java</artifactId>
-			<version>1.4.9</version>
+			<groupId>com.brevo</groupId>
+			<artifactId>brevo</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 	</dependencies>
