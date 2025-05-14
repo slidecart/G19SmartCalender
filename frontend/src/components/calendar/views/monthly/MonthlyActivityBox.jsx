@@ -1,23 +1,34 @@
 import {Box, Paper, Typography} from "@mui/material";
+import {useCalendarContext} from "../../../../context/CalendarContext";
 
 const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
+    const {
+        categories,
+    } = useCalendarContext();
+
     if (!filteredActivities || filteredActivities.length === 0 ) return null;
+
+
 
     return (
         <Box sx={{ display:"flex", flexDirection:"column", gap:0.5 }}>
-            {filteredActivities.map((activity, i) => (
-                <Paper  
+            {filteredActivities.map((activity, i) => {
+                const category = categories?.find(cat => cat.id === activity.categoryId);
+                const backgroundColor = category ? category.color : "#60f085";
+
+                return (
+                <Paper
                     key={i}
+                    onClick={onClick}
                     elevation={1}
-                    onClick={() => onClick(activity)}
                     sx={{
-                        p:0.5,
-                        backgroundColor:"#60f085",
-                        cursor:"pointer",
-                        zIndex:1,
+                        p: 0.5,
+                        backgroundColor,
+                        cursor: "pointer",
+                        zIndex: 1,
                         "&:hover": {
-                            backgroundColor:"primary.main",
-                            color:"fff"
+                            backgroundColor: "primary.main",
+                            color: "fff"
                         }
                     }}
                 >
@@ -25,7 +36,8 @@ const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
                         {activity.name}
                     </Typography>
                 </Paper>
-            ))}
+                )
+            })}
         </Box>
     );
 };

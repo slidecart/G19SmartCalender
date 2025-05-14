@@ -20,7 +20,7 @@ const weekdays = ["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
  * where the last row sits flush at the bottom.
  */
 const MonthlyGrid = ({ weeks = [] }) => {
-    const { filteredActivities, openViewDialog, handleActivityClick } = useCalendarContext();
+    const { filteredActivities, handleActivityClick, categories, handleCellClick} = useCalendarContext();
     // compute each row's height as a percentage of container
     const rowHeight = `${100 / weeks.length}%`;
 
@@ -103,6 +103,7 @@ const MonthlyGrid = ({ weeks = [] }) => {
                             const dailyActivities = filteredActivities.filter(
                                 (a) => dayjs(a.date).format("YYYY-MM-DD") === formattedDate
                             );
+                            const isToday = dayjs(day.date).isSame(dayjs(), "day");
 
                             return (
                                 <TableCell
@@ -113,7 +114,15 @@ const MonthlyGrid = ({ weeks = [] }) => {
                                         p: 1,
                                         display: "flex",
                                         flexDirection: "column",
-                                        boxSizing: "border-box"
+                                        boxSizing: "border-box",
+                                        backgroundColor: isToday ? "grey.200" : "inherit",
+                                        cursor: "pointer",
+                                        "&:hover": {
+                                            backgroundColor: isToday ? "grey.300" : "grey.100",
+                                        },
+                                    }}
+                                    onClick={() => {
+                                            handleCellClick(day.format("YYYY-MM-DD"), "12:00");
                                     }}
                                 >
                                     <Typography variant="caption" sx={{ mb: 0.5 }}>
@@ -123,7 +132,8 @@ const MonthlyGrid = ({ weeks = [] }) => {
                                     {dailyActivities.length > 0 && (
                                         <MonthlyActivityBox
                                             filteredActivities={dailyActivities}
-                                            onClick={(e) => handleActivityClick(e, dailyActivities, colIndex)}
+                                            onClick={(e) => handleActivityClick(e, dailyActivities[0], colIndex)}
+                                            categories={categories}
                                         />
                                     )}
                                 </TableCell>

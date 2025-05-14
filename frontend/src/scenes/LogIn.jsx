@@ -3,7 +3,6 @@ import {Alert, Box, Button, CircularProgress, Snackbar, TextField, Typography} f
 import {Link} from "react-router-dom";
 import UserInput from "../components/userInput";
 import {useAuth} from "../context/AuthContext";
-import {fetchData} from "../hooks/FetchData";
 
 function LogIn() {
     const auth = useAuth();

@@ -2,6 +2,9 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import dayjs from "dayjs";
 import {fetchData} from "../FetchData";
 
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+
 export function useCalendar() {
     /* ---------- Dates ---------- */
     // Constant variables for dates
@@ -40,6 +43,7 @@ export function useCalendar() {
         categoryId:"",
     });
 
+    const [currentView, setCurrentView] = useState("week"); // Weekly or monthly
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
     const [isViewDialogOpen, setIsViewDialogOpen]       = useState(false);
@@ -75,8 +79,8 @@ export function useCalendar() {
             description: preFill.description || "",
             location:    preFill.location    || "",
             date:        preFill.date        || today.format("YYYY-MM-DD"),
-            startTime:   preFill.startTime   || "",
-            endTime:     preFill.endTime     || "",
+            startTime:   preFill.startTime   || "12:00",
+            endTime:     preFill.endTime     || "13:00",
             categoryId:  preFill.categoryId  || ""
         });
         setIsViewDialogOpen(false);
@@ -90,15 +94,9 @@ export function useCalendar() {
         setIsViewDialogOpen(true);
     }, []);
 
-    useEffect(() => {
-        if (selectedActivity) {
-            console.log("Selected activity:", selectedActivity);
-        }
-    }, [selectedActivity]);
 
     // Function to open the edit dialog
     const openEditDialog = useCallback((selectedActivity) => {
-        console.log("Hello from openEditDialog", selectedActivity);
         setDialogMode("edit");
         setFormData({
             name:        selectedActivity.name,
@@ -245,11 +243,8 @@ export function useCalendar() {
         openAddDialog({ date, startTime: time, endTime: defaultEndTime });
     }
 
-    const [currentView, setCurrentView] = useState("week");
 
-    useEffect(() => {
-        console.log(selectedActivity)
-    }, [selectedActivity]);
+
 
     // —————— expose everything ——————
     return {
