@@ -21,6 +21,8 @@ import { useCalendarContext } from "../../context/CalendarContext";
 import CreateCategoryDialog from "../CreateCategoryDialog";
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUncheckedOutlined';
+import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import {grey} from "@mui/material/colors"; // change
 
 export default function TopBar() {
     const theme = useTheme();
@@ -86,13 +88,13 @@ export default function TopBar() {
                     open={Boolean(filterAnchorEl)}
                     onClose={handleFilterClose}
                 >
-                    <MenuItem onClick={resetFilter}>
+                    <MenuItem
+                        onClick={resetFilter}
+                        sx={{
+                            color: grey[600],
+                        }}>
                         <ListItemIcon>
-                            <Checkbox
-                                icon={<RadioButtonUncheckedOutlinedIcon />}
-                                >
-
-                            </Checkbox>
+                            <CancelOutlinedIcon fontSize="small" />
                         </ListItemIcon>
                         <ListItemText primary="Rensa filter" />
                     </MenuItem>
