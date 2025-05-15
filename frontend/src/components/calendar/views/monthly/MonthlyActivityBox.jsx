@@ -19,7 +19,6 @@ const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
                 return (
                 <Paper
                     key={i}
-                    onClick={onClick}
                     elevation={1}
                     sx={{
                         p: 0.5,
@@ -31,6 +30,11 @@ const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
                             color: "white"
                         }
                     }}
+                    onClick={e => {
+                        e.stopPropagation();
+                        onClick(e, activity);
+                    }}
+
                 >
                     <Typography variant="subtitle2">
                         {activity.name}
