@@ -25,9 +25,9 @@ function ToDoPage(){
 
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState(null);
-    const {openConvertDialog, isAddEditDialogOpen} = useCalendarContext();
+    const { openAddDialog, isAddEditDialogOpen, handleCloseDialog, formData, setFormData , handleChange } = useCalendarContext();
 
-    const [formData, setFormData] = useState({
+   /* const [formData, setFormData] = useState({
         name:"",
         description:"",
         location:"",
@@ -35,11 +35,11 @@ function ToDoPage(){
         categoryId:"",
         id:"",
         completed:false
-    })
+    })*/
 
     const [selectedTask, setSelectedTask] = useState(null);
     const [taskDialogOpen, setTaskDialogOpen] = useState(false);
-    const [activityDialogOpen, setActivityDialogOpen] = useState(false);
+
 
 
     const handleTaskClick = (task) => {
@@ -50,7 +50,7 @@ function ToDoPage(){
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [dialogMode, setDialogMode] = useState(null); // "add" or "edit"
 
-    const openAddDialog = () => {
+    const openAddTaskDialog = () => {
         setDialogMode("add");
         setIsDialogOpen(true);
     };
@@ -72,23 +72,8 @@ function ToDoPage(){
         setTaskDialogOpen(true);
     };
 
-    const requestConvert = (task) => {
-        const convertableTask = {
-            name: task.name || "",
-            description: task.description || "",
-            location: task.location || "",
-            date: task.date || "",
-            categoryId: task.categoryId || "",
-            id: task.id || "",
-            completed: task.completed ?? false,
-        };
 
-        setFormData(convertableTask);
-        setDialogMode("edit");
-        setActivityDialogOpen(true);
-    };
-
-    const handleCloseDialog = () => {
+    const handleCloseTaskDialog = () => {
         setIsDialogOpen(false);
         setFormData({
             name:"",
@@ -96,11 +81,8 @@ function ToDoPage(){
             location:"",
             date:"",
             categoryId:"",
-            id:"",
-            completed:false
         });
     };
-
 
     const handleSubmit = async () =>{
         try{
@@ -119,7 +101,6 @@ function ToDoPage(){
                 location:"",
                 date:"",
                 categoryId:"",
-                userId:"",
                 completed:false
             });
 
@@ -137,13 +118,6 @@ function ToDoPage(){
         }
     }
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]:value,
-        }));
-    }
     
     useEffect(() => {
         const fetchTasks = async() => {
@@ -198,6 +172,11 @@ function ToDoPage(){
         }
     };
 
+    const requestConvert = (selectedTask) => {
+            openAddDialog(selectedTask, selectedTask.id);
+            setTaskDialogOpen(false);
+    }
+
     return (
         <Body>
             <Container maxWidth="xs" sx={{ bgcolor: theme.palette.primary.main, p: 2, mt: 2, borderRadius: 2, fontFamily: "'Fira Code', 'Consolas', 'monospace'"}}>
@@ -214,7 +193,7 @@ function ToDoPage(){
                     <IconButton
                         size="small"
                         sx={{ color: theme.palette.primary.contrastText, }}
-                        onClick={() => openAddDialog()}
+                        onClick={() => openAddTaskDialog()}
                     >
                         <AddIcon />
                         Ny Task
@@ -292,7 +271,7 @@ function ToDoPage(){
 
                 <AddTask
                     open={isDialogOpen}
-                    onClose={handleCloseDialog}
+                    onClose={handleCloseTaskDialog}
                     formData={formData}
                     handleChange={handleChange}
                     handleSubmit={handleSubmit}
@@ -307,15 +286,15 @@ function ToDoPage(){
                         task={selectedTask}
                         onEdit={() => openEditDialog(selectedTask)} // Opens edit dialog
                         onDelete={() => requestDelete(selectedTask)} // Deletes task
-                        onConvert={() => requestConvert(selectedTask)} //Converts task 
+                        onConvert={() => requestConvert(selectedTask)} //Converts task
                     />
                 )}
 
                 {/* Shows task when clicked */}
-                {selectedTask && activityDialogOpen && (
+                {selectedTask && isAddEditDialogOpen && (
                     <AddActivity
-                        open={activityDialogOpen}
-                        onClose={() => setActivityDialogOpen(false)} // Closes task dialog
+                        open={isAddEditDialogOpen}
+                        onClose={() => handleCloseDialog()} // Closes task dialog
                         task={selectedTask} 
                     />
                 )}

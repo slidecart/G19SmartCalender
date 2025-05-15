@@ -53,6 +53,8 @@ export function useCalendar() {
     const [selectedActivity, setSelectedActivity] = useState(null);
     const [placement, setPlacement] = useState("right");
 
+    const [taskID, setTaskID] = useState(null);
+
     const handleActivityClick = useCallback((event, activity, index) => {
         const newPlacement = index < 4 ? "right" : "left";
         setPlacement(newPlacement);
@@ -72,8 +74,9 @@ export function useCalendar() {
     } , []);
 
     // Function to open the add dialog
-    const openAddDialog = useCallback((preFill = {}) => {
+    const openAddDialog = useCallback((preFill = {}, taskID) => {
         setDialogMode("add");
+        setTaskID(taskID || null);
         setFormData({
             name:        preFill.name        || "",
             description: preFill.description || "",
@@ -127,6 +130,7 @@ export function useCalendar() {
         }
     }, []);
 
+
     const createOrUpdateActivity = useCallback(
         async (formData, mode, ) => {
             const path =
@@ -152,19 +156,19 @@ export function useCalendar() {
         handleCloseDialog();
     }, []);
 
-    const [selectedTask, setSelectedTask] = useState(null);
-    
-    const openConvertDialog = useCallback((task) => {
-        setDialogMode("edit");
-        setFormData({
-            name:        task.name,
-            description: task.description,
-            location:    task.location,
-            date:        task.date,
-            categoryId:  task.categoryId
-        });
-        setIsAddEditDialogOpen(true);
-    },[selectedTask]);
+    const convertTaskToActivity = useCallback(
+        async (formData, taskID) => {
+            console.log("taskID", taskID);
+            const path = `tasks/convert/${taskID}`;
+            const method = "POST";
+            const saved = await fetchData(path, method, formData);
+
+            setActivities((prev) => [...prev, saved]);
+            return saved;
+        },
+        []
+    );
+
 
     useEffect(() => {
         loadActivities();
@@ -277,6 +281,8 @@ export function useCalendar() {
         handleActivityClick,
         anchorEl,
         placement,
+        taskID,
+        convertTaskToActivity,
 
         // categories & filter
         categories,
@@ -296,8 +302,6 @@ export function useCalendar() {
         currentView,
         setCurrentView,
 
-        //tasks 
-        openConvertDialog,
 
     };
 }

@@ -181,7 +181,7 @@ public class TaskController {
      *         and the user is authenticated, or an HTTP 401 Unauthorized response if authentication fails
      * @author Carl Lundholm, David Lexe
      */
-    @PostMapping("/{id}/convert")
+    @PostMapping("/convert/{id}")
     public ResponseEntity<?> convertTaskToActivity(@PathVariable Long id, @RequestBody @Valid ConvertTaskRequest taskRequest) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
