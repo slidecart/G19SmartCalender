@@ -28,7 +28,7 @@ const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
                         zIndex: 1,
                         "&:hover": {
                             backgroundColor: "primary.main",
-                            color: "fff"
+                            color: "white"
                         }
                     }}
                 >

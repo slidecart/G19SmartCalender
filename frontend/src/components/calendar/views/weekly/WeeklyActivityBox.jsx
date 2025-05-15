@@ -44,7 +44,8 @@ const WeeklyActivityBox = ({ filteredActivities, onClick }) => {
                             zIndex:1,
                              transition: "background-color 0.3s ease",
                              "&:hover": {
-                                 backgroundColor: "primary.main", // Slightly darkens the background
+                                backgroundColor: "primary.main", // Slightly darkens the background
+                                color:"white"
                              },
                         }}>
                             <Typography variant="subtitle2">
