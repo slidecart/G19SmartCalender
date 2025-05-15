@@ -126,13 +126,13 @@ function WeeklyCalendar() {
                     weekdays.map((_, idx) =>
                         idx < todayIndex ? (
                             <Box
-                                key={`dotted-${idx}`}
+                                key={`dashed-${idx}`}
                                 sx={{
                                     position: "absolute",
                                     top: `${lineTopPx}px`,
                                     left: `${timeColWidth + dayColWidth * idx}px`,
                                     width: `${dayColWidth}px`,
-                                    borderTop: "2px dotted",
+                                    borderTop: "1.5px dashed",
                                     borderColor: "error.main",
                                     zIndex: 1,
                                     transform: "translateY(-50%)",
