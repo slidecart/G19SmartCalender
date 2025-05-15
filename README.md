@@ -102,11 +102,6 @@ Frontend är byggd med Create React App, en verktygslåda för React-applikation
 
 ## Viktig information för testare och granskare
 
-- **Verifierade användare**: På grund av begränsningar i gratisversionen av Mailgun, ett Email API som används, går det endast att ha **5 verifierade användare** (Maxat i dagsläget). För att registrera en ny användare, kontakta oss utvecklare.
-- **Testanvändare**: Det finns en verifierad användare för granskare och testare:
-  - **Användarnamn**: Testuser
-  - **Lösenord**: Test12345
-
 **Saknade filer**: Av säkerhetsskäl saknas 2 filer i Git-repot. Dessa filer måste testare/granskaren be oss utvecklare att tillhandahålla för att applikationen ska fungera korrekt.
 
 ## Ytterligare information
