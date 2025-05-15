@@ -101,7 +101,7 @@ function WeeklyCalendar() {
 
                 {/* Headtitle for calender */}
                 <Typography variant="h6">
-                    Vecka {startOfWeek.week()} - {startOfWeek.year} {/* Shows year based on week */}
+                    Vecka {startOfWeek.week()} - {startOfWeek.year()} {/* Shows year based on week */}
                 </Typography>
 
                 {/* Button changing visible week to next */}
