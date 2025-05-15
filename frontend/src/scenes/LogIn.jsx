@@ -80,16 +80,32 @@ function LogIn() {
               }
             });
             const data = await response.json();
+
+            if (!response.ok) {
+                if (data.message.includes("User not found")) {
+                    setSnackbar({
+                        open: true,
+                        message: "Användaren hittades inte. Var vänlig kontrollera din e-postadress.",
+                        severity: "error"
+                    });
+                } else {
+                    setSnackbar({
+                        open: true,
+                        message: data.message || "Ett fel inträffade. Var vänlig försök igen.",
+                        severity: "error"
+                    });
+                }
+                setEmailInput("");
+                return;
+            }
+
             setSnackbar({
                 open: true,
                 message: data.message || "Länk för återställning av lösenord skickas till din e-post.",
                 severity: "success"
             });
             setEmailInput("");
-
-            if (data.message === "Länk för återställning av lösenord skickas till din e-post.") {
-                setIsForgotPassword(false);
-            }
+            setIsForgotPassword(false);
 
         } catch (error) {
             console.error("Forgot password error:", error);
