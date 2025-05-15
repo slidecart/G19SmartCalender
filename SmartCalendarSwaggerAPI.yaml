@@ -589,7 +589,7 @@ paths:
                   $ref: '#/components/schemas/TaskDTO'
         '401': { description: Unauthorized }
   
-  /tasks/{id}/convert:
+  /tasks/convert/{id}:
     post:
       tags: [Tasks]
       summary: Convert task to activity
