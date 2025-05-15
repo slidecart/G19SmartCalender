@@ -4,9 +4,11 @@ import {Checkbox,
     Stack,
     IconButton,
     Box,
-    Card, CardContent} from "@mui/material";
+    Card, 
+    CardContent,
+    useTheme } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import {useEffect, useState} from "react";
+import {useEffect, useState } from "react";
 import AddTask from "./AddTask";
 import {fetchData} from "../../hooks/FetchData";
 import TaskDialog from "./TaskDialog";
@@ -14,6 +16,8 @@ import ConfirmationDialog from "../ConfirmationDialog";
 import Body from "../containers/Body"
 
 function ToDoPage(){
+
+    const theme = useTheme();
 
     const [tasks, setTasks] = useState([]);
     const [error, setError] = useState(null);
@@ -174,7 +178,7 @@ function ToDoPage(){
 
     return (
         <Body>
-            <Container maxWidth="xs" sx={{ bgcolor: "#0077ff7e", p: 2, mt: 2, borderRadius: 2, fontFamily: "'Fira Code', 'Consolas', 'monospace'"}}>
+            <Container maxWidth="xs" sx={{ bgcolor: theme.palette.primary.main, p: 2, mt: 2, borderRadius: 2, fontFamily: "'Fira Code', 'Consolas', 'monospace'"}}>
                 <Box
                     display="flex"
                     justifyContent="space-between"
@@ -182,12 +186,12 @@ function ToDoPage(){
                     gap={1}
                     mb={2}>
 
-                    <Typography variant="h1" align="center" sx={{ fontWeight: "bold", textDecoration: "underline", color: "black"}}>
+                    <Typography variant="h1" align="center" sx={{ fontWeight: "bold", textDecoration: "underline", color: theme.palette.primary.contrastText,}}>
                         TASKS
                     </Typography>
                     <IconButton
                         size="small"
-                        sx={{ color: "black" }}
+                        sx={{ color: theme.palette.primary.contrastText, }}
                         onClick={() => openAddDialog()}
                     >
                         <AddIcon />
