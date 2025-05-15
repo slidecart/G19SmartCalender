@@ -4,11 +4,11 @@ SmartCalendar är en kalenderapplikation utformad för att hjälpa användare at
 
 ## Ladda ner och köra projektet
 
-Versionen av koden som har lämnats för granskning är taggad som `v2.0-review`. För att ladda ner och använda denna version:
+Versionen av koden som har lämnats för granskning är taggad som `v3.0-review`. För att ladda ner och använda denna version:
 
 1. Gå till projektets GitHub-sida: https://github.com/slidecart/G19SmartCalender.
-2. Klicka på fliken "Releases" eller "Tags" och hitta taggen `v2.0-review`.
-3. Klicka på "Download ZIP" under `v2.0-review` för att ladda ner källkoden som en ZIP-fil.
+2. Klicka på fliken "Releases" eller "Tags" och hitta taggen `v3.0-review`.
+3. Klicka på "Download ZIP" under `v3.0-review` för att ladda ner källkoden som en ZIP-fil.
 4. Extrahera ZIP-filen till en mapp på din dator.
 5. Öppna projektet i din IDE:
    - **IntelliJ IDEA**: Välj "Open" och navigera till den extraherade mappen.
@@ -101,11 +101,6 @@ Frontend är byggd med Create React App, en verktygslåda för React-applikation
 6. Frontend startar på port 3000 och öppnas automatiskt i din webbläsare på `http://localhost:3000`.
 
 ## Viktig information för testare och granskare
-
-- **Verifierade användare**: På grund av begränsningar i gratisversionen av Mailgun, ett Email API som används, går det endast att ha **5 verifierade användare** (Maxat i dagsläget). För att registrera en ny användare, kontakta oss utvecklare.
-- **Testanvändare**: Det finns en verifierad användare för granskare och testare:
-  - **Användarnamn**: Testuser
-  - **Lösenord**: Test12345
 
 **Saknade filer**: Av säkerhetsskäl saknas 2 filer i Git-repot. Dessa filer måste testare/granskaren be oss utvecklare att tillhandahålla för att applikationen ska fungera korrekt.
 
