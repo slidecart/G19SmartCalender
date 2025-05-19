@@ -130,7 +130,7 @@ export default function Navbar({ onNavigate }) {
                             <CircularProgress color="inherit" size={16} />
                         ) : null,
                         sx: {
-                            height: 32,
+                            height: 26,
                             "& .MuiOutlinedInput-input": {
                                 padding: "4px 8px",
                                 /* "& fieldset": {
