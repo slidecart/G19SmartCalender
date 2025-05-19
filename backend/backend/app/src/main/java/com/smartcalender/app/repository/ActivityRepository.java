@@ -34,4 +34,6 @@ public interface ActivityRepository extends JpaRepository<Activity, Long> {
     List<Activity> findByCategoryIdAndUserId(Long categoryId, Long id);
 
     List<Activity> findByUserAndDateBetween(User user, LocalDate start, LocalDate end);
+
+    List<Activity> findByUserAndNameContainingIgnoreCase(User user, String query);
 }

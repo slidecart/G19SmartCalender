@@ -1,8 +1,6 @@
 package com.smartcalender.app.service;
 
-import com.smartcalender.app.dto.ActivityStatsDTO;
-import com.smartcalender.app.dto.TaskStatsDTO;
-import com.smartcalender.app.dto.UserDTO;
+import com.smartcalender.app.dto.*;
 import com.smartcalender.app.entity.Activity;
 import com.smartcalender.app.entity.Task;
 import com.smartcalender.app.entity.User;
@@ -119,4 +117,16 @@ public class UserService implements UserDetailsService {
         }
         return false;
     }
+
+    public SearchDTO searchForActivitiesOrTasks(UserDetails currentUser, String query) {
+        User user = userRepository.findByUsername(currentUser.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<Task> tasks = taskRepository.findByUserAndNameContainingIgnoreCase(user, query);
+        List<Activity> activities = activityRepository.findByUserAndNameContainingIgnoreCase(user, query);
+
+        if (tasks.isEmpty() && activities.isEmpty()) {
+            return null;
+        }
+
+        return new SearchDTO(query , activities.stream().map(ActivityDTO::new).toArray(ActivityDTO[]::new), tasks.stream().map(TaskDTO::new).toArray(TaskDTO[]::new));}
 }
