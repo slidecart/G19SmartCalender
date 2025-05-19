@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     Box,
     ToggleButtonGroup,
@@ -11,21 +12,26 @@ import {
     ListItemText,
     Button,
     Tooltip,
-    useTheme, Divider
+    useTheme,
+    Divider
 } from "@mui/material";
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import { useCalendarContext } from "../../context/CalendarContext";
 import CreateCategoryDialog from "../CreateCategoryDialog";
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUncheckedOutlined';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
-import {grey} from "@mui/material/colors"; // change
+import { grey } from "@mui/material/colors";
+import {useTodoContext} from "../../context/TodoContext";
 
 export default function TopBar() {
     const theme = useTheme();
+    const navigate = useNavigate();
+
     const {
         categories,
         selectedCategories,
@@ -39,9 +45,28 @@ export default function TopBar() {
     const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
     const [filterAnchorEl, setFilterAnchorEl] = useState(null);
 
+    const [addAnchorEl, setAddAnchorEl] = useState(null);
+
     const handleFilterOpen = (e) => setFilterAnchorEl(e.currentTarget);
     const handleFilterClose = () => setFilterAnchorEl(null);
     const handleViewChange = (_e, nextView) => nextView && setCurrentView(nextView);
+
+    const handleAddMenuOpen = (e) => setAddAnchorEl(e.currentTarget);
+    const handleAddMenuClose = () => setAddAnchorEl(null);
+
+    const goAddActivity = () => {
+        handleAddMenuClose();
+        navigate("/today");
+        openAddDialog();
+    };
+
+    const { openTodoDialog } = useTodoContext()
+
+    const goAddTask = () => {
+        handleAddMenuClose();
+        navigate("/taskTodoPage");
+        openTodoDialog();
+    };
 
     return (
         <Box
@@ -135,15 +160,28 @@ export default function TopBar() {
 
             <Box sx={{ flexGrow: 1 }} />
 
-            {/* Add Activity button */}
+            {/* Add Activity button with dropdown */}
             <Button
                 variant="contained"
                 color="primary"
                 startIcon={<AddCircleOutlineOutlinedIcon />}
-                onClick={openAddDialog}
+                endIcon={<ArrowDropDownIcon />}
+                onClick={handleAddMenuOpen}
             >
                 Lägg till
             </Button>
+            <Menu
+                anchorEl={addAnchorEl}
+                open={Boolean(addAnchorEl)}
+                onClose={handleAddMenuClose}
+            >
+                <MenuItem onClick={goAddActivity}>
+                    <ListItemText primary="Skapa ny aktivitet" />
+                </MenuItem>
+                <MenuItem onClick={goAddTask}>
+                    <ListItemText primary="Skapa ny ToDo" />
+                </MenuItem>
+            </Menu>
 
             <CreateCategoryDialog
                 open={openCreateCategoryDialog}
