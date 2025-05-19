@@ -1,10 +1,14 @@
 import {useEffect, useRef, useState} from "react";
-import {useSearchParams} from "react-router-dom";
+import {useSearchParams, useNavigate } from "react-router-dom";
 import {Box, Button, CircularProgress, Typography} from "@mui/material";
 import {fetchData} from "../hooks/FetchData";
+import { useAuth } from "../context/AuthContext";
 
 function VerifyEmail() {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const auth = useAuth();
+
     const uid = searchParams.get("uid");
     const otp = searchParams.get("otp");
     const [message, setMessage] = useState("Verifying your email...");
@@ -54,7 +58,7 @@ function VerifyEmail() {
             }
 
         } catch (error) {
-            console.error("Verifiering misslyckades", error);
+            console.error("Verifiering misslyckades", error.message);
 
             let errorData;
             try {
@@ -67,7 +71,9 @@ function VerifyEmail() {
             setUserEmail(errorData.email || "");
 
             // Handle specific error messages
-            if (error.message.includes("E-postadressen är redan verifierad")) {
+            if (error.message.includes("User not found")) {
+                setMessage("Användaren hittades inte. Vänligen kontrollera din e-post och försök igen.");
+            } else if (error.message.includes("E-postadressen är redan verifierad")) {
                 setMessage("E-postadressen är redan verifierad. Du kan logga in nu.");
             } else if (error.message.includes("Ogiltig otp")) {
                 setMessage("Verifieringslänken är ogiltig eller har redan använts. Vänligen begär en ny verifieringslänk.");
@@ -110,7 +116,11 @@ function VerifyEmail() {
     };
 
     const handleLoginRedirect = () => {
-        window.location.href = "/login";
+        if (auth.accessToken && auth.refreshToken) {
+            navigate("/today");
+        } else {
+            navigate("/login");
+        }
     };
 
     return (

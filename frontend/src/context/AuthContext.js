@@ -8,6 +8,13 @@ const AuthProvider = ({ children }) => {
     const [refreshToken, setRefToken] = useState(localStorage.getItem("refreshToken") || "");
     const navigate = useNavigate();
 
+    const setTokens = (newAccess, newRefresh) => {
+        setAccToken(newAccess);
+        setRefToken(newRefresh);
+        localStorage.setItem("accessToken", newAccess);
+        localStorage.setItem("refreshToken", newRefresh);
+    };
+
     const loginAction = async (data) => {
         try {
             const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}auth/login`, {

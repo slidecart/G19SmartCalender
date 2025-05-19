@@ -91,14 +91,11 @@ public class AuthController {
 
     @PutMapping("/verify")
     public ResponseEntity<?> verifyEmail(@RequestParam("uid") Long userId, @RequestParam("otp") String otp) {
-        try {
-            String userEmailAddress = authService.verifyEmail(userId, otp);
-            return ResponseEntity.ok(new ResponseDTO("E-postadressen har verifierats.", userEmailAddress));
+         try {
+            VerifyEmailDTO dto = authService.verifyEmail(userId, otp);
+            return ResponseEntity.ok(dto);
         } catch (RuntimeException e) {
-            String userEmailAddress = userRepository.findById(userId)
-                    .map(User::getEmailAddress)
-                    .orElse(null);
-            return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage(), userEmailAddress));
+            return ResponseEntity.badRequest().body(new ResponseDTO(e.getMessage()));
         }
     }
 

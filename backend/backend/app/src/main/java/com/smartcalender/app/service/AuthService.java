@@ -1,9 +1,6 @@
 package com.smartcalender.app.service;
 
-import com.smartcalender.app.dto.LoginRequest;
-import com.smartcalender.app.dto.LoginResponseDTO;
-import com.smartcalender.app.dto.RegisterRequest;
-import com.smartcalender.app.dto.UserDTO;
+import com.smartcalender.app.dto.*;
 import com.smartcalender.app.entity.PasswordResetToken;
 import com.smartcalender.app.entity.RefreshToken;
 import com.smartcalender.app.entity.User;
@@ -189,7 +186,7 @@ public class AuthService {
     }
 
     @Transactional
-    public String verifyEmail(Long userId, String otp) {
+    public VerifyEmailDTO verifyEmail(Long userId, String otp) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -204,7 +201,25 @@ public class AuthService {
             user.setEmailVerified(true);
             userRepository.save(user);
             otpService.deleteOtp(userId);
-            return user.getEmailAddress();
+
+        String accessToken = jwtUtil.generateToken(
+                org.springframework.security.core.userdetails.User
+                        .withUsername(user.getUsername())
+                        .password(user.getPassword())
+                        .authorities("USER")
+                        .build()
+            );
+
+        RefreshToken refreshToken = refreshTokenRepository.findByUserAndExpiresAtAfter(user, Instant.now())
+                .orElseGet(() -> {
+                    RefreshToken newToken = new RefreshToken();
+                    newToken.setUser(user);
+                    newToken.setExpiresAt(Instant.now().plusSeconds(60 * 60 * 24 * 7)); // 7 days expiration
+                    refreshTokenRepository.save(newToken);
+                    return newToken;
+                });
+
+            return new VerifyEmailDTO("E-postadressen har verifierats.", user.getEmailAddress(), accessToken, refreshToken.getId());
     }
 
     public void changeEmail(String newEmail, String password, UserDetails currentUser) {
