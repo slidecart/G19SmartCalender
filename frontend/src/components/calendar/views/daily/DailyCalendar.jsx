@@ -1,17 +1,33 @@
 // In DailyCalendar.jsx
-import React, { useEffect, useRef } from "react";
-import { Box, Table, TableBody, TableCell, TableRow, Typography } from "@mui/material";
+import React, {
+    useEffect,
+    useRef
+} from "react";
+import {
+    Box,
+    Table,
+    TableBody,
+    TableCell,
+    TableRow,
+    Typography
+} from "@mui/material";
 import dayjs from "dayjs";
 import { useCalendarContext } from "../../../../context/CalendarContext";
 import WeeklyActivityBox from "../weekly/WeeklyActivityBox";
 
 export function DailyCalendar({ date, draftActivity }) {
-    const { activities, handleCellClick, handleActivityClick, categories } = useCalendarContext();
+    const {
+        activities,
+        handleCellClick,
+        handleActivityClick,
+        categories,
+        currentTime,
+    } = useCalendarContext();
+
     const containerRef = useRef(null);
     const ROW_HEIGHT = 60;
     const VISIBLE_ROWS = 8;
 
-    const timeSlots = Array.from({ length: 24 }, (_, hour) => hour.toString().padStart(2, "0") + ":00");
     const currentDate = dayjs();
     const targetHour = currentDate.isSame(date, "day") ? currentDate.hour() : 12;
 
@@ -22,15 +38,27 @@ export function DailyCalendar({ date, draftActivity }) {
         }
     }, [targetHour]);
 
+    const timeSlots = Array.from({ length: 24 }, (_, hour) =>
+        hour.toString().padStart(2, "0") + ":00");
+
     // Filter activities for the given day
-    const dayActivities = activities.filter(activity => dayjs(activity.date).isSame(date, "day"));
+    const dayActivities = activities.filter(activity =>
+        dayjs(activity.date).isSame(date, "day"));
+
     // If a draft exists, add it temporarily (ensuring it does not conflict with saved data)
-    const activitiesToRender = draftActivity ? [...dayActivities, draftActivity] : dayActivities;
+    const activitiesToRender = draftActivity
+        ? [...dayActivities, draftActivity]
+        : dayActivities;
+
+    const isToday = currentTime.isSame(date, "day");
+    const minutesSinceMidnight = currentTime.hour() * 60 + currentTime.minute();
+    const topPx = (minutesSinceMidnight / 60) * ROW_HEIGHT;
 
     return (
         <Box
             ref={containerRef}
             sx={{
+                position: "relative",
                 height: VISIBLE_ROWS * ROW_HEIGHT,
                 overflowY: "scroll",
                 border: 1,
@@ -38,6 +66,26 @@ export function DailyCalendar({ date, draftActivity }) {
                 mt: 1,
             }}
         >
+
+            {isToday && (
+                <>
+                    {/* Solid line */}
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            top: `${topPx}px`,
+                            left: "45px",
+                            width: "100%",
+                            height: "2px",
+                            bgcolor: "error.main",
+                            zIndex: 2,
+                            transform: "translateY(-50%)",
+                            pointerEvents: "none",
+                        }}
+                    />
+                </>
+            )}
+
             <Table sx={{ tableLayout: "fixed" }}>
                 <TableBody>
                     {timeSlots.map(time => {

@@ -1,43 +1,82 @@
-import {Box, Button, Container, Paper, TableContainer, Typography} from "@mui/material";
-import dayjs from "dayjs";
-import {useEffect, useRef, useState} from "react";
-import WeeklyGrid from "./WeeklyGrid"
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import {useCalendarContext} from "../../../../context/CalendarContext";
+import React, { useEffect, useRef, useState } from 'react';
+import dayjs from 'dayjs';
+import {
+    Box,
+    Button,
+    Paper,
+    TableContainer,
+    Typography
+} from '@mui/material';
+import {
+    ArrowBack as ArrowBackIcon,
+    ArrowForward as ArrowForwardIcon
+} from '@mui/icons-material';
 
+import WeeklyGrid from './WeeklyGrid';
+import { useCalendarContext } from '../../../../context/CalendarContext';
+
+const ROW_HEIGHT_PX = 60;
+const PRE_HOURS = 3;
 
 function WeeklyCalendar() {
-
     // Constant variables for dates
-    const today = dayjs();
-    const currentYear = today.year();
-    const [startOfWeek, setStartOfWeek] = useState(dayjs().startOf("week").add(1,"day")); //First day of the week is monday
 
-    //const startOfWeek = today.startOf("week").add(1, "day"); // First day of the week is monday
+    const {
+        weekdays,
+        timeSlots,
+        currentTime,
+        startOfWeek,
+        setStartOfWeek
+    } = useCalendarContext();
 
-    // Array over weekdays from monday to sunday with actual dates from local computer
-    const weekdays = Array.from ({ length: 7 }, (_, i) => ({
-        name: ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag", "Lördag", "Söndag"][i],
-        date: startOfWeek.clone().add(i, "day").format("YYYY-MM-DD") //Format from JSON-file
-    }));
-
-    // Set visible hours
-    const {timeSlots, targetDate} = useCalendarContext();
-    const ROW_HEIGHT_PX = 60;
-    const PRE_HOURS = 3;
+    const [timeColWidth, setTimeColWidth] = useState(0);
+    const [dayColWidth, setDayColWidth]   = useState(0);
 
     const scrollRef = useRef(null);
+    const timeColumnRef = useRef(null);
+
+    const today = dayjs();
+    const todayDate = today.format("YYYY-MM-DD");
+    const todayIndex = weekdays.findIndex(w => w.date === todayDate);
+
+    // Set visible hours
+    const lineTopPx =
+        ROW_HEIGHT_PX + //header/weekdays height
+        currentTime.hour() * ROW_HEIGHT_PX +
+        (currentTime.minute() / 60) * ROW_HEIGHT_PX;
+    const lineLeftPx = timeColWidth + dayColWidth * todayIndex;
+
+
+    // On mount, calculate the width of the time column and day columns
+    useEffect(() => {
+        function updateWidths() {
+            if (scrollRef.current && timeColumnRef.current) {
+                const totalWidth = scrollRef.current.clientWidth;
+                const tWidth = timeColumnRef.current.clientWidth;
+                setTimeColWidth(tWidth);
+                setDayColWidth((totalWidth - tWidth) / weekdays.length);
+            }
+        }
+
+        updateWidths();
+        window.addEventListener('resize', updateWidths);
+        return () => window.removeEventListener('resize', updateWidths);
+    }, [weekdays]);
 
     // On mount, scroll so current hour row is PRE_HOURS rows from the top
     useEffect(() => {
-        const nowHour = dayjs().hour();
-        const index = timeSlots.findIndex((time) => parseInt(time, 10) === nowHour);
+        const nowHour = today.hour();
+        const index = timeSlots.findIndex(time => parseInt(time, 10) === nowHour);
         if (index > 0 && scrollRef.current) {
             const offSet = (index - PRE_HOURS) * ROW_HEIGHT_PX;
             scrollRef.current.scrollTop = offSet > 0 ? offSet : 0;
         }
-    }, [timeSlots]);
+    }, [timeSlots, today]);
+
+    const handlePrevWeek = () =>
+        setStartOfWeek((prev) => prev.subtract(1, 'week'));
+    const handleNextWeek = () =>
+        setStartOfWeek((prev) => prev.add(1, 'week'));
 
     // whenever someone calls navigateToDate(date), jump the week
     useEffect(() => {
@@ -48,39 +87,104 @@ function WeeklyCalendar() {
 
 
     return(
-        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, overflow: "hidden" }}>
-            <Box display="flex" justifyContent={"space-between"} mb={1}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+                overflow: "hidden"
+            }}
+        >
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 1
+                }}
+            >
                 {/* Button changing visible week to previous */}
-                <Button variant="contained"  size="small" onClick={() => setStartOfWeek(prev => prev.subtract(1, "week"))}>
+                <Button variant="contained"  size="small" onClick={handlePrevWeek}>
                     <ArrowBackIcon fontSize="small"/>
                 </Button>
 
                 {/* Headtitle for calender */}
-                <Typography variant="h6" sx={{textAlign:"center"}}>
-                    Vecka {startOfWeek.week()} - {currentYear} {/* Shows year based on week */}
+                <Typography variant="h6">
+                    Vecka {startOfWeek.week()} - {startOfWeek.year()} {/* Shows year based on week */}
                 </Typography>
 
                 {/* Button changing visible week to next */}
-                <Button variant ="contained" size="small" onClick={() => setStartOfWeek(prev => prev.add(1, "week"))}>
+                <Button variant ="contained" size="small" onClick={handleNextWeek}>
                     <ArrowForwardIcon fontSize="small"/>
                 </Button>
-
             </Box>
-
 
             {/* Shows calendar */}
             <TableContainer
                 component ={Paper}
                 elevation="2"
-                sx={{height:"visibleHeight" + "px", overflowY:"auto"}}
                 ref={scrollRef}
+                sx={{
+                    position: "relative",
+                    height:"100%",
+                    overflowY:"auto"
+                }}
             >
+                {/* Draw today's timeline with point + line */}
+                {todayIndex >= 0 &&
+                    weekdays.map((_, idx) =>
+                        idx < todayIndex ? (
+                            <Box
+                                key={`dashed-${idx}`}
+                                sx={{
+                                    position: "absolute",
+                                    top: `${lineTopPx}px`,
+                                    left: `${timeColWidth + dayColWidth * idx}px`,
+                                    width: `${dayColWidth}px`,
+                                    borderTop: "1.5px dashed",
+                                    borderColor: "error.main",
+                                    zIndex: 1,
+                                    transform: "translateY(-50%)",
+                                }}
+                            />
+                        ) : null
+                    )
+                }
 
-                <WeeklyGrid
-                    weekdays={weekdays}
-                />
+                {/* 2) Solida linjen + ankaret för dagens kolumn */}
+                {todayIndex >= 0 && (
+                    <>
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                top: `${lineTopPx}px`,
+                                left: `${lineLeftPx}px`,
+                                width: `calc(${dayColWidth}px + 7px)`, // Ej responsiv lösning!!!!!
+                                height: "2px",
+                                bgcolor: "error.main",
+                                zIndex: 2,
+                                transform: "translateY(-50%)",
+                            }}
+                        />
+
+                        {/* RÖD PRICK */}
+                        <Box
+                            sx={{
+                                position: "absolute",
+                                top: `${lineTopPx}px`,
+                                left: `${lineLeftPx}px`,
+                                width: 12,
+                                height: 12,
+                                bgcolor: "error.main",
+                                borderRadius: "50%",
+                                zIndex: 3,
+                                transform: "translate(-50%, -50%)",
+                            }}
+                        />
+                    </>
+                )}
+
+                <WeeklyGrid weekdays={weekdays} ref={timeColumnRef} />
             </TableContainer>
-
             {/* Shows error message if any */}
         </Box>
     );
