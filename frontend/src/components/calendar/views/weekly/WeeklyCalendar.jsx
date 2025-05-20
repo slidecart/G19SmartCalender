@@ -24,6 +24,7 @@ function WeeklyCalendar() {
     const {
         weekdays,
         timeSlots,
+        targetDate,
         currentTime,
         startOfWeek,
         setStartOfWeek
