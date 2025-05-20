@@ -63,6 +63,7 @@ function MonthlyCalendar({ chromeHeight }) {
                                 flexDirection: "column",
                                 overflow: "hidden",
                                 p: 0,
+                                maxWidth:"1300px"
                             }}>
                 <MonthlyGrid
                     weeks={calendar}

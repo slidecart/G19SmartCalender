@@ -43,10 +43,10 @@ export default function TodoList() {
                 justifyContent="space-between"
                 alignItems="center"
                 mb={2}
-                minWidth={"300px"}
+                minWidth={"275px"}
             >
-                <Typography variant="h1">
-                    TASKS
+                <Typography variant="h1" fontWeight={"bold"} pl={1}>
+                    ToDo
                 </Typography>
                 <IconButton onClick={openAddTaskDialog}>
                     <AddIcon />
