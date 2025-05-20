@@ -165,6 +165,7 @@ public class TaskService {
      *                                  or if the date is missing and cannot be derived from the task
      * @author David Lexe, Carl Lundholm
      */
+    @Transactional
     public ActivityDTO convertTaskToActivity(Long id, ConvertTaskRequest taskRequest, UserDetails currentUser) {
         User user = getUser(currentUser);
         Task task = getTask(id, user);
@@ -197,7 +198,7 @@ public class TaskService {
                     .orElseThrow(() -> new IllegalArgumentException("Category not found"));
             activity.setCategory(category);
         }
-
+        taskRepository.delete(task);
         activityRepository.save(activity);
         return new ActivityDTO(activity);
     }

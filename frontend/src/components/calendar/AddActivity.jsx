@@ -57,8 +57,11 @@ export default function AddActivity({ open, onClose, mode }) {
         handleChange,
         createOrUpdateActivity,
         categories,
+        taskID,
+        convertTaskToActivity,
     } = useCalendarContext();
     const { date, startTime, endTime } = formData;
+    console.log(taskID);
 
     const draftActivity =
         formData.name || formData.startTime
@@ -91,7 +94,12 @@ export default function AddActivity({ open, onClose, mode }) {
     // Handler for saving activity data (both add and edit)
     const handleSave = async () => {
         try {
-            await createOrUpdateActivity(formData, mode, );
+            if (taskID) {
+                // If taskID is present, convert the task to an activity
+                await convertTaskToActivity(formData, taskID);
+            } else {
+                await createOrUpdateActivity(formData, mode, );
+            }
             onClose();           // only close after success
         } catch (err) {
             console.error("Couldn’t save:", err);
