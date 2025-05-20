@@ -2,7 +2,7 @@ import React from "react";
 import { Box, IconButton, Tooltip, useTheme } from "@mui/material";
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
-import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+import ChecklistRtlOutlinedIcon from '@mui/icons-material/ChecklistRtlOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -12,9 +12,9 @@ export default function Sidebar() {
     const location = useLocation();
 
     const items = [
-        { label: "Hem", icon: <HomeOutlinedIcon />, path: "/" },
+        { label: "Hem", icon: <HomeOutlinedIcon />, path: "/today" },
         { label: "Dagens agenda", icon: <CalendarTodayOutlinedIcon />, path: "/today" },
-        { label: "Uppgifter", icon: <ListAltOutlinedIcon />, path: "/taskTodoPage" },
+        { label: "Att göra", icon: <ChecklistRtlOutlinedIcon />, path: "/taskTodoPage" },
         { label: "Inställningar", icon: <SettingsOutlinedIcon />, path: "/account-settings" }
     ];
 

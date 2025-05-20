@@ -247,6 +247,26 @@ export function useCalendar() {
         openAddDialog({ date, startTime: time, endTime: defaultEndTime });
     }
 
+    /* ----------  Timeline ---------- */
+    const [currentTime, setCurrentTime] = useState(dayjs());
+
+    // Håll koll på nuvarande tid och uppdatera varje minut
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(dayjs()), 60000);
+        return () => clearInterval(timer);
+    }, []);
+
+    // Beräkna antal minuter sedan midnatt
+    const currentMinutes = useMemo(
+        () => currentTime.hour() * 60 + currentTime.minute(),
+        [currentTime]
+    );
+
+    // Beräkna linjens position som procentandel av dygnets totala höjd
+    const currentTimePosition = useMemo(
+        () => (currentMinutes / (24 * 60)) * 100,
+        [currentMinutes]
+    );
 
 
 
@@ -302,6 +322,10 @@ export function useCalendar() {
         currentView,
         setCurrentView,
 
+
+        // timeline
+        currentTime,
+        currentTimePosition,
 
     };
 }

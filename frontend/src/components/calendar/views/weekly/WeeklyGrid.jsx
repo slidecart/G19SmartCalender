@@ -1,11 +1,12 @@
 import {Divider, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import dayjs from "dayjs";
+import { forwardRef } from "react";
 
 import WeeklyActivityBox from "./WeeklyActivityBox";
 import {useCalendarContext} from "../../../../context/CalendarContext";
 
 
-const WeeklyGrid = ({ weekdays= [] }) => {
+const WeeklyGrid = forwardRef(({ weekdays= [] }, timeColumnRef) => {
     const {
         filteredActivities,
         categories,
@@ -13,6 +14,7 @@ const WeeklyGrid = ({ weekdays= [] }) => {
         timeSlots,
         handleActivityClick,
     } = useCalendarContext();
+
     return (
         <Table stickyHeader>
             {/* TableHead for all the weekdays */}
@@ -20,6 +22,7 @@ const WeeklyGrid = ({ weekdays= [] }) => {
                 <TableRow>
                     {/* Empty corner cell */}
                     <TableCell
+                        ref={timeColumnRef}
                         sx={{
                             position: 'sticky',
                             top: 0,
@@ -116,6 +119,6 @@ const WeeklyGrid = ({ weekdays= [] }) => {
             </TableBody>
         </Table>
     );
-};
+});
 
 export default WeeklyGrid;
