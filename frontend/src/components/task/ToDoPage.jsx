@@ -16,7 +16,7 @@ import AddTask from "./AddTask";
 import TaskDialog from "./TaskDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
 import Body from "../containers/Body";
-import ActivityDialog from "../calendar/ActivityDialog";
+import AddActivity from "../calendar/AddActivity";
 
 import { useCalendarContext } from "../../context/CalendarContext";
 import { useTodoContext }     from "../../context/TodoContext";
@@ -34,13 +34,18 @@ export default function ToDoPage() {
         formData,
         setFormData,
         isDialogOpen,
-        dialogMode,
+        dialogMode: todoDialogMode,
         openTodoDialog,
         closeTodoDialog,
 
     } = useTodoContext();
 
-    const { openConvertDialog, isAddEditDialogOpen } = useCalendarContext();
+    const {
+        openAddDialog,
+        isAddEditDialogOpen,
+        handleCloseDialog,
+        dialogMode: calendarDialogMode
+    } = useCalendarContext();
 
     // Local UI state for the TaskDialog & delete confirmation
     const [selectedTask, setSelectedTask] = useState(null);
@@ -54,7 +59,7 @@ export default function ToDoPage() {
     };
 
     const handleSubmit = async () => {
-        if (dialogMode === "add") {
+        if (todoDialogMode === "add") {
             await createTask(formData);
         } else {
             await updateTask(formData.id, formData);
@@ -92,7 +97,7 @@ export default function ToDoPage() {
         await toggleComplete(task);
     };
 
-    const openAddDialog = () => openTodoDialog("add");
+    const openAddTaskDialog = () => openTodoDialog("add");
 
     return (
         <Body>
@@ -106,7 +111,7 @@ export default function ToDoPage() {
                     <Typography variant="h1">
                         TASKS
                     </Typography>
-                    <IconButton onClick={openAddDialog}>
+                    <IconButton onClick={openAddTaskDialog}>
                         <AddIcon />
                     </IconButton>
                 </Box>
@@ -155,7 +160,7 @@ export default function ToDoPage() {
                     onDelete={requestDelete}
                     onConvert={() => {
                         setTaskDialogOpen(false);
-                        openConvertDialog(selectedTask);
+                        openAddDialog(selectedTask, selectedTask.id);
                     }}
                 />
 
@@ -167,11 +172,10 @@ export default function ToDoPage() {
                     description="Är du säker på att du vill radera den här tasken?"
                 />
 
-                <ActivityDialog
+                <AddActivity
                     open={isAddEditDialogOpen}
-                    onClose={() => {
-                        /* calendar‐dialog's close logic */
-                    }}
+                    mode={calendarDialogMode}
+                    onClose={handleCloseDialog}
                 />
             </Container>
         </Body>
