@@ -2,7 +2,8 @@ import {Navigate, Route, Routes, Outlet} from "react-router-dom";
 
 import LogIn from "./scenes/LogIn";
 import TodaysAgenda from "./scenes/TodaysAgenda";
-import ToDoPage from "./components/task/ToDoPage";
+import CalendarPage from "./scenes/CalendarPage";
+import ToDoPage from "./scenes/ToDoPage";
 import AuthProvider, {PrivateRoute} from "./context/AuthContext";
 import VerifyEmail from "./scenes/VerifyEmail";
 import ResetPassword from "./scenes/ResetPassword";
@@ -33,6 +34,7 @@ function App() {
                       }
                   >
                       <Route path="/today" element={<TodaysAgenda />} />
+                      <Route path="/calendar" element={<CalendarPage/>} />
                       <Route path="/taskTodoPage" element={<ToDoPage />} />
                       <Route path="/account-settings" element={<AccountSettings />} />
                   </Route>

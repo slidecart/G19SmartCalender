@@ -1,4 +1,5 @@
 import { Box } from "@mui/material";
+import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import TopBar from "./TopBar";
@@ -28,8 +29,12 @@ function Body({ children }) {
                     <TopBar />
 
                     {/* Page content area with padding */}
-                    <Box sx={{ flexGrow: 1, p: 2 }}>
-                        {children}
+                    <Box sx={{ flexGrow: 1, p: 2, display:"flex", flexDirection:"row", justifyContent:"space-around"}}>
+                        {React.Children.map(children, (child, index) => (
+                            <Box key={index} sx={{ mb:2 }}>
+                                {child}
+                            </Box>
+                        ))}
                     </Box>
                 </Box>
 

@@ -1,9 +1,9 @@
 import Body from "../components/containers/Body";
 import CalendarView from "../components/calendar/CalendarView";
 import {useCalendarContext} from "../context/CalendarContext";
-import TodoList from "../components/task/todoList";
+import ToDoPage from "./ToDoPage";
 
-function TodaysAgenda(){
+function CalendarPage(){
 
 
 
@@ -11,11 +11,10 @@ function TodaysAgenda(){
         <Body
             withSidebar
         >
-            <TodoList/>
             <CalendarView/>
         </Body>
     );
 }
 
-export default TodaysAgenda;
+export default CalendarPage;
 
