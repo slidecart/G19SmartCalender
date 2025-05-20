@@ -78,6 +78,14 @@ function WeeklyCalendar() {
     const handleNextWeek = () =>
         setStartOfWeek((prev) => prev.add(1, 'week'));
 
+    // whenever someone calls navigateToDate(date), jump the week
+    useEffect(() => {
+        if (targetDate) {
+            setStartOfWeek(dayjs(targetDate).startOf("week").add(1, "day"));
+        }
+    }, [targetDate]);
+
+
     return(
         <Box
             sx={{
