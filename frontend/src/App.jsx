@@ -9,6 +9,7 @@ import ResetPassword from "./scenes/ResetPassword";
 import Register from "./scenes/Register";
 import AccountSettings from "./scenes/AccountSettings";
 import {CalendarProvider} from "./context/CalendarContext";
+import {TodoProvider} from "./context/TodoContext";
 
 function App() {
   return (
@@ -24,8 +25,10 @@ function App() {
                   <Route
                       element={
                           <CalendarProvider>
-                              {/* Outlet will render matching child route */}
-                              <Outlet />
+                              <TodoProvider>
+                                {/* Outlet will render matching child route */}
+                                <Outlet />
+                              </TodoProvider>
                           </CalendarProvider>
                       }
                   >
