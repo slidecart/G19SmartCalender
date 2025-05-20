@@ -1,9 +1,7 @@
 package com.smartcalender.app.controller;
 
 import com.smartcalender.app.auth.SecurityUtils;
-import com.smartcalender.app.dto.ActivityStatsDTO;
-import com.smartcalender.app.dto.UserDTO;
-import com.smartcalender.app.dto.TaskStatsDTO;
+import com.smartcalender.app.dto.*;
 import com.smartcalender.app.entity.User;
 import com.smartcalender.app.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -76,6 +74,21 @@ public class UserController {
         if (currentUser != null) {
             UserDTO updatedIcon = userService.setProfileIcon(currentUser, user.getProfileIcon());
             return ResponseEntity.status(HttpStatus.OK).body(updatedIcon);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchForActivitiesOrTasks(@RequestParam String query) {
+        UserDetails currentUser = SecurityUtils.getCurrentUser();
+
+        if (currentUser != null) {
+            SearchDTO searchResults = userService.searchForActivitiesOrTasks(currentUser, query);
+            if (searchResults != null) {
+                return ResponseEntity.status(HttpStatus.OK).body(searchResults);
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO("Search results not found"));
+            }
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }

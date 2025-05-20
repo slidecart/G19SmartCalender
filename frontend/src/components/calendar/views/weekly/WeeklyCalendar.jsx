@@ -23,7 +23,7 @@ function WeeklyCalendar() {
     }));
 
     // Set visible hours
-    const {timeSlots} = useCalendarContext();
+    const {timeSlots, targetDate} = useCalendarContext();
     const ROW_HEIGHT_PX = 60;
     const PRE_HOURS = 3;
 
@@ -38,6 +38,14 @@ function WeeklyCalendar() {
             scrollRef.current.scrollTop = offSet > 0 ? offSet : 0;
         }
     }, [timeSlots]);
+
+    // whenever someone calls navigateToDate(date), jump the week
+    useEffect(() => {
+        if (targetDate) {
+            setStartOfWeek(dayjs(targetDate).startOf("week").add(1, "day"));
+        }
+    }, [targetDate]);
+
 
     return(
         <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, overflow: "hidden" }}>
