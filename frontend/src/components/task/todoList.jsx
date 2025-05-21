@@ -19,10 +19,8 @@ export default function TodoList() {
         error,
         toggleComplete,
         openTodoDialog,
-        setSelectedTask,
         setTaskDialogOpen
     } = useTodoContext();
-
 
     // Clicking on a task card
     const handleTaskClick = (task) => {

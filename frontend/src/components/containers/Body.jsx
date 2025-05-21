@@ -30,6 +30,7 @@ function Body({ children }) {
 
                     {/* Page content area with padding */}
                     <Box sx={{ flexGrow: 1, p: 2, display:"flex", flexDirection:"row", justifyContent:"space-around"}}>
+                        {/* Allows multiple children inside the body */}
                         {React.Children.map(children, (child, index) => (
                             <Box key={index} sx={{ mb:2 }}>
                                 {child}
