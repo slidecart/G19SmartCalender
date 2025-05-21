@@ -100,84 +100,87 @@ export default function ToDoPage() {
     const openAddTaskDialog = () => openTodoDialog("add");
 
     return (
-        <Body>
-            <Container maxWidth="xs" sx={{ mt: 4 }}>
-                <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    mb={2}
-                >
-                    <Typography variant="h1">
-                        TASKS
-                    </Typography>
-                    <IconButton onClick={openAddTaskDialog}>
-                        <AddIcon />
-                    </IconButton>
-                </Box>
+        <>
+            <Body>
+                <Container maxWidth="xs" sx={{ mt: 4 }}>
+                    <Box
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        mb={2}
+                    >
+                        <Typography variant="h1">
+                            TASKS
+                        </Typography>
+                        <IconButton onClick={openAddTaskDialog}>
+                            <AddIcon />
+                        </IconButton>
+                    </Box>
 
-                <Stack spacing={2}>
-                    {loading && <Typography>Loading…</Typography>}
-                    {error && <Typography color="error">{error}</Typography>}
-                    {tasks
-                        .slice()
-                        .sort((a, b) => a.completed - b.completed)
-                        .map((task) => (
-                            <Card key={task.id}>
-                                <CardContent sx={{ position: "relative" }}>
-                                    <Checkbox
-                                        checked={task.completed}
-                                        onChange={() => handleToggleCompleted(task)}
-                                        sx={{ position: "absolute", top: 8, right: 8 }}
-                                    />
-                                    <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer" }}>
-                                        <Typography variant="h6">{task.name}</Typography>
-                                        <Typography variant="body2">{task.description}</Typography>
-                                        {task.date && (
-                                            <Typography variant="caption">
-                                                Ska utföras innan: {task.date}
-                                            </Typography>
-                                        )}
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        ))}
-                </Stack>
+                    <Stack spacing={2}>
+                        {loading && <Typography>Loading…</Typography>}
+                        {error && <Typography color="error">{error}</Typography>}
+                        {tasks
+                            .slice()
+                            .sort((a, b) => a.completed - b.completed)
+                            .map((task) => (
+                                <Card key={task.id}>
+                                    <CardContent sx={{ position: "relative" }}>
+                                        <Checkbox
+                                            checked={task.completed}
+                                            onChange={() => handleToggleCompleted(task)}
+                                            sx={{ position: "absolute", top: 8, right: 8 }}
+                                        />
+                                        <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer" }}>
+                                            <Typography variant="h6">{task.name}</Typography>
+                                            <Typography variant="body2">{task.description}</Typography>
+                                            {task.date && (
+                                                <Typography variant="caption">
+                                                    Ska utföras innan: {task.date}
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    </CardContent>
+                                </Card>
+                            ))}
+                    </Stack>
+                </Container>
 
-                <AddTask
-                    open={isDialogOpen}
-                    onClose={closeTodoDialog}
-                    formData={formData}
-                    handleChange={handleChange}
-                    handleSubmit={handleSubmit}
-                />
+            </Body>
+            
+            <AddTask
+                open={isDialogOpen}
+                onClose={closeTodoDialog}
+                formData={formData}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+            />
 
-                <TaskDialog
-                    open={taskDialogOpen}
-                    onClose={() => setTaskDialogOpen(false)}
-                    task={selectedTask}
-                    onEdit={handleEdit}
-                    onDelete={requestDelete}
-                    onConvert={() => {
-                        setTaskDialogOpen(false);
-                        openAddDialog(selectedTask, selectedTask.id);
-                    }}
-                />
+            <TaskDialog
+                open={taskDialogOpen}
+                onClose={() => setTaskDialogOpen(false)}
+                task={selectedTask}
+                onEdit={handleEdit}
+                onDelete={requestDelete}
+                onConvert={() => {
+                    setTaskDialogOpen(false);
+                    openAddDialog(selectedTask, selectedTask.id);
+                }}
+            />
 
-                <ConfirmationDialog
-                    open={confirmDeleteOpen}
-                    onClose={() => setConfirmDeleteOpen(false)}
-                    onConfirm={handleDelete}
-                    title="Ta bort task"
-                    description="Är du säker på att du vill radera den här tasken?"
-                />
+            <ConfirmationDialog
+                open={confirmDeleteOpen}
+                onClose={() => setConfirmDeleteOpen(false)}
+                onConfirm={handleDelete}
+                title="Ta bort task"
+                description="Är du säker på att du vill radera den här tasken?"
+            />
 
-                <AddActivity
-                    open={isAddEditDialogOpen}
-                    mode={calendarDialogMode}
-                    onClose={handleCloseDialog}
-                />
-            </Container>
-        </Body>
+            <AddActivity
+                open={isAddEditDialogOpen}
+                mode={calendarDialogMode}
+                onClose={handleCloseDialog}
+            />
+        </>
     );
 }

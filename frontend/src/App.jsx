@@ -10,6 +10,7 @@ import Register from "./scenes/Register";
 import AccountSettings from "./scenes/AccountSettings";
 import {CalendarProvider} from "./context/CalendarContext";
 import {TodoProvider} from "./context/TodoContext";
+import CalendarPage from "./scenes/CalendarPage";
 
 function App() {
   return (
@@ -33,7 +34,8 @@ function App() {
                       }
                   >
                       <Route path="/today" element={<TodaysAgenda />} />
-                      <Route path="/taskTodoPage" element={<ToDoPage />} />
+                      <Route path="/calendar" element={<CalendarPage/>} />
+                      <Route path="/toDo" element={<ToDoPage />} />
                       <Route path="/account-settings" element={<AccountSettings />} />
                   </Route>
                 </Route>
