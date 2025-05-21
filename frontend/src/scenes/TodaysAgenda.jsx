@@ -1,7 +1,6 @@
 import Body from "../components/containers/Body";
 import CalendarView from "../components/calendar/CalendarView";
 import {useCalendarContext} from "../context/CalendarContext";
-import TodoList from "../components/task/todoList";
 
 function TodaysAgenda(){
 
@@ -11,7 +10,6 @@ function TodaysAgenda(){
         <Body
             withSidebar
         >
-            <TodoList/>
             <CalendarView/>
         </Body>
     );

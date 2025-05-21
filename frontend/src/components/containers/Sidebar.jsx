@@ -12,8 +12,8 @@ export default function Sidebar() {
     const location = useLocation();
 
     const items = [
-        { label: "Dagens Agenda", icon: <HomeOutlinedIcon />, path: "/today" },
-        { label: "Kalender", icon: <CalendarTodayOutlinedIcon />, path: "/calendar" },
+        { label: "Hem", icon: <HomeOutlinedIcon />, path: "/today" },
+        { label: "Dagens agenda", icon: <CalendarTodayOutlinedIcon />, path: "/today" },
         { label: "Att göra", icon: <ChecklistRtlOutlinedIcon />, path: "/taskTodoPage" },
         { label: "Inställningar", icon: <SettingsOutlinedIcon />, path: "/account-settings" }
     ];

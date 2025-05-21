@@ -1,5 +1,4 @@
 import { Box } from "@mui/material";
-import React from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import TopBar from "./TopBar";
@@ -36,7 +35,6 @@ function Body({ children }) {
                                 {child}
                             </Box>
                         ))}
-                    </Box>
                 </Box>
 
                 {/* Fixed sidebar on the right */}
