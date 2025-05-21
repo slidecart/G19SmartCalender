@@ -37,6 +37,14 @@ const AddTask = ({ open, onClose, formData, handleChange, handleSubmit}) => {
                 </Box>
                 <Box mb ={2}>
                     <TextField
+                        name="category"
+                        label="Kategori"
+                        value={formData.categoryId}
+                        onChange={handleChange}
+                    />
+                </Box>
+                <Box mb ={2}>
+                    <TextField
                         name="date"
                         label="Datum"
                         type="date"

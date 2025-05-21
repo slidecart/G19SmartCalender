@@ -77,6 +77,10 @@ function TaskDialog({ open, onClose, task, onEdit, onDelete, onConvert}){
                         </Typography>
 
                         <Typography variant="body1" sx={{ color: "text.secondary" }}>
+                            <strong>Kategori:</strong> {task?.categoryId || "Ingen kategori angiven."}
+                        </Typography>
+
+                        <Typography variant="body1" sx={{ color: "text.secondary" }}>
                             <strong>Datum:</strong> {task?.date ? dayjs(task.date).format("YYYY-MM-DD") : "Inget datum angivet."}
                         </Typography>
                     </Box>

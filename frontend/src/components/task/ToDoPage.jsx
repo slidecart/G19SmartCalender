@@ -125,7 +125,7 @@ export default function ToDoPage() {
                                 .sort((a, b) => a.completed - b.completed)
                                 .map((task) => (
                                     <Card key={task.id}>
-                                        <CardContent sx={{ position: "relative" }}>
+                                        <CardContent sx={{ position: "relative", ":hover" : { backgroundColor: "action.hover" } }}>
                                             <IconButton
                                                 onClick={handleDelete}
                                                 variant="text"
