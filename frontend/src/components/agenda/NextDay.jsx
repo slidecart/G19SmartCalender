@@ -1,10 +1,12 @@
-import { Box, Container, Typography, Card } from "@mui/material";
+import { Box, Container, Typography, Card, Paper } from "@mui/material";
 
 
-const NextDay = ({filteredActivities, onClick}) {
+const NextDay = () => {
 
     return (
-        
+        <Paper>
+
+        </Paper>
 
     )
 }

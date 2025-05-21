@@ -13,6 +13,7 @@ export function useCalendar() {
     const [startOfWeek, setStartOfWeek] = useState(
         dayjs().startOf("week").add(1,"day")
     ); //First day of the week is monday
+    const [day, setDay] = useState(dayjs().startOf("day").add(1,"day"));
 
     // Array over weekdays from monday to sunday with actual dates from local computer
     const weekdays = useMemo(
@@ -23,6 +24,8 @@ export function useCalendar() {
     })),
         [startOfWeek]
     );
+
+    
 
     // Array with time from 00:00 to 23:00
     const timeSlots = useMemo(
