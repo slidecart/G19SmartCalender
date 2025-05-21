@@ -7,7 +7,7 @@ import {
     Box,
     Card,
     CardContent,
-    useTheme
+    Button,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
@@ -19,10 +19,12 @@ import Body from "../containers/Body";
 import AddActivity from "../calendar/AddActivity";
 
 import { useCalendarContext } from "../../context/CalendarContext";
-import { useTodoContext }     from "../../context/TodoContext";
+import { useTodoContext } from "../../context/TodoContext";
+import DailyTaskView from "./DailyTaskView"; // New component
+import dayjs from "dayjs";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 export default function ToDoPage() {
-    const theme = useTheme();
     const {
         tasks,
         loading,
@@ -37,7 +39,6 @@ export default function ToDoPage() {
         dialogMode: todoDialogMode,
         openTodoDialog,
         closeTodoDialog,
-
     } = useTodoContext();
 
     const {
@@ -52,6 +53,8 @@ export default function ToDoPage() {
     const [taskDialogOpen, setTaskDialogOpen] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [taskToDelete, setTaskToDelete] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
+    const [taskCompleted, setTaskCompleted] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -84,6 +87,7 @@ export default function ToDoPage() {
         setTaskToDelete(selectedTask);
         setConfirmDeleteOpen(true);
     };
+
     const handleDelete = async () => {
         if (taskToDelete) {
             await deleteTask(taskToDelete.id);
@@ -95,54 +99,75 @@ export default function ToDoPage() {
 
     const handleToggleCompleted = async (task) => {
         await toggleComplete(task);
+        setTaskCompleted(!taskCompleted);
     };
 
     const openAddTaskDialog = () => openTodoDialog("add");
 
     return (
         <Body>
-            <Container maxWidth="xs" sx={{ mt: 4 }}>
-                <Box
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    mb={2}
-                >
-                    <Typography variant="h1">
-                        TASKS
-                    </Typography>
-                    <IconButton onClick={openAddTaskDialog}>
-                        <AddIcon />
-                    </IconButton>
-                </Box>
+            <Container maxWidth="lg" sx={{ mt: 4 }}>
+                <Box display="flex" gap={4}>
+                    {/* Left Column: ToDo List */}
+                    <Box flex={1}>
+                        <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+                            <Typography variant="h1">ToDo</Typography>
+                            <IconButton onClick={openAddTaskDialog}>
+                                <AddIcon />
+                            </IconButton>
+                        </Box>
 
-                <Stack spacing={2}>
-                    {loading && <Typography>Loading…</Typography>}
-                    {error && <Typography color="error">{error}</Typography>}
-                    {tasks
-                        .slice()
-                        .sort((a, b) => a.completed - b.completed)
-                        .map((task) => (
-                            <Card key={task.id}>
-                                <CardContent sx={{ position: "relative" }}>
-                                    <Checkbox
-                                        checked={task.completed}
-                                        onChange={() => handleToggleCompleted(task)}
-                                        sx={{ position: "absolute", top: 8, right: 8 }}
-                                    />
-                                    <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer" }}>
-                                        <Typography variant="h6">{task.name}</Typography>
-                                        <Typography variant="body2">{task.description}</Typography>
-                                        {task.date && (
-                                            <Typography variant="caption">
-                                                Ska utföras innan: {task.date}
-                                            </Typography>
-                                        )}
-                                    </Box>
-                                </CardContent>
-                            </Card>
-                        ))}
-                </Stack>
+                        <Stack spacing={2}>
+                            {loading && <Typography>Loading…</Typography>}
+                            {error && <Typography color="error">{error}</Typography>}
+                            {tasks
+                                .slice()
+                                .sort((a, b) => a.completed - b.completed)
+                                .map((task) => (
+                                    <Card key={task.id}>
+                                        <CardContent sx={{ position: "relative" }}>
+                                            <IconButton
+                                                onClick={handleDelete}
+                                                variant="text"
+                                                sx={{
+                                                    position: "absolute",
+                                                    top: 2,
+                                                    right: 2,
+                                                    color: "error.main",
+                                                }}
+
+                                            >
+                                                <DeleteOutlineOutlinedIcon />
+                                            </IconButton>
+                                            <Checkbox
+                                                checked={task.completed}
+                                                onChange={() => handleToggleCompleted(task)}
+                                                sx={{ position: "absolute", bottom: 2, right: 2 }}
+                                            />
+                                            <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer", textDecoration: task.completed ? "line-through" : "none", color: task.completed ? "text.disabled" : "text.primary", }}>
+                                                <Typography variant="h6">{task.name}</Typography>
+                                                {!task.completed && (
+                                                <>
+                                                <Typography variant="body2">{task.description}</Typography>
+                                                {task.date && (
+                                                    <Typography variant="caption">
+                                                        Ska utföras innan: {task.date}
+                                                    </Typography>
+                                                )}
+                                                </>
+                                                )}
+                                            </Box>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                        </Stack>
+                    </Box>
+
+                    {/* Right Column: Daily View */}
+                    <Box flex={1}>
+                        <DailyTaskView date={selectedDate} setDate={setSelectedDate} tasks={tasks} />
+                    </Box>
+                </Box>
 
                 <AddTask
                     open={isDialogOpen}
