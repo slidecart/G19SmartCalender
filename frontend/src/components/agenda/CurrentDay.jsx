@@ -7,15 +7,7 @@ const CurrentDay = () => {
     const {
         categories,
     } = useCalendarContext();
-    if(!filteredActivities || filteredActivities.length === 0){
-        return(
-            <Card>
-                <Typography variant="caption2">
-                    Inga aktiviteter!
-                </Typography>
-            </Card>
-        )
-    }
+
 
     return (
         <>
