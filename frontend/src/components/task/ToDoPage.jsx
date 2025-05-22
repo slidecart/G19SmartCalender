@@ -124,7 +124,7 @@ export default function ToDoPage() {
                                 .sort((a, b) => a.date?.localeCompare(b.date))
                                 .map((task) => (
                                     <Card key={task.id}>
-                                        <CardContent sx={{ position: "relative", ":hover" : { backgroundColor: "action.hover" } }}>
+                                        <CardContent sx={{ position: "relative", ":hover" : { backgroundColor: "action.hover" }}}>
                                             <IconButton
                                                 onClick={() => {
                                                     if (task.completed) {

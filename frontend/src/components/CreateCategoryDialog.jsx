@@ -1,23 +1,30 @@
 import React, {useState} from "react";
-import {Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField} from "@mui/material";
-import {useCalendarContext} from "../context/CalendarContext";
+import {
+    Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    TextField
+} from "@mui/material";
+import { useCategoryContext } from "../context/CategoryContext";
 
-
-const CreateCategoryDialog = ({ open, onClose, }) => {
+const CreateCategoryDialog = ({ open, onClose, onCreate }) => {
     const [categoryName, setCategoryName] = useState("");
     const [selectedColor, setSelectedColor] = useState("#60f085");
-    const {createCategory}  = useCalendarContext();
+    const { createCategory } = useCategoryContext();
 
     const handleCreate = () => {
         if (!categoryName) {
             alert("Vänligen ange ett namn för kategorin.");
             return;
         }
-        createCategory(categoryName, selectedColor);
+
+        onCreate({ name: categoryName, color: selectedColor });
 
         setCategoryName("");
         setSelectedColor("#60f085");
-        onClose();
     };
 
     return (
@@ -31,6 +38,7 @@ const CreateCategoryDialog = ({ open, onClose, }) => {
                     fullWidth
                     value={categoryName}
                     onChange={(e) => setCategoryName(e.target.value)}
+                    required
                 />
                 <Box mt={2}>
                     <TextField
