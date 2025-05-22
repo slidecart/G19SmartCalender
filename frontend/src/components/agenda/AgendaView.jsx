@@ -69,7 +69,7 @@ function AgendaView() {
 
                     {/* Headtitle for agenda */}
                     <Typography variant="h6">
-                        Vecka {startOfWeek.week()}, {todayIndex}
+                        Vecka {startOfWeek.week()}, {weekdays[todayIndex].name}
                     </Typography>
 
                     {/* Button changing visible day to next */}
