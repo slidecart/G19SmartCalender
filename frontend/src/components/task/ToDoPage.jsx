@@ -153,10 +153,11 @@ export default function ToDoPage() {
                                             <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer", p:1.5, textDecoration: task.completed ? "line-through" : "none", color: task.completed ? "text.disabled" : "text.primary", }}>
                                                 <Typography variant="h6">{task.name}</Typography>
                                                 <Typography variant="body2">{task.description}</Typography>
-
-                                                <Typography variant="caption">
+                                                {task.date && (
+                                                    <Typography variant="caption">
                                                         Ska utföras innan: {task.date}
                                                     </Typography>
+                                                )}
                                             </Box>
                                         </CardContent>
                                     </Card>
