@@ -1,8 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from "react";
 import dayjs from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { fetchData } from "../FetchData";
+import { useCategoryContext } from "../../context/CategoryContext";
 
 dayjs.extend(customParseFormat);
 dayjs.extend(isoWeek);
@@ -171,52 +177,22 @@ export function useCalendar() {
   }, [loadActivities]);
 
   /* ---------- Categories + Filters ---------- */
-  const [categories, setCategories]               = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-
-  const loadCategories = useCallback(async () => {
-    try {
-      const cats = await fetchData("categories/all", "GET", "");
-      setCategories(cats || []);
-    } catch (err) {
-      console.error("Error fetching categories:", err.message);
-      setCategories([]);
-    }
-  }, []);
-
-  useEffect(() => {
-    loadCategories();
-  }, [loadCategories]);
-
-  useEffect(() => {
-    setSelectedCategories(categories.map(cat => cat.id));
-  }, [categories]);
-
-  const toggleCategory = useCallback(id => {
-    setSelectedCategories(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-    );
-  }, []);
-
-  // — Newly re-added: createCategory —
-  const createCategory = useCallback(async (name, color) => {
-    const category = { name, color };
-    const newCategory = await fetchData("categories/create", "POST", category);
-    setCategories(prev => [...prev, newCategory]);
-    setSelectedCategories(prev => [...prev, newCategory.id]);
-  }, []);
-
-  const resetFilter = useCallback(() => {
-    setSelectedCategories(categories.map(cat => cat.id));
-  }, [categories]);
+  const {
+    categories,
+    selectedCategories,
+    toggleCategory,
+    resetFilter,
+    createCategory,
+  } = useCategoryContext();
 
   const filteredActivities = useMemo(
-    () =>
-      activities.filter(
-        a => !a.categoryId || selectedCategories.includes(a.categoryId)
-      ),
-    [activities, selectedCategories]
+      () =>
+          activities.filter(
+              (a) => !a.categoryId || selectedCategories.includes(a.categoryId)
+          ),
+      [activities, selectedCategories]
   );
+
 
   /* ---------- Form handlers ---------- */
   const handleChange = e => {
