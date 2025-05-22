@@ -7,8 +7,12 @@ import {
     Box,
     Card,
     CardContent,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
 
 import AddTask from "./AddTask";
@@ -95,6 +99,9 @@ export default function ToDoPage() {
 
     const openAddTaskDialog = () => openTodoDialog("add");
 
+    const incompleteTasks = tasks.filter((t) => !t.completed);
+    const completedTasks  = tasks.filter((t) => t.completed);
+
     return (
         <Body>
             <Container maxWidth="lg" sx={{ mt: 4 }}>
@@ -111,9 +118,10 @@ export default function ToDoPage() {
                         <Stack spacing={2}>
                             {loading && <Typography>Loading…</Typography>}
                             {error && <Typography color="error">{error}</Typography>}
-                            {tasks
-                                .slice()
-                                .sort((a, b) => a.completed - b.completed)
+
+                            {/* --- Incomplete tasks --- */}
+                            {incompleteTasks
+                                .sort((a, b) => a.date?.localeCompare(b.date))
                                 .map((task) => (
                                     <Card key={task.id}>
                                         <CardContent sx={{ position: "relative", ":hover" : { backgroundColor: "action.hover" } }}>
@@ -144,20 +152,69 @@ export default function ToDoPage() {
                                             />
                                             <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer", p:1.5, textDecoration: task.completed ? "line-through" : "none", color: task.completed ? "text.disabled" : "text.primary", }}>
                                                 <Typography variant="h6">{task.name}</Typography>
-                                                {!task.completed && (
-                                                <>
                                                 <Typography variant="body2">{task.description}</Typography>
-                                                {task.date && (
-                                                    <Typography variant="caption">
+
+                                                <Typography variant="caption">
                                                         Ska utföras innan: {task.date}
                                                     </Typography>
-                                                )}
-                                                </>
-                                                )}
                                             </Box>
                                         </CardContent>
                                     </Card>
                                 ))}
+
+                            {/* --- Collapsible completed tasks --- */}
+                            <Accordion>
+                                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                    <Typography>
+                                        Slutförda ({completedTasks.length})
+                                    </Typography>
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <Stack spacing={1}>
+                                        {completedTasks.map((task) => (
+                                            <Card key={task.id} variant="outlined">
+                                                <CardContent
+                                                    sx={{
+                                                        opacity: 0.7,
+                                                        textDecoration: "line-through",
+                                                        position: "relative",
+                                                    }}
+                                                >
+                                                    <Box
+                                                        sx={{
+                                                            cursor: "pointer",
+                                                            p: 1,
+                                                            color: "text.disabled",
+                                                        }}
+                                                        onClick={() => handleTaskClick(task)}
+                                                    >
+                                                    </Box>
+                                                    <IconButton
+                                                        onClick={() => deleteTask(task.id)}
+                                                        sx={{
+                                                            position: "absolute",
+                                                            top: 2,
+                                                            right: 2,
+                                                            color: "error.main",
+                                                        }}
+                                                    >
+                                                        <DeleteOutlineOutlinedIcon/>
+                                                    </IconButton>
+                                                    <Checkbox
+                                                        checked={task.completed}
+                                                        onChange={() => handleToggleCompleted(task)}
+                                                        sx={{ position: "absolute", bottom: 2, right: 2 }}
+                                                    />
+                                                    <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer", p:1.5, textDecoration: task.completed ? "line-through" : "none", color: task.completed ? "text.disabled" : "text.primary", }}>
+                                                        <Typography variant="h6">{task.name}</Typography>
+                                                        <Typography variant="body2">{task.description}</Typography>
+                                                    </Box>
+                                                </CardContent>
+                                            </Card>
+                                        ))}
+                                    </Stack>
+                                </AccordionDetails>
+                            </Accordion>
                         </Stack>
                     </Box>
 
