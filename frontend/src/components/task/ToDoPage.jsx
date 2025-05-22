@@ -7,7 +7,6 @@ import {
     Box,
     Card,
     CardContent,
-    Button,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
@@ -20,7 +19,7 @@ import AddActivity from "../calendar/AddActivity";
 
 import { useCalendarContext } from "../../context/CalendarContext";
 import { useTodoContext } from "../../context/TodoContext";
-import DailyTaskView from "./DailyTaskView"; // New component
+import DailyTaskView from "./DailyTaskView";
 import dayjs from "dayjs";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
@@ -54,7 +53,6 @@ export default function ToDoPage() {
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [taskToDelete, setTaskToDelete] = useState(null);
     const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
-    const [taskCompleted, setTaskCompleted] = useState(false);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -82,12 +80,6 @@ export default function ToDoPage() {
         setTaskDialogOpen(false);
     };
 
-    // Mark for deletion
-    const requestDelete = () => {
-        setTaskToDelete(selectedTask);
-        setConfirmDeleteOpen(true);
-    };
-
     const handleDelete = async () => {
         if (taskToDelete) {
             await deleteTask(taskToDelete.id);
@@ -99,7 +91,6 @@ export default function ToDoPage() {
 
     const handleToggleCompleted = async (task) => {
         await toggleComplete(task);
-        setTaskCompleted(!taskCompleted);
     };
 
     const openAddTaskDialog = () => openTodoDialog("add");
@@ -127,8 +118,15 @@ export default function ToDoPage() {
                                     <Card key={task.id}>
                                         <CardContent sx={{ position: "relative", ":hover" : { backgroundColor: "action.hover" } }}>
                                             <IconButton
-                                                onClick={handleDelete}
-                                                variant="text"
+                                                onClick={() => {
+                                                    if (task.completed) {
+                                                    deleteTask(task.id);
+                                                    } else {
+                                                    setTaskToDelete(task);
+                                                    setConfirmDeleteOpen(true);
+                                                    }
+                                                }}
+
                                                 sx={{
                                                     position: "absolute",
                                                     top: 2,
@@ -144,7 +142,7 @@ export default function ToDoPage() {
                                                 onChange={() => handleToggleCompleted(task)}
                                                 sx={{ position: "absolute", bottom: 2, right: 2 }}
                                             />
-                                            <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer", textDecoration: task.completed ? "line-through" : "none", color: task.completed ? "text.disabled" : "text.primary", }}>
+                                            <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer", p:1.5, textDecoration: task.completed ? "line-through" : "none", color: task.completed ? "text.disabled" : "text.primary", }}>
                                                 <Typography variant="h6">{task.name}</Typography>
                                                 {!task.completed && (
                                                 <>
@@ -182,7 +180,10 @@ export default function ToDoPage() {
                     onClose={() => setTaskDialogOpen(false)}
                     task={selectedTask}
                     onEdit={handleEdit}
-                    onDelete={requestDelete}
+                    onDelete={() => {
+                        setTaskToDelete(selectedTask);
+                        setConfirmDeleteOpen(true);
+                    }}
                     onConvert={() => {
                         setTaskDialogOpen(false);
                         openAddDialog(selectedTask, selectedTask.id);
@@ -193,8 +194,8 @@ export default function ToDoPage() {
                     open={confirmDeleteOpen}
                     onClose={() => setConfirmDeleteOpen(false)}
                     onConfirm={handleDelete}
-                    title="Ta bort task"
-                    description="Är du säker på att du vill radera den här tasken?"
+                    title="Ta bort ToDo"
+                    description="Är du säker på att du vill radera denna ToDo?" //Denna syns inte fixa detta!
                 />
 
                 <AddActivity
