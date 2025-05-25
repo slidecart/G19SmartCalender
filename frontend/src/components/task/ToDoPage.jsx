@@ -1,3 +1,7 @@
+import React, {
+    useRef,
+    useState
+} from "react";
 import {
     Checkbox,
     Container,
@@ -10,10 +14,17 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
+    TextField,
+    Menu,
+    MenuItem, Tooltip, Divider,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useState } from "react";
+import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
+import CategoryIcon from '@mui/icons-material/Category';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+
+import { alpha } from "@mui/material/styles";
 
 import AddTask from "./AddTask";
 import TaskDialog from "./TaskDialog";
@@ -23,9 +34,9 @@ import AddActivity from "../calendar/AddActivity";
 
 import { useCalendarContext } from "../../context/CalendarContext";
 import { useTodoContext } from "../../context/TodoContext";
+import { useCategoryContext} from "../../context/CategoryContext";
 import DailyTaskView from "./DailyTaskView";
 import dayjs from "dayjs";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 
 export default function ToDoPage() {
     const {
@@ -51,12 +62,22 @@ export default function ToDoPage() {
         dialogMode: calendarDialogMode
     } = useCalendarContext();
 
+    const { categories } = useCategoryContext();
+
     // Local UI state for the TaskDialog & delete confirmation
     const [selectedTask, setSelectedTask] = useState(null);
     const [taskDialogOpen, setTaskDialogOpen] = useState(false);
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [taskToDelete, setTaskToDelete] = useState(null);
     const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
+
+    const [newTodoName, setNewTodoName] = useState("");
+    const [newTodoDescription, setNewTodoDescription] = useState("");
+    const [newTodoCategory, setNewTodoCategory] = useState("");
+    const [catMenuAnchor, setCatMenuAnchor] = useState(null);
+    const dateInputRef = useRef(null);
+    const [newTodoDate, setNewTodoDate] = useState("");
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -110,9 +131,152 @@ export default function ToDoPage() {
                     <Box flex={1}>
                         <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                             <Typography variant="h1">ToDo</Typography>
-                            <IconButton onClick={openAddTaskDialog}>
-                                <AddIcon />
-                            </IconButton>
+                        </Box>
+
+                        <Box mb={2}>
+                            <TextField
+                                label="Lägg till en ny ToDo"
+                                placeholder="Titel"
+                                value={newTodoName}
+                                onChange={(e) => setNewTodoName(e.target.value)}
+                                onKeyDown={async e => {
+                                    if (e.key === "Enter" && newTodoName.trim()) {
+                                        try {
+                                            await createTask({
+                                                name: newTodoName.trim(),
+                                                description: newTodoDescription.trim() || undefined,
+                                                categoryId: newTodoCategory || undefined,
+                                                date: newTodoDate || undefined
+                                            });
+
+                                            setNewTodoName("");
+                                            setNewTodoDescription("");
+                                        } catch (err) {
+                                            console.error("Error creating task:", err);
+                                        }
+                                    }
+                                }}
+                                fullWidth
+                            />
+
+                            {newTodoName.trim() !== "" && (
+                                <>
+                                    <TextField
+                                        size="small"
+                                        sx={{
+                                            mt: 2,
+                                            ml: 2,
+                                            width: theme => `calc(100% - ${theme.spacing(2)})`,
+
+                                    }}
+                                        label="Lägg till en beskrivning"
+                                        placeholder="Beskrivning"
+                                        value={newTodoDescription}
+                                        onChange={e => setNewTodoDescription(e.target.value)}
+                                        onKeyDown={async e => {
+                                            if (e.key === "Enter" && newTodoName.trim()) {
+                                                try {
+                                                    await createTask({
+                                                        name: newTodoName.trim(),
+                                                        description: newTodoDescription.trim() || undefined,
+                                                        categoryId: newTodoCategory || undefined,
+                                                        date: newTodoDate || undefined
+                                                    });
+
+                                                    setNewTodoName("");
+                                                    setNewTodoDescription("");
+                                                } catch (err) {
+                                                    console.error("Error creating task:", err);
+                                                }
+                                            }
+                                        }}
+                                    />
+
+
+                                    <Box
+                                        sx={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 1,
+                                            mt: 1,
+                                            ml: 4
+                                        }}
+                                    >
+                                        {/* Category picker */}
+                                        <Tooltip title="Välj kategori" arrow>
+                                            <IconButton
+                                                onClick={e => setCatMenuAnchor(e.currentTarget)}
+                                                sx={{ color: newTodoCategory ? "primary.main" : "text.secondary" }}
+                                            >
+                                                <CategoryIcon />
+                                            </IconButton>
+                                        </Tooltip>
+
+                                        <Menu
+                                            anchorEl={catMenuAnchor}
+                                            open={Boolean(catMenuAnchor)}
+                                            onClose={() => setCatMenuAnchor(null)}
+                                        >
+                                            <MenuItem
+                                                value=""
+                                                onClick={() => {
+                                                    setNewTodoCategory("");
+                                                    setCatMenuAnchor(null);
+                                                }}
+                                            >
+                                                <em>Rensa</em>
+                                            </MenuItem>
+
+                                            {categories.map(cat => (
+                                                <MenuItem
+                                                    key={cat.id}
+                                                    onClick={() => {
+                                                        setNewTodoCategory(cat.id);
+                                                        setCatMenuAnchor(null);
+                                                    }}
+                                                >
+                                                    {cat.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Menu>
+
+                                        {/* Date picker */}
+                                        <Box sx={{ position: "relative" }}>
+                                            <Tooltip title="Välj datum" arrow>
+                                                <IconButton
+                                                    onClick={() => {
+                                                        // native date picker
+                                                        if (dateInputRef.current?.showPicker) {
+                                                            dateInputRef.current.showPicker();
+                                                        } else {
+                                                            dateInputRef.current.click();
+                                                        }
+                                                    }}
+                                                    sx={{ color: newTodoDate ? "primary.main" : "text.secondary" }}
+                                                >
+                                                    <DateRangeIcon />
+                                                </IconButton>
+                                            </Tooltip>
+
+                                            <input
+                                                ref={dateInputRef}
+                                                type="date"
+                                                value={newTodoDate}
+                                                onChange={e => setNewTodoDate(e.target.value)}
+                                                style={{
+                                                    position: "absolute",
+                                                    top: 0,
+                                                    left: 0,
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    opacity: 0,
+                                                    pointerEvents: "none"
+                                                }}
+                                            />
+                                        </Box>
+                                    </Box>
+                                </>
+                            )}
                         </Box>
 
                         <Stack spacing={2}>
@@ -122,46 +286,61 @@ export default function ToDoPage() {
                             {/* --- Incomplete tasks --- */}
                             {incompleteTasks
                                 .sort((a, b) => a.date?.localeCompare(b.date))
-                                .map((task) => (
-                                    <Card key={task.id}>
-                                        <CardContent sx={{ position: "relative", ":hover" : { backgroundColor: "action.hover" }}}>
-                                            <IconButton
-                                                onClick={() => {
-                                                    if (task.completed) {
-                                                    deleteTask(task.id);
-                                                    } else {
-                                                    setTaskToDelete(task);
-                                                    setConfirmDeleteOpen(true);
-                                                    }
-                                                }}
+                                .map(task => {
+                                    const cat = categories.find(c => c.id === task.categoryId) || null;
 
-                                                sx={{
-                                                    position: "absolute",
-                                                    top: 2,
-                                                    right: 2,
-                                                    color: "error.main",
-                                                }}
+                                    return (
+                                        <Card key={task.id}>
+                                            <CardContent sx={{
+                                                position: "relative",
+                                                borderLeft: cat?.color ? `4px solid ${cat.color}` : "4px solid #ccc",
+                                                backgroundColor: cat?.color ? alpha(cat.color, 0.1) : "background.paper",
+                                                "&:hover" : {
+                                                    backgroundColor: cat?.color
+                                                        ? alpha(cat.color, 0.4)
+                                                        : "action.hover"
+                                                },
+                                                transition: "background-color 0.3s ease",
+                                            }}>
+                                                <IconButton
+                                                    onClick={() => {
+                                                        if (task.completed) {
+                                                        deleteTask(task.id);
+                                                        } else {
+                                                        setTaskToDelete(task);
+                                                        setConfirmDeleteOpen(true);
+                                                        }
+                                                    }}
 
-                                            >
-                                                <DeleteOutlineOutlinedIcon />
-                                            </IconButton>
-                                            <Checkbox
-                                                checked={task.completed}
-                                                onChange={() => handleToggleCompleted(task)}
-                                                sx={{ position: "absolute", bottom: 2, right: 2 }}
-                                            />
-                                            <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer", p:1.5, textDecoration: task.completed ? "line-through" : "none", color: task.completed ? "text.disabled" : "text.primary", }}>
-                                                <Typography variant="h6">{task.name}</Typography>
-                                                <Typography variant="body2">{task.description}</Typography>
-                                                {task.date && (
-                                                    <Typography variant="caption">
-                                                        Ska utföras innan: {task.date}
-                                                    </Typography>
-                                                )}
-                                            </Box>
-                                        </CardContent>
-                                    </Card>
-                                ))}
+                                                    sx={{
+                                                        position: "absolute",
+                                                        top: 2,
+                                                        right: 2,
+                                                        color: "error.main",
+                                                    }}
+
+                                                >
+                                                    <DeleteOutlineOutlinedIcon />
+                                                </IconButton>
+                                                <Checkbox
+                                                    checked={task.completed}
+                                                    onChange={() => handleToggleCompleted(task)}
+                                                    sx={{ position: "absolute", bottom: 2, right: 2 }}
+                                                />
+                                                <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer", p:1.5, textDecoration: task.completed ? "line-through" : "none", color: task.completed ? "text.disabled" : "text.primary", }}>
+                                                    <Typography variant="h6">{task.name}</Typography>
+                                                    <Typography variant="body2">{task.description}</Typography>
+                                                    {task.date && (
+                                                        <Typography variant="caption">
+                                                            Ska utföras innan: {task.date}
+                                                        </Typography>
+                                                    )}
+                                                </Box>
+                                            </CardContent>
+                                        </Card>
+                                    );
+                                })
+                            }
 
                             {/* --- Collapsible completed tasks --- */}
                             <Accordion>
@@ -172,47 +351,59 @@ export default function ToDoPage() {
                                 </AccordionSummary>
                                 <AccordionDetails>
                                     <Stack spacing={1}>
-                                        {completedTasks.map((task) => (
-                                            <Card key={task.id} variant="outlined">
-                                                <CardContent
-                                                    sx={{
-                                                        opacity: 0.7,
-                                                        textDecoration: "line-through",
-                                                        position: "relative",
-                                                    }}
-                                                >
-                                                    <Box
+                                        {completedTasks.map(task => {
+
+                                            const cat = categories.find(c => c.id === task.categoryId) || null;
+
+                                            return (
+                                                <Card key={task.id} variant="outlined">
+                                                    <CardContent
                                                         sx={{
+                                                            opacity: 0.7,
+                                                            textDecoration: "line-through",
+                                                            position: "relative",
+                                                            borderLeft: cat?.color ? `4px solid ${cat.color}` : "4px solid transparent",
+                                                            backgroundColor: cat?.color ? alpha(cat.color, 0.1) : "background.paper",
+                                                        }}
+                                                    >
+                                                        <Box
+                                                            sx={{
+                                                                cursor: "pointer",
+                                                                p: 1,
+                                                                color: "text.disabled",
+                                                            }}
+                                                            onClick={() => handleTaskClick(task)}
+                                                        >
+                                                        </Box>
+                                                        <IconButton
+                                                            onClick={() => deleteTask(task.id)}
+                                                            sx={{
+                                                                position: "absolute",
+                                                                top: 2,
+                                                                right: 2,
+                                                                color: "error.main",
+                                                            }}
+                                                        >
+                                                            <DeleteOutlineOutlinedIcon/>
+                                                        </IconButton>
+                                                        <Checkbox
+                                                            checked={task.completed}
+                                                            onChange={() => handleToggleCompleted(task)}
+                                                            sx={{position: "absolute", bottom: 2, right: 2}}
+                                                        />
+                                                        <Box onClick={() => handleTaskClick(task)} sx={{
                                                             cursor: "pointer",
-                                                            p: 1,
-                                                            color: "text.disabled",
-                                                        }}
-                                                        onClick={() => handleTaskClick(task)}
-                                                    >
-                                                    </Box>
-                                                    <IconButton
-                                                        onClick={() => deleteTask(task.id)}
-                                                        sx={{
-                                                            position: "absolute",
-                                                            top: 2,
-                                                            right: 2,
-                                                            color: "error.main",
-                                                        }}
-                                                    >
-                                                        <DeleteOutlineOutlinedIcon/>
-                                                    </IconButton>
-                                                    <Checkbox
-                                                        checked={task.completed}
-                                                        onChange={() => handleToggleCompleted(task)}
-                                                        sx={{ position: "absolute", bottom: 2, right: 2 }}
-                                                    />
-                                                    <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer", p:1.5, textDecoration: task.completed ? "line-through" : "none", color: task.completed ? "text.disabled" : "text.primary", }}>
-                                                        <Typography variant="h6">{task.name}</Typography>
-                                                        <Typography variant="body2">{task.description}</Typography>
-                                                    </Box>
-                                                </CardContent>
-                                            </Card>
-                                        ))}
+                                                            p: 1.5,
+                                                            textDecoration: task.completed ? "line-through" : "none",
+                                                            color: task.completed ? "text.disabled" : "text.primary",
+                                                        }}>
+                                                            <Typography variant="h6">{task.name}</Typography>
+                                                            <Typography variant="body2">{task.description}</Typography>
+                                                        </Box>
+                                                    </CardContent>
+                                                </Card>
+                                            );
+                                        })}
                                     </Stack>
                                 </AccordionDetails>
                             </Accordion>

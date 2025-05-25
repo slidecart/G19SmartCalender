@@ -14,11 +14,16 @@ import {
   import dayjs from "dayjs";
   import "dayjs/locale/sv";          // ← import Swedish locale
   import isoWeek from "dayjs/plugin/isoWeek";
-  
+  import {alpha} from "@mui/material/styles";
+  import {useCategoryContext} from "../../context/CategoryContext";
+
   dayjs.extend(isoWeek);
   dayjs.locale("sv");               // ← activate Swedish globally (for formatting)
   
   export default function DailyTaskView({ date, setDate, tasks }) {
+
+    const { categories } = useCategoryContext();
+
     const selected  = dayjs(date);
     const today     = dayjs().startOf("day");
     const isToday   = selected.isSame(today, "day");
@@ -96,25 +101,33 @@ import {
         <Divider sx={{ mb: 2 }} />
   
         {tasks.filter(t => dayjs(t.date).isSame(selected, "day")).length === 0 ? (
-          <Typography variant="body2">
+          <Typography variant="body1" color="text.secondary" align="center">
             Inga uppgifter för detta datum.
           </Typography>
         ) : (
           tasks
             .filter(t => dayjs(t.date).isSame(selected, "day"))
-            .map((task) => (
-              <Box
-                key={task.id}
-                mb={2}
-                p={2}
-                border="1px solid #ccc"
-                borderRadius={2}
-                bgcolor="#f9f9f9"
-              >
-                <Typography variant="h6">{task.name}</Typography>
-                <Typography variant="body2">{task.description}</Typography>
-              </Box>
-            ))
+            .map(task => {
+
+                const cat = categories.find(c => c.id === task.categoryId) || null;
+
+                return (
+                  <Box
+                    key={task.id}
+                    sx={{
+                        mb: 2,
+                        p: 2,
+                        border: "1px solid #ccc",
+                        borderRadius: 2,
+                        borderLeft: cat?.color ? `4px solid ${cat.color}` : "1px solid #ccc",
+                        backgroundColor: cat?.color ? alpha(cat.color, 0.1) : "background.paper",
+                    }}
+                  >
+                    <Typography variant="h6">{task.name}</Typography>
+                    <Typography variant="body2">{task.description}</Typography>
+                  </Box>
+                );
+            })
         )}
       </Box>
     );
