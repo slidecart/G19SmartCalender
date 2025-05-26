@@ -160,15 +160,18 @@ export default function ToDoPage() {
                             />
 
                             {newTodoName.trim() !== "" && (
-                                <>
+                                <Box
+                                    sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: 1,
+                                        mt: 1,
+                                        ml: 2,
+                                    }}
+                                >
                                     <TextField
                                         size="small"
-                                        sx={{
-                                            mt: 2,
-                                            ml: 2,
-                                            width: theme => `calc(100% - ${theme.spacing(2)})`,
-
-                                    }}
+                                        sx={{ flex: 1 }}
                                         label="Lägg till en beskrivning"
                                         placeholder="Beskrivning"
                                         value={newTodoDescription}
@@ -192,16 +195,6 @@ export default function ToDoPage() {
                                         }}
                                     />
 
-
-                                    <Box
-                                        sx={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 1,
-                                            mt: 1,
-                                            ml: 4
-                                        }}
-                                    >
                                         {/* Category picker */}
                                         <Tooltip title="Välj kategori" arrow>
                                             <IconButton
@@ -211,6 +204,9 @@ export default function ToDoPage() {
                                                 <CategoryIcon />
                                             </IconButton>
                                         </Tooltip>
+                                        <Typography variant="caption" color="text.secondary">
+                                            {newTodoCategory ? categories.find(cat => cat.id === newTodoCategory)?.name || "Kategori" : "Kategori"}
+                                        </Typography>
 
                                         <Menu
                                             anchorEl={catMenuAnchor}
@@ -257,6 +253,10 @@ export default function ToDoPage() {
                                                     <DateRangeIcon />
                                                 </IconButton>
                                             </Tooltip>
+                                            <Typography variant="caption" color="text.secondary">
+                                                {newTodoDate ? dayjs(newTodoDate).format("D MMMM YYYY") : "Datum"}
+                                            </Typography>
+
 
                                             <input
                                                 ref={dateInputRef}
@@ -274,8 +274,7 @@ export default function ToDoPage() {
                                                 }}
                                             />
                                         </Box>
-                                    </Box>
-                                </>
+                                </Box>
                             )}
                         </Box>
 
