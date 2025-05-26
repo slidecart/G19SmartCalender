@@ -151,6 +151,8 @@ export default function ToDoPage() {
 
                                             setNewTodoName("");
                                             setNewTodoDescription("");
+                                            setNewTodoCategory("");
+                                            setNewTodoDate("");
                                         } catch (err) {
                                             console.error("Error creating task:", err);
                                         }
@@ -188,6 +190,8 @@ export default function ToDoPage() {
 
                                                     setNewTodoName("");
                                                     setNewTodoDescription("");
+                                                    setNewTodoCategory("");
+                                                    setNewTodoDate("");
                                                 } catch (err) {
                                                     console.error("Error creating task:", err);
                                                 }
