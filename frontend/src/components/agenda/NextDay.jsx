@@ -1,14 +1,7 @@
-import { Box, Container, Typography, Card, Paper } from "@mui/material";
+import CurrentDay from "./CurrentDay";
 
-
-const NextDay = () => {
-
-    return (
-        <Paper>
-
-        </Paper>
-
-    )
-}
+const NextDay = ({ startOfDay }) => (
+    <CurrentDay dayOffset={2} startOfDay={startOfDay} height="300px" width="100%" />
+);
 
 export default NextDay;

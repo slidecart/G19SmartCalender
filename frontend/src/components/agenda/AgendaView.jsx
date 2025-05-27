@@ -10,6 +10,7 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import {timeSlots} from "../../data/calendar/CalendarData";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {useCalendar} from "../../hooks/calendar/useCalendar";
+import {useState} from "react";
 
 function AgendaView() {
     const {
@@ -21,8 +22,6 @@ function AgendaView() {
         targetDate,
         timeSlots,
         setDay,
-        setStartOfWeek,
-        startOfWeek,
         handleCloseDialog,
         handleClosePopover,
         dialogMode,
@@ -37,18 +36,18 @@ function AgendaView() {
     } = useCalendarContext();
 
 
-    const today = dayjs();
-    const todayDate = today.format("YYYY-MM-DD");
-    const todayIndex = weekdays.findIndex(w => w.date === todayDate);
-    const todayTime = timeSlots.findIndex(time => parseInt(time, 10) === today.hour());
-    const currentDay = dayjs(targetDate).startOf("day");
+    const [startOfWeek, setStartOfWeek] = useState(dayjs().startOf("week").add(1,"day"));
+
+    const selectedDayIndex = (startOfWeek.day() + 7) % 7;
+    const selectedDayName = weekdays[selectedDayIndex].name;
+
 
 
     const handlePrevDay = () => {
-        setStartOfWeek(prev => prev.subtract(1, 'day'));
+        setStartOfWeek(prev => dayjs(prev).subtract(1, 'day'));
     }
     const handleNextDay = () => {
-        setStartOfWeek(prev => prev.add(1, 'day'));
+        setStartOfWeek(prev => dayjs(prev).add(1, 'day'));
     }
 
 
@@ -69,38 +68,49 @@ function AgendaView() {
 
                     {/* Headtitle for agenda */}
                     <Typography variant="h6">
-                        Vecka {startOfWeek.week()}, {weekdays[todayIndex].name}
+                        Vecka {startOfWeek.week()}, {selectedDayName}
                     </Typography>
 
                     {/* Button changing visible day to next */}
-                    <Button variant ="contained" size="small" onclick={handleNextDay}>
+                    <Button variant ="contained" size="small" onClick={handleNextDay}>
                         <ArrowForwardIcon fontSize="small"/>
                     </Button>
                 </Box>
-                <Container>
+                <Paper sx={{ height: '100vh', display: 'flex', overflow: 'hidden' }}>
+                    {/* LEFT COLUMN */}
+                    <Box sx={{ width: '40%', overflowY: 'auto', backgroundColor: '#f5f5f5' }}>
+                        <CurrentDay startOfDay={startOfWeek} />
+                    </Box>
 
-                </Container>
-                <Container>
-                    <Container>
-                        <Container>
+                    {/* RIGHT COLUMN */}
+                    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
 
-                        </Container>
-                        <Container>
+                        {/* FIXED HEIGHT TOP ROW (two boxes) */}
+                        <Box sx={{ height: '40%', display: 'flex' }}>
+                            <Box sx={{ flex: 1, p: 2 }}>
+                                <Typography variant="h6">Top Left</Typography>
+                            </Box>
+                            <Box sx={{ flex: 1, p: 2 }}>
+                                <Typography variant="h6">Top Right</Typography>
+                            </Box>
+                        </Box>
 
-                        </Container>
-                    </Container>
-                    <Container>
+                        {/* REMAINING HEIGHT BOTTOM ROW (scrollable NextDay) */}
+                        <Box
+                            sx={{
+                                flex: 1,
+                                overflowY: 'auto',
+                                p: 2,
+                                backgroundColor: '#fafafa',
+                            }}
+                        >
+                            <NextDay startOfDay={startOfWeek} />
 
-                    </Container>
+                        </Box>
+                    </Box>
+                </Paper>
 
-                </Container>
 
-                <CurrentDay>
-
-                </CurrentDay>
-                <NextDay>
-
-                </NextDay>
 
                 {/* dialogs */}
                 <AddActivity
