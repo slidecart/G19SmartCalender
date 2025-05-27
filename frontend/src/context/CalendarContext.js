@@ -5,6 +5,7 @@ import React, {
     useState,
     useCallback
 } from "react";
+import dayjs from "dayjs";
 import { useCalendar } from "../hooks/calendar/useCalendar";
 import { useAuth }     from "./AuthContext";
 
@@ -19,9 +20,9 @@ export function CalendarProvider({ children }) {
     const [currentView, setCurrentView] = useState("week");
     const [targetDate, setTargetDate] = useState(null);
 
-    const navigateToDate = useCallback((isoDateString) => {
-        setCurrentView("week");
-        setTargetDate(isoDateString);
+    const navigateToDate = useCallback((isoDateString, view = null) => {
+        if (view) setCurrentView(view);
+        setTargetDate(dayjs(isoDateString));
     }, []);
 
     // 3) Combine everything into one context value
