@@ -53,95 +53,95 @@ function AgendaView() {
 
 
     return(
-            <Paper>
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        mb: 1
-                    }}
-                >
-                    {/* Button changing visible day to previous */}
-                    <Button variant="contained" size="small" onClick={handlePrevDay}>
-                        <ArrowBackIcon fontSize="small"/>
-                    </Button>
+        <Paper>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 1
+                }}
+            >
+                {/* Button changing visible day to previous */}
+                <Button variant="contained" size="small" onClick={handlePrevDay}>
+                    <ArrowBackIcon fontSize="small"/>
+                </Button>
 
-                    {/* Headtitle for agenda */}
-                    <Typography variant="h6">
-                        Vecka {startOfWeek.week()}, {selectedDayName}
-                    </Typography>
+                {/* Headtitle for agenda */}
+                <Typography variant="h6">
+                    Vecka {startOfWeek.week()}, {selectedDayName}
+                </Typography>
 
-                    {/* Button changing visible day to next */}
-                    <Button variant ="contained" size="small" onClick={handleNextDay}>
-                        <ArrowForwardIcon fontSize="small"/>
-                    </Button>
+                {/* Button changing visible day to next */}
+                <Button variant ="contained" size="small" onClick={handleNextDay}>
+                    <ArrowForwardIcon fontSize="small"/>
+                </Button>
+            </Box>
+            <Paper sx={{ height: '76vh', display: 'flex', overflow: 'hidden' }}>
+                {/* LEFT COLUMN */}
+                <Box sx={{ width: '40%', overflowY: 'auto', backgroundColor: '#f5f5f5', height:"510px", m:1 }}>
+                    <CurrentDay startOfDay={startOfWeek} title="Dagens aktiviteter" />
                 </Box>
-                <Paper sx={{ height: '100vh', display: 'flex', overflow: 'hidden' }}>
-                    {/* LEFT COLUMN */}
-                    <Box sx={{ width: '40%', overflowY: 'auto', backgroundColor: '#f5f5f5' }}>
-                        <CurrentDay startOfDay={startOfWeek} />
-                    </Box>
 
-                    {/* RIGHT COLUMN */}
-                    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                {/* RIGHT COLUMN */}
+                <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
 
-                        {/* FIXED HEIGHT TOP ROW (two boxes) */}
-                        <Box sx={{ height: '40%', display: 'flex' }}>
-                            <Box sx={{ flex: 1, p: 2 }}>
-                                <Typography variant="h6">Top Left</Typography>
-                            </Box>
-                            <Box sx={{ flex: 1, p: 2 }}>
-                                <Typography variant="h6">Top Right</Typography>
-                            </Box>
+                    {/* FIXED HEIGHT TOP ROW (two boxes) */}
+                    <Box sx={{ height: '40%', display: 'flex' }}>
+                        <Box sx={{ flex: 1, p: 2 }}>
+                            <Typography variant="h6">Top Left</Typography>
                         </Box>
-
-                        {/* REMAINING HEIGHT BOTTOM ROW (scrollable NextDay) */}
-                        <Box
-                            sx={{
-                                flex: 1,
-                                overflowY: 'auto',
-                                p: 2,
-                                backgroundColor: '#fafafa',
-                            }}
-                        >
-                            <NextDay startOfDay={startOfWeek} />
-
+                        <Box sx={{ flex: 1, p: 2 }}>
+                            <Typography variant="h6">Top Right</Typography>
                         </Box>
                     </Box>
-                </Paper>
 
+                    {/* REMAINING HEIGHT BOTTOM ROW (scrollable NextDay) */}
+                    <Box
+                        sx={{
+                            overflowY: 'auto',
+                            backgroundColor: '#fafafa',
+                            m:1,
+                            height:"300px"
+                        }}
+                    >
+                        <NextDay startOfDay={startOfWeek} />
 
-
-                {/* dialogs */}
-                <AddActivity
-                    open={isAddEditDialogOpen}
-                    formData={formData}
-                    mode={dialogMode}
-                    onClose={handleCloseDialog}
-                />
-
-                <ActivityDialog
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl)}
-                    placement={placement}
-                    activity={selectedActivity}
-                    onClose={handleClosePopover}
-                    onEdit={() => {openEditDialog(selectedActivity)}}
-                    onDelete={() => setConfirmDeleteOpen(true)}
-                />
-
-                <ConfirmationDialog
-                    open={confirmDeleteOpen}
-                    title="Bekräfta borttagning"
-                    content="Är du säker på att du vill ta bort aktiviteten?"
-                    onClose={() => setConfirmDeleteOpen(false)}
-                    onConfirm={() => {
-                        deleteActivity(selectedActivity.id);
-                        setConfirmDeleteOpen(false);
-                        setSelectedActivity(null);
-                    }}
-                />
+                    </Box>
+                </Box>
             </Paper>
+
+
+
+            {/* dialogs */}
+            <AddActivity
+                open={isAddEditDialogOpen}
+                formData={formData}
+                mode={dialogMode}
+                onClose={handleCloseDialog}
+            />
+
+            <ActivityDialog
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                placement={placement}
+                activity={selectedActivity}
+                onClose={handleClosePopover}
+                onEdit={() => {openEditDialog(selectedActivity)}}
+                onDelete={() => setConfirmDeleteOpen(true)}
+            />
+
+            <ConfirmationDialog
+                open={confirmDeleteOpen}
+                title="Bekräfta borttagning"
+                content="Är du säker på att du vill ta bort aktiviteten?"
+                onClose={() => setConfirmDeleteOpen(false)}
+                onConfirm={() => {
+                    deleteActivity(selectedActivity.id);
+                    setConfirmDeleteOpen(false);
+                    setSelectedActivity(null);
+                }}
+            />
+        </Paper>
 
     )
 }

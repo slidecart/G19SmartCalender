@@ -2,14 +2,17 @@ import { Box, Container, Paper, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { useCalendarContext } from "../../context/CalendarContext";
 
+
+
 const toMinutes = (timeStr) => {
     if (!timeStr) return Number.MAX_SAFE_INTEGER;
     const [h, m] = timeStr.split(":").map(Number);
     return h * 60 + m;
 };
 
-const CurrentDay = ({ startOfDay, dayOffset = 1, height = '100vh', width = '100%' }) => {
-    const { filteredActivities } = useCalendarContext();
+const CurrentDay = ({ startOfDay, dayOffset = 1, title }) => {
+
+    const { filteredActivities, categories } = useCalendarContext();
 
     const currentDay = dayjs(startOfDay).add(dayOffset, 'day');
     const selectedDate = currentDay.format("YYYY-MM-DD");
@@ -21,20 +24,21 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, height = '100vh', width = '100%
     return (
         <Box
             sx={{
-                width,
-                
                 overflowY: 'auto',
-                px: 2,
-                py: 2,
                 backgroundColor: '#fafafa',
                 position: 'sticky',
                 top: 0,
+                m:0.5
+
             }}
         >
 
         <Container disableGutters>
+            <Typography variant="title" align="center">
+                {title}
+            </Typography>
                 {activitiesForDay.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" p={2}>
                         Inga aktiviteter för denna dag.
                     </Typography>
                 ) : (
@@ -46,14 +50,15 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, height = '100vh', width = '100%
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'center',
-                                p: 2,
-                                mb: 2,
-                                borderLeft: '5px solid #1976d2',
+                                p:1,
+                                m: 1,
+                                borderLeft: '5px solid',
+                                borderLeftColor:"primary",
                                 backgroundColor: '#f9f9f9',
-                                maxWidth:"85%"
+                                maxWidth:"95%",
                             }}
                         >
-                            <Typography variant="h6">
+                            <Typography variant="h7">
                                 {activity.name ?? 'Ingen titel'}
                             </Typography>
                             {activity.description && (
