@@ -237,6 +237,7 @@ export function useCalendar() {
     activities,
     filteredActivities,
     selectedActivity,
+    setSelectedActivity,
     createOrUpdateActivity,
     deleteActivity,
     convertTaskToActivity,
