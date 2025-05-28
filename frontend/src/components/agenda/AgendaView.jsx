@@ -36,7 +36,9 @@ function AgendaView() {
     } = useCalendarContext();
 
 
-    const [startOfWeek, setStartOfWeek] = useState(dayjs().startOf("week").add(1,"day"));
+    const [startOfWeek, setStartOfWeek] = useState(
+        dayjs().subtract(1, 'day')
+    );
 
     const selectedDayIndex = (startOfWeek.day() + 7) % 7;
     const selectedDayName = weekdays[selectedDayIndex].name;
