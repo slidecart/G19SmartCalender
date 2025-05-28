@@ -22,7 +22,7 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, height = '100vh', width = '100%
         <Box
             sx={{
                 width,
-                height,
+                
                 overflowY: 'auto',
                 px: 2,
                 py: 2,
@@ -50,6 +50,7 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, height = '100vh', width = '100%
                                 mb: 2,
                                 borderLeft: '5px solid #1976d2',
                                 backgroundColor: '#f9f9f9',
+                                maxWidth:"85%"
                             }}
                         >
                             <Typography variant="h6">
