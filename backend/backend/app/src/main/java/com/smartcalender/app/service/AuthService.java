@@ -103,7 +103,7 @@ public class AuthService {
         passwordResetTokenRepository.save(resetToken);
 
         // Create the reset URL
-        String resetUrl = "http://localhost:3000/reset-password?token=" + token;
+        String resetUrl = "https://smartcalendar.se/reset-password?token=" + token;
 
         // Send the email
         emailService.sendPasswordResetEmail(user.getEmailAddress(), "Återställ ditt lösenord | SmartCalendar", resetUrl);
@@ -181,7 +181,7 @@ public class AuthService {
 
         if (emailVerificationRequired) {
             String otp = otpService.generateAndStoreOtp(savedUser.getId());
-            String verificationUrl = "http://localhost:3000/verify-email?uid=" + savedUser.getId() + "&otp=" + otp;
+            String verificationUrl = "https://smartcalendar.se/verify-email?uid=" + savedUser.getId() + "&otp=" + otp;
             emailService.sendVerificationEmail(savedUser.getEmailAddress(), "Verifiera din e-postadress | SmartCalendar", verificationUrl, otp);
         }
 
@@ -201,10 +201,10 @@ public class AuthService {
             throw new RuntimeException("Ogiltigt otp");
         }
 
-            user.setEmailVerified(true);
-            userRepository.save(user);
-            otpService.deleteOtp(userId);
-            return user.getEmailAddress();
+        user.setEmailVerified(true);
+        userRepository.save(user);
+        otpService.deleteOtp(userId);
+        return user.getEmailAddress();
     }
 
     public void changeEmail(String newEmail, String password, UserDetails currentUser) {
@@ -225,7 +225,7 @@ public class AuthService {
         userRepository.save(user);
 
         String otp = otpService.generateAndStoreOtp(user.getId());
-        String verificationUrl = "http://localhost:3000/verify-email?uid=" + user.getId() + "&otp=" + otp;
+        String verificationUrl = "https://smartcalendar.se/verify-email?uid=" + user.getId() + "&otp=" + otp;
         emailService.sendVerificationEmail(newEmail, "Verifiera din e-postadress | SmartCalendar", verificationUrl, otp);
     }
 
@@ -248,7 +248,7 @@ public class AuthService {
 
         if (!user.isEmailVerified()) {
             String otp = otpService.generateAndStoreOtp(user.getId());
-            String verificationUrl = "http://localhost:3000/verify-email?uid=" + user.getId() + "&otp=" + otp;
+            String verificationUrl = "https://smartcalendar.se/verify-email?uid=" + user.getId() + "&otp=" + otp;
             emailService.sendVerificationEmail(user.getEmailAddress(), "Verifiera din e-postadress | SmartCalendar", verificationUrl, otp);
         } else {
             throw new RuntimeException("Email already verified");
