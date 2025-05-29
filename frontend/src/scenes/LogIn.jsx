@@ -3,7 +3,6 @@ import {Alert, Box, Button, CircularProgress, Snackbar, TextField, Typography} f
 import {Link} from "react-router-dom";
 import UserInput from "../components/userInput";
 import {useAuth} from "../context/AuthContext";
-import {fetchData} from "../hooks/FetchData";
 
 function LogIn() {
     const auth = useAuth();
@@ -74,17 +73,39 @@ function LogIn() {
 
         setIsLoading(true);
         try {
-            const data = await fetchData(`auth/forgot-password?email=${encodeURIComponent(emailInput)}`, "POST", null, true);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}auth/forgot-password?email=${encodeURIComponent(emailInput)}`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                if (data.message.includes("User not found")) {
+                    setSnackbar({
+                        open: true,
+                        message: "Användaren hittades inte. Var vänlig kontrollera din e-postadress.",
+                        severity: "error"
+                    });
+                } else {
+                    setSnackbar({
+                        open: true,
+                        message: data.message || "Ett fel inträffade. Var vänlig försök igen.",
+                        severity: "error"
+                    });
+                }
+                setEmailInput("");
+                return;
+            }
+
             setSnackbar({
                 open: true,
                 message: data.message || "Länk för återställning av lösenord skickas till din e-post.",
                 severity: "success"
             });
             setEmailInput("");
-
-            if (data.message === "Länk för återställning av lösenord skickas till din e-post.") {
-                setIsForgotPassword(false);
-            }
+            setIsForgotPassword(false);
 
         } catch (error) {
             console.error("Forgot password error:", error);
@@ -110,7 +131,13 @@ function LogIn() {
 
         setIsLoading(true);
         try {
-            const data = await fetchData(`auth/resend-verification?email=${encodeURIComponent(emailInput)}`, "POST", null, true);
+            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}auth/resend-verification?email=${encodeURIComponent(emailInput)}`, {
+            method: 'POST',
+                headers: {
+                'Content-Type': 'application/json'
+                }
+             });
+        const data = await response.json();
             console.error("fetchData response:", data);
             setSnackbar({
                 open: true,

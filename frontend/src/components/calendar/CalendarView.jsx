@@ -18,39 +18,40 @@ function CalendarView(){
 
         /* dialogs */
         handleCloseDialog,
+        handleClosePopover,
         dialogMode,
         confirmDeleteOpen,
         setConfirmDeleteOpen,
-        openAddDialog,
         openEditDialog,
         deleteActivity,
         isAddEditDialogOpen,
-        isViewDialogOpen,
+        anchorEl,
+        placement,
 
         //view
         currentView,
 
     } = useCalendarContext();
 
+    const chromeHeight = 48 + 56; // Navbar + TopBar height
 
     return (
-        <Paper elevation={3} sx={{ p:2 }}>
+        <Paper
+            elevation={3}
+            sx={{
+                height: `calc(100vh - ${chromeHeight}px)`,
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+            }}>
 
             {/* Sets view to week */}
-            {currentView === "week" && (
-                <WeeklyCalendar/>
+            {currentView  === "week" ? (
+                <WeeklyCalendar containerHeight={8} chromeHeight={chromeHeight}/>
+            ) : (
+                <MonthlyCalendar chromeHeight={chromeHeight} />
             )}
 
-
-            {currentView === "month" && (
-                <MonthlyCalendar/>
-            )}
-
-            <Box display="flex" justifyContent="flex-end" mt={2}>
-                <Button variant="contained" onClick={() => openAddDialog()}>
-                    Lägg till
-                </Button>
-            </Box>
 
             {/* dialogs */}
             <AddActivity
@@ -61,9 +62,11 @@ function CalendarView(){
             />
 
             <ActivityDialog
-                open={isViewDialogOpen}
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                placement={placement}
                 activity={selectedActivity}
-                onClose={handleCloseDialog}
+                onClose={handleClosePopover}
                 onEdit={() => {openEditDialog(selectedActivity)}}
                 onDelete={() => setConfirmDeleteOpen(true)}
             />

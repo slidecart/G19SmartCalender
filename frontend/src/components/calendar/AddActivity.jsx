@@ -39,9 +39,13 @@ import {
 import { useCalendarContext } from "../../context/CalendarContext";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
+import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
+import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
+import ArrowCircleUpOutlinedIcon from '@mui/icons-material/ArrowCircleUpOutlined';
 
-import {MiniCalendar} from "./MiniCalendar";
+import {DailyCalendar} from "./views/daily/DailyCalendar";
 import CreateCategoryDialog from "../CreateCategoryDialog";
+import dayjs from "dayjs";
 
 
 
@@ -53,9 +57,16 @@ export default function AddActivity({ open, onClose, mode }) {
         handleChange,
         createOrUpdateActivity,
         categories,
+        taskID,
+        convertTaskToActivity,
     } = useCalendarContext();
     const { date, startTime, endTime } = formData;
+    console.log(taskID);
 
+    const draftActivity =
+        formData.name || formData.startTime
+            ? { ...formData, id: "draft", date } // Ensure the draft has a date.
+            : null;
 
     // State for managing the category menu
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -73,24 +84,39 @@ export default function AddActivity({ open, onClose, mode }) {
             handleChange({ target: { name: "endTime", value: "23:59" } });
         } else {
             // Reset to default times if unchecked
-            handleChange({ target: { name: "startTime", value: "08:00" } });
-            handleChange({ target: { name: "endTime", value: "17:00" } });
+            handleChange({ target: { name: "startTime", value: "12:00" } });
+            handleChange({ target: { name: "endTime", value: "13:00" } });
         }
     }
-
 
     const [recurring, setRecurring] = React.useState(false);
 
     // Handler for saving activity data (both add and edit)
     const handleSave = async () => {
         try {
-            await createOrUpdateActivity(formData, mode, );
-            onClose();           // ◀︎ only close after success
+            if (taskID) {
+                // If taskID is present, convert the task to an activity
+                await convertTaskToActivity(formData, taskID);
+            } else {
+                await createOrUpdateActivity(formData, mode, );
+            }
+            onClose();           // only close after success
         } catch (err) {
             console.error("Couldn’t save:", err);
             alert("Något gick fel vid sparandet");
         }
     };
+
+    // Handlers for navigating through dates in the preview area
+    const [previewDate, setPreviewDate] = React.useState(date);
+    React.useEffect(() => {
+        setPreviewDate(date);
+    }, [date, open]);
+
+    const handleTodayDate = () => {
+        const todayDate = dayjs().format("YYYY-MM-DD");
+        setPreviewDate(todayDate);
+    }
 
     return (
     <Dialog
@@ -113,11 +139,24 @@ export default function AddActivity({ open, onClose, mode }) {
             >
               Spara
             </Button>
-            {/* Appbar icons*/}
+            {/* Appbar */}
             <Tooltip title="Kategorier">
-              <IconButton size="small" onClick={handleMenuClick}>
+              <IconButton
+                size="small"
+                onClick={handleMenuClick}
+                sx={{
+                  color: formData.categoryId
+                    ? (categories.find(cat => cat.id === formData.categoryId)?.color || "text.primary")
+                    : "text.primary",
+                  "&:hover": {
+                    backgroundColor: "action.hover",
+                  },
+                }}
+              >
                 <LocalOfferOutlinedIcon />
-                  Kategorier
+                {formData.categoryId
+                  ? categories.find(cat => cat.id === formData.categoryId)?.name || "Kategorier"
+                  : "Kategorier"}
               </IconButton>
             </Tooltip>
             <Menu
@@ -172,7 +211,7 @@ export default function AddActivity({ open, onClose, mode }) {
         <DialogContent
             sx={{
                 flex: 1,
-                p: 0,                    // no extra padding so our flex children touch the edges
+                p: 0,                    // no extra padding so flex children touch the edges
                 display: "flex",         // make it a row
                 height: "100%",
             }}
@@ -269,7 +308,7 @@ export default function AddActivity({ open, onClose, mode }) {
                             label="Heldag"
                         />
                         <Box>
-                            <Button>
+
                             <FormControlLabel
                                 control={
                                     <IconButton onClick={() => setRecurring(prev => !prev)}>
@@ -278,7 +317,7 @@ export default function AddActivity({ open, onClose, mode }) {
                                 }
                                 label="Återkommande"
                             />
-                            </Button>
+
                         </Box>
                     </Box>
                     <Divider />
@@ -298,7 +337,7 @@ export default function AddActivity({ open, onClose, mode }) {
                         placeholder="Lägg till anteckningar"
                         variant="outlined"
                         multiline
-                        rows={6}
+                        rows={10}
                         value={formData.description}
                         onChange={handleChange}
                     />
@@ -325,21 +364,27 @@ export default function AddActivity({ open, onClose, mode }) {
                         justifyContent: "space-between",
                     }}
                 >
-                    <Box>
-                        <Typography variant="h6" gutterBottom>
-                            Förhandsgranskning
-                        </Typography>
-                        <Typography variant="body1">
-                            {formData.name}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                            {date} {startTime} - {endTime}
-                        </Typography>
+                    <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+                      <IconButton size="small" onClick={() => setPreviewDate(prev => dayjs(prev).subtract(1, "day").format("YYYY-MM-DD"))}>
+                        <ArrowBackIosNewOutlinedIcon />
+                      </IconButton>
+                      <Typography variant="h6">
+                        {previewDate}
+                      </Typography>
+
+                        <Tooltip title="Idag">
+                          <IconButton size="small" onClick={handleTodayDate}>
+                            <ArrowCircleUpOutlinedIcon />
+                          </IconButton>
+                        </Tooltip>
+
+                      <IconButton size="small" onClick={() => setPreviewDate(prev => dayjs(prev).add(1, "day").format("YYYY-MM-DD"))}>
+                        <ArrowForwardIosOutlinedIcon />
+                      </IconButton>
                     </Box>
-                    <MiniCalendar
-                        date={date}
-                        startTime={startTime}
-                        endTime={endTime}
+                    <DailyCalendar
+                        date={previewDate}
+                        draftActivity={draftActivity}
                     />
                 </Paper>
             </Box>

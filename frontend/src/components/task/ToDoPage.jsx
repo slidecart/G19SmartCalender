@@ -1,224 +1,183 @@
-import {Box, Card, CardContent, Container, IconButton, Stack, Typography} from "@mui/material";
+import {
+    Checkbox,
+    Container,
+    Typography,
+    Stack,
+    IconButton,
+    Box,
+    Card,
+    CardContent,
+    useTheme
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import {useEffect, useState} from "react";
+import { useState } from "react";
+
 import AddTask from "./AddTask";
-import {fetchData} from "../../hooks/FetchData";
 import TaskDialog from "./TaskDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
-import Body from "../containers/Body"
+import Body from "../containers/Body";
+import AddActivity from "../calendar/AddActivity";
 
-function ToDoPage(){
+import { useCalendarContext } from "../../context/CalendarContext";
+import { useTodoContext }     from "../../context/TodoContext";
 
-    const [tasks, setTasks] = useState([]);
-    const [error, setError] = useState(null);
+export default function ToDoPage() {
+    const theme = useTheme();
+    const {
+        tasks,
+        loading,
+        error,
+        createTask,
+        updateTask,
+        deleteTask,
+        toggleComplete,
+        formData,
+        setFormData,
+        isDialogOpen,
+        dialogMode: todoDialogMode,
+        openTodoDialog,
+        closeTodoDialog,
 
-    const [formData, setFormData] = useState({
-        name:"",
-        description:"",
-        location:"",
-        date:"",
-        categoryId:"",
-        id:"",
-        completed:false
-    })
+    } = useTodoContext();
 
+    const {
+        openAddDialog,
+        isAddEditDialogOpen,
+        handleCloseDialog,
+        dialogMode: calendarDialogMode
+    } = useCalendarContext();
+
+    // Local UI state for the TaskDialog & delete confirmation
     const [selectedTask, setSelectedTask] = useState(null);
     const [taskDialogOpen, setTaskDialogOpen] = useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+    const [taskToDelete, setTaskToDelete] = useState(null);
 
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
+    const handleSubmit = async () => {
+        if (todoDialogMode === "add") {
+            await createTask(formData);
+        } else {
+            await updateTask(formData.id, formData);
+        }
+        closeTodoDialog();
+    };
+
+    // Clicking on a task card
     const handleTaskClick = (task) => {
         setSelectedTask(task);
         setTaskDialogOpen(true);
     };
 
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [dialogMode, setDialogMode] = useState(null); // "add" or "edit"
-
-    const openAddDialog = () => {
-        setDialogMode("add");
-        setIsDialogOpen(true);
-    };
-
-    const openEditDialog = (task) => {
-        setFormData(task);
-        setDialogMode("edit");
-        setIsDialogOpen(true);
+    // From TaskDialog → open AddTask in edit mode
+    const handleEdit = () => {
+        openTodoDialog("edit", selectedTask);
         setTaskDialogOpen(false);
     };
 
-    const handleCloseDialog = () => {
-        setIsDialogOpen(false);
-        setFormData({
-            name:"",
-            description:"",
-            location:"",
-            date:"",
-            categoryId:"",
-            id:"",
-            completed:false
-        });
+    // Mark for deletion
+    const requestDelete = () => {
+        setTaskToDelete(selectedTask);
+        setConfirmDeleteOpen(true);
     };
-
-
-    const handleSubmit = async () =>{
-        try{
-            console.log(selectedTask);
-            // Checks if the user is in edit mode or not
-            const apiPath = dialogMode === "edit" ? `tasks/edit/${selectedTask.id}` : "tasks/create";
-            const method = dialogMode === "edit" ? "PUT" : "POST";
-
-            const response = await fetchData(apiPath, method, formData);
-            console.log(response);
-
-            setIsDialogOpen(false);
-            setFormData({
-                name:"",
-                description:"",
-                location:"",
-                date:"",
-                categoryId:"",
-                userId:"",
-                completed:false
-            });
-
-            if (method === "POST") {
-                setTasks((prevTasks) => [...prevTasks, response]); // Adds the new task to the list
-            } else {
-                setTasks((prevTasks) =>
-                    prevTasks.map((task) =>
-                        task.id === response.id ? response : task
-                    )
-                ); // Updates the existing task in the list
-            }
-        } catch (error){
-            console.error(error);
-        }
-    }
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]:value,
-        }));
-    }
-    
-    useEffect(() => {
-        const fetchTasks = async() => {
-            try {
-                const response = await fetchData("tasks/all", "GET", "");
-
-
-                setTasks(response);
-            } catch (error) {
-                console.error("Fel vid hämtning: ", error.message);
-                setError(error.message); // Visar eventuella fel
-            }
-        };
-        fetchTasks();
-    }, []);
-
-
-    {/* Delete function */}
-    const [confirmDeleteOpen, setConfirmationDeleteOpen] = useState(false);
-    const [taskToDelete, setTaskToDelete] = useState(null);
-    const requestDelete = (task) => {
-        setTaskToDelete(task);
-        setConfirmationDeleteOpen(true);
-    }
-
     const handleDelete = async () => {
-        if (!taskToDelete) return;
-
-        try {
-            await fetchData(`tasks/delete/${taskToDelete.id}`, "DELETE");
-            setTasks(prev => prev.filter(a => a.id !== taskToDelete.id));
-
-        } catch (error) {
-            console.error("Fel vid borttagning: ", error.message);
-        } finally {
-            setConfirmationDeleteOpen(false);
+        if (taskToDelete) {
+            await deleteTask(taskToDelete.id);
+            setConfirmDeleteOpen(false);
+            setTaskDialogOpen(false);
             setTaskToDelete(null);
-            setSelectedTask(null);
         }
     };
+
+    const handleToggleCompleted = async (task) => {
+        await toggleComplete(task);
+    };
+
+    const openAddTaskDialog = () => openTodoDialog("add");
 
     return (
         <Body>
-            <Container maxWidth="xs" sx={{ bgcolor: "#0077ff7e", p: 2, mt: 2, borderRadius: 2, fontFamily: "'Fira Code', 'Consolas', 'monospace'"}}>
+            <Container maxWidth="xs" sx={{ mt: 4 }}>
                 <Box
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
-                    gap={1}
-                    mb={2}>
-
-                    <Typography variant="h1" align="center" sx={{ fontWeight: "bold", textDecoration: "underline", color: "black"}}>
+                    mb={2}
+                >
+                    <Typography variant="h1">
                         TASKS
                     </Typography>
-                    <IconButton
-                        size="small"
-                        sx={{ color: "black" }}
-                        onClick={() => openAddDialog()}
-                    >
+                    <IconButton onClick={openAddTaskDialog}>
                         <AddIcon />
-                        Ny Task
                     </IconButton>
                 </Box>
 
                 <Stack spacing={2}>
-                    {tasks.map((task, index) => (
-                    <Card key={task.id} sx={{ bgcolor: "white", p: 2, borderRadius: 2, mb: 1 }}>
-                        <CardContent>
-                            <Box
-                                onClick={() => handleTaskClick(task)}
-                                display="flex" justifyContent="space-between" alignItems="center">
-                                <Box>
-                                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>{task.name}</Typography>
-                                    <Typography>{task.description}</Typography>
-                                </Box>
-
-
-                            </Box>
-                        </CardContent>
-                    </Card>
-                    ))}
+                    {loading && <Typography>Loading…</Typography>}
+                    {error && <Typography color="error">{error}</Typography>}
+                    {tasks
+                        .slice()
+                        .sort((a, b) => a.completed - b.completed)
+                        .map((task) => (
+                            <Card key={task.id}>
+                                <CardContent sx={{ position: "relative" }}>
+                                    <Checkbox
+                                        checked={task.completed}
+                                        onChange={() => handleToggleCompleted(task)}
+                                        sx={{ position: "absolute", top: 8, right: 8 }}
+                                    />
+                                    <Box onClick={() => handleTaskClick(task)} sx={{ cursor: "pointer" }}>
+                                        <Typography variant="h6">{task.name}</Typography>
+                                        <Typography variant="body2">{task.description}</Typography>
+                                        {task.date && (
+                                            <Typography variant="caption">
+                                                Ska utföras innan: {task.date}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                </CardContent>
+                            </Card>
+                        ))}
                 </Stack>
 
                 <AddTask
                     open={isDialogOpen}
-                    onClose={handleCloseDialog}
+                    onClose={closeTodoDialog}
                     formData={formData}
                     handleChange={handleChange}
                     handleSubmit={handleSubmit}
                 />
 
+                <TaskDialog
+                    open={taskDialogOpen}
+                    onClose={() => setTaskDialogOpen(false)}
+                    task={selectedTask}
+                    onEdit={handleEdit}
+                    onDelete={requestDelete}
+                    onConvert={() => {
+                        setTaskDialogOpen(false);
+                        openAddDialog(selectedTask, selectedTask.id);
+                    }}
+                />
 
-                {/* Shows task when clicked */}
-                {selectedTask && (
-                    <TaskDialog
-                        open={taskDialogOpen}
-                        onClose={() => setTaskDialogOpen(false)} // Closes task dialog
-                        task={selectedTask}
-                        onEdit={() => openEditDialog(selectedTask)} // Opens edit dialog
-                        onDelete={() => requestDelete(selectedTask)} // Deletes task
-                    />
-                )}
+                <ConfirmationDialog
+                    open={confirmDeleteOpen}
+                    onClose={() => setConfirmDeleteOpen(false)}
+                    onConfirm={handleDelete}
+                    title="Ta bort task"
+                    description="Är du säker på att du vill radera den här tasken?"
+                />
 
-
-                {/* Shows confirmation dialog for delete */}
-                {confirmDeleteOpen && (
-                    <ConfirmationDialog
-                        open={confirmDeleteOpen}
-                        onClose={() => setConfirmationDeleteOpen(false)}
-                        onConfirm={handleDelete}
-                        title="Bekräfta borttagning"
-                        content="Är du säker på att du vill ta bort ToDo?"
-                    />
-                )}
+                <AddActivity
+                    open={isAddEditDialogOpen}
+                    mode={calendarDialogMode}
+                    onClose={handleCloseDialog}
+                />
             </Container>
         </Body>
     );
 }
-
-export default ToDoPage;

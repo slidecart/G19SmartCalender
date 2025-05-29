@@ -92,10 +92,18 @@
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
+		<!-- ... -->
 		<dependency>
-			<groupId>com.mashape.unirest</groupId>
-			<artifactId>unirest-java</artifactId>
-			<version>1.4.9</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- ... -->
+
+		<dependency>
+			<groupId>com.brevo</groupId>
+			<artifactId>brevo</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 
 	</dependencies>
@@ -109,4 +117,6 @@
 		</plugins>
 	</build>
 
+
+<packaging>jar</packaging>
 </project>

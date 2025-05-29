@@ -1,0 +1,862 @@
+openapi: 3.0.3
+info:
+  title: SmartCalendarAPI
+  description: Complete API documentation for the Smart Calendar application.
+  version: 1.0.0
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/smartcalendar/SmartCalendarAPI/1.0.0
+  - url: /api
+
+paths:
+  /activities/create:
+    post:
+      tags: [Activities]
+      summary: Create a new activity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateActivityRequest'
+      responses:
+        '201':
+          description: Activity created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityDTO'
+        '401': { description: Unauthorized }
+
+  /activities/edit/{id}:
+    put:
+      tags: [Activities]
+      summary: Edit an activity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateActivityRequest'
+      responses:
+        '200': { description: Activity updated }
+        '401': { description: Unauthorized }
+        '404': { description: Activity not found }
+
+  /activities/delete/{id}:
+    delete:
+      tags: [Activities]
+      summary: Delete an activity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200': { description: Activity deleted }
+        '401': { description: Unauthorized }
+        '404': { description: Activity not found }
+
+  /activities/ongoing:
+    get:
+      tags: [Activities]
+      summary: Get ongoing activities
+      responses:
+        '200':
+          description: List of ongoing activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivityDTO'
+        '401': { description: Unauthorized }
+
+  /activities/future:
+    get:
+      tags: [Activities]
+      summary: Get future activities
+      responses:
+        '200':
+          description: List of future activities
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivityDTO'
+        '401': { description: Unauthorized }
+
+  /activities/category/{categoryId}:
+    get:
+      tags: [Activities]
+      summary: Get activities by category
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Activities in category
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivityDTO'
+        '401': { description: Unauthorized }
+
+  /activities/between:
+    get:
+      tags: [Activities]
+      summary: Get activities between dates
+      parameters:
+        - name: start
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+        - name: end
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Activities between dates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActivityDTO'
+        '401': { description: Unauthorized }
+
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseDTO'
+        '401': { description: Invalid credentials }
+  
+  /auth/logout:
+    post:
+      tags: [Authentication]
+      summary: Revoke refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+                  format: uuid
+      responses:
+        '204': { description: Token revoked }
+  
+  /auth/forgot-password:
+    post:
+      tags: [Authentication]
+      summary: Send forgot password email
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Reset link sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTO'
+        '400':
+          description: Error sending reset link
+
+  /auth/reset-password:
+    put:
+      tags: [Authentication]
+      summary: Reset password using token
+      parameters:
+        - name: token
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: newPassword
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Password reset successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTO'
+        '400':
+          description: Error resetting password
+
+  /auth/change-password:
+      put:
+        tags: [Authentication]
+        summary: Change user password
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangePasswordRequest'
+        responses:
+          '200':
+            description: Password changed
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ResponseDTO'
+          '401':
+            description: Unauthorized
+
+  /auth/register:
+    post:
+      tags: [Authentication]
+      summary: Register new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+
+  /auth/verify:
+    put:
+      tags: [Authentication]
+      summary: Verify email
+      parameters:
+        - name: uid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: otp
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Email verified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTO'
+        '400':
+          description: Verification failed
+
+  /auth/resend-verification:
+    post:
+      tags: [Authentication]
+      summary: Resend email verification
+      parameters:
+        - name: email
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Verification email sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTO'
+        '400':
+          description: Error resending email
+
+  /auth/change-email:
+    put:
+      tags: [Authentication]
+      summary: Change user email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangeEmailRequest'
+      responses:
+        '200':
+          description: Email changed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTO'
+        '401':
+          description: Unauthorized
+
+  /auth/delete-account:
+    delete:
+      tags: [Authentication]
+      summary: Delete user account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAccountRequest'
+      responses:
+        '200':
+          description: Account deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseDTO'
+        '401':
+          description: Unauthorized
+
+  /auth/refresh-token:
+    post:
+      tags: [Authentication]
+      summary: Refresh JWT token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Token refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseDTO'
+  
+  /categories/all:
+    get:
+      tags: [Categories]
+      summary: Get all categories
+      responses:
+        '200':
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CategoryDTO'
+        '401': { description: Unauthorized }
+  
+  /categories/{id}:
+    get:
+      tags: [Categories]
+      summary: Get category by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Category details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDTO'
+        '401': { description: Unauthorized }
+  
+  /categories/create:
+    post:
+      tags: [Categories]
+      summary: Create a new category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+      responses:
+        '201':
+          description: Category created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDTO'
+        '401': { description: Unauthorized }
+  
+  /categories/edit/{id}:
+    put:
+      tags: [Categories]
+      summary: Edit a category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCategoryRequest'
+      responses:
+        '200':
+          description: Category updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryDTO'
+        '401': { description: Unauthorized }
+  
+  /categories/delete/{id}:
+    delete:
+      tags: [Categories]
+      summary: Delete a category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200': { description: Category deleted }
+        '401': { description: Unauthorized }
+  
+  /tasks/all:
+    get:
+      tags: [Tasks]
+      summary: Get all tasks
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskDTO'
+        '401': { description: Unauthorized }
+  
+  /tasks/{id}:
+    get:
+      tags: [Tasks]
+      summary: Get task by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDTO'
+        '401': { description: Unauthorized }
+  
+  /tasks/create:
+    post:
+      tags: [Tasks]
+      summary: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDTO'
+        '401': { description: Unauthorized }
+  
+  /tasks/edit/{id}:
+    put:
+      tags: [Tasks]
+      summary: Edit a task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '200':
+          description: Task updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskDTO'
+        '401': { description: Unauthorized }
+  
+  /tasks/delete/{id}:
+    delete:
+      tags: [Tasks]
+      summary: Delete a task
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200': { description: Task deleted }
+        '401': { description: Unauthorized }
+  
+  /tasks/{id}/complete:
+    put:
+      tags: [Tasks]
+      summary: Toggle task completion
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200': { description: Completion status toggled }
+        '401': { description: Unauthorized }
+  
+  /tasks/category/{categoryId}:
+    get:
+      tags: [Tasks]
+      summary: Get tasks by category
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Tasks in category
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskDTO'
+        '401': { description: Unauthorized }
+  
+  /tasks/convert/{id}:
+    post:
+      tags: [Tasks]
+      summary: Convert task to activity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConvertTaskRequest'
+      responses:
+        '200': { description: Task converted to activity }
+        '401': { description: Unauthorized }
+  
+  /user/me:
+    get:
+      tags: [Users]
+      summary: Get current user information
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+        '401': { description: Unauthorized }
+  
+  /user/me/stats/tasks:
+    get:
+      tags: [Users]
+      summary: Get task statistics
+      responses:
+        '200':
+          description: Task stats returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskStatsDTO'
+        '401': { description: Unauthorized }
+  
+  /user/me/stats/activities:
+    get:
+      tags: [Users]
+      summary: Get activity statistics
+      responses:
+        '200':
+          description: Activity stats returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityStatsDTO'
+        '401': { description: Unauthorized }
+  
+  /user/my/profile-icon:
+    get:
+      tags: [Users]
+      summary: Get profile icon
+      responses:
+        '200': { description: Profile icon data }
+        '401': { description: Unauthorized }
+  
+  /user/me/profile-icon:
+    put:
+      tags: [Users]
+      summary: Set profile icon
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200': { description: Profile icon updated }
+        '401': { description: Unauthorized }
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      required: [email, password]
+
+    ChangePasswordRequest:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+        newPassword:
+          type: string
+      required: [oldPassword, newPassword]
+
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        fullName:
+          type: string
+      required: [email, password, fullName]
+
+    ChangeEmailRequest:
+      type: object
+      properties:
+        newEmail:
+          type: string
+        password:
+          type: string
+      required: [newEmail, password]
+
+    DeleteAccountRequest:
+      type: object
+      properties:
+        password:
+          type: string
+      required: [password]
+
+    CreateActivityRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        categoryId:
+          type: integer
+      required: [title, startDate, endDate, categoryId]
+
+    ActivityDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        category:
+          type: string
+
+    CreateCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        color:
+          type: string
+      required: [name]
+
+    CategoryDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        color:
+          type: string
+
+    CreateTaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+        categoryId:
+          type: integer
+      required: [title, dueDate, categoryId]
+
+    TaskDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        dueDate:
+          type: string
+          format: date-time
+        completed:
+          type: boolean
+        category:
+          type: string
+
+    ConvertTaskRequest:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+      required: [startDate, endDate]
+
+    UserDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        fullName:
+          type: string
+        profileIcon:
+          type: string
+
+    TaskStatsDTO:
+      type: object
+      properties:
+        total:
+          type: integer
+        completed:
+          type: integer
+        pending:
+          type: integer
+
+    ActivityStatsDTO:
+      type: object
+      properties:
+        total:
+          type: integer
+        upcoming:
+          type: integer
+        ongoing:
+          type: integer
+
+    ResponseDTO:
+      type: object
+      properties:
+        message:
+          type: string
+        email:
+          type: string
+
+    LoginResponseDTO:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string

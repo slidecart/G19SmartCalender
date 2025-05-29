@@ -7,6 +7,7 @@ import com.smartcalender.app.dto.CreateTaskRequest;
 import com.smartcalender.app.dto.TaskDTO;
 import com.smartcalender.app.service.TaskService;
 import jakarta.validation.Valid;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -64,7 +65,7 @@ public class TaskController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             TaskDTO task = taskService.getUserTaskById(id, currentUser);
-            return ResponseEntity.ok(task);
+            return ResponseEntity.status(HttpStatus.OK).body(task);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -105,7 +106,7 @@ public class TaskController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             TaskDTO updated = taskService.editTask(id, taskDTO, currentUser);
-            return ResponseEntity.ok(updated);
+            return ResponseEntity.status(HttpStatus.OK).body(updated);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -146,7 +147,7 @@ public class TaskController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             TaskDTO updated = taskService.toggleTaskCompletion(id, currentUser);
-            return ResponseEntity.ok(updated);        }
+            return ResponseEntity.status(HttpStatus.OK).body(updated);        }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 
@@ -164,7 +165,7 @@ public class TaskController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             List<TaskDTO> tasks = taskService.getTasksByCategory(categoryId, currentUser);
-            return ResponseEntity.ok(tasks);
+            return ResponseEntity.status(HttpStatus.OK).body(tasks);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -181,12 +182,12 @@ public class TaskController {
      *         and the user is authenticated, or an HTTP 401 Unauthorized response if authentication fails
      * @author Carl Lundholm, David Lexe
      */
-    @PostMapping("/{id}/convert")
+    @PostMapping("/convert/{id}")
     public ResponseEntity<?> convertTaskToActivity(@PathVariable Long id, @RequestBody @Valid ConvertTaskRequest taskRequest) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
             ActivityDTO activity = taskService.convertTaskToActivity(id, taskRequest, currentUser);
-            return ResponseEntity.ok(activity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(activity);
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }

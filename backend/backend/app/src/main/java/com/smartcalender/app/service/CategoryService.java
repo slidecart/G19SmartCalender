@@ -45,6 +45,7 @@ public class CategoryService {
     public CategoryDTO createCategory(CreateCategoryRequest categoryRequest, UserDetails currentUser) {
         User user = getUser(currentUser);
 
+        // TODO: Change to check if user has a category with the same name
         if (categoryRepository.findByName(categoryRequest.getName()).isPresent()) {
             throw new AlreadyExistsException("Category already exists");
         } else {

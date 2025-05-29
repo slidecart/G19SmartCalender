@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useSearchParams} from "react-router-dom";
-import {Box, Button, CircularProgress, TextField, Typography} from "@mui/material";
+import {Box, Button, CircularProgress, TextField, Typography, Snackbar, Alert} from "@mui/material";
 import {fetchData} from "../hooks/FetchData";
 
 function ResetPassword() {
@@ -8,86 +8,124 @@ function ResetPassword() {
     const token = searchParams.get("token");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
+    const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
 
     useEffect(() => {
         if (!token) {
-            setMessage("Ogiltig eller saknad token. Vänligen försök återställa ditt lösenord igen.");
+            setSnackbar({
+                open: true,
+                message: "Ogiltig eller saknad token. Vänligen försök återställa ditt lösenord igen.",
+                severity: "error"
+            })
         }
     }, [token]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!token) {
-            setMessage("Ogiltig eller saknad token. Vänligen försök återställa ditt lösenord igen.");
+            setSnackbar({
+                open: true,
+                message: "Ogiltig eller saknad token. Vänligen försök återställa ditt lösenord igen.",
+                severity: "error"
+            });
             return;
         }
         if (newPassword !== confirmPassword) {
-            setMessage("Lösenorden matchar inte. Var vänlig försök igen.");
+            setSnackbar({
+                open: true,
+                message: "Lösenorden matchar inte. Vänligen försök igen.",
+                severity: "error"
+            })
             return;
         }
         if (newPassword.length < 8 || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
-            setMessage("Lösenordet måste vara minst 8 tecken långt och innehålla minst en stor bokstav och en siffra.");
+            setSnackbar({
+                open: true,
+                message: "Lösenordet måste vara minst 8 tecken långt och innehålla minst en stor bokstav och en siffra.",
+                severity: "error"
+            })
             return;
         }
 
         setIsLoading(true);
         try {
             const data = await fetchData(`auth/reset-password?token=${token}&newPassword=${newPassword}`, "PUT", null, true);
-            setMessage(data.message || "Lösenordet har återställts.");
-            setIsSuccess(true);
+            setSnackbar({
+                open: true,
+                message: "Lösenordet har återställts. Du kommer att omdirigeras till inloggningssidan.",
+                severity: "success"
+            })
             setTimeout(() => {
                 window.location.href = "/login";
-            }, 3000);
+            }, 2000);
         } catch (error) {
-            setMessage(error.message || "Lösenordsåterställning misslyckades. Var vänlig försök igen.");
+            setSnackbar({
+                open: true,
+                message: "Ett fel inträffade vid återställning av lösenordet. Vänligen försök igen.",
+                severity: "error"
+            });
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", minHeight: "100vh", pt: 2 }}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                minHeight: "100vh"
+            }}
+        >
             <Typography variant="h1" sx={{ textAlign: "center", mb: 4, color: "primary.main" }}>
                 SmartCalendar
             </Typography>
-            <Box sx={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-                <Typography variant="h5">Återställ Ditt Lösenord</Typography>
-                <Box component="div" sx={{ width: "300px", mt: 2 }}>
-                    <TextField
-                        label="Nytt Lösenord"
-                        type="password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Bekräfta Lösenord"
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <Button
-                        onClick={handleSubmit}
-                        variant="contained"
-                        fullWidth
-                        sx={{ mt: 2 }}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? <CircularProgress size={24} /> : "Återställ Lösenord"}
-                    </Button>
-                </Box>
-                {message && (
-                    <Typography variant="body1" sx={{ mt: 2, color: isSuccess ? "green" : "red" }}>
-                        {message}
-                    </Typography>
-                )}
+            <Box sx={{ width: "300px", textAlign: "center", mb: 2 }}>
+                <Typography variant="h5" sx={{ textAlign: "center", }}>Återställ Ditt Lösenord</Typography>
             </Box>
+            <Box component="form" onSubmit={handleSubmit} sx={{ width: "350px", mt: 2 }}>
+                <TextField
+                    label="Nytt Lösenord"
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    fullWidth
+                    margin="normal"
+                    required
+                    sx={{ mb: 3 }}
+                />
+                <TextField
+                    label="Bekräfta Lösenord"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    fullWidth
+                    margin="normal"
+                    required
+                    sx={{ mb: 3 }}
+                />
+                <Button
+                    type="submit"
+                    variant="contained"
+                    fullWidth
+                    disabled={isLoading}
+                >
+                    {isLoading ? <CircularProgress size={24} /> : "Återställ Lösenord"}
+                </Button>
+            </Box>
+            <Snackbar
+                open={snackbar.open}
+                autoHideDuration={6000}
+                onClose={() => setSnackbar({ ...snackbar, open: false })}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            >
+                <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+                    {snackbar.message}
+                </Alert>
+            </Snackbar>
         </Box>
     );
 }

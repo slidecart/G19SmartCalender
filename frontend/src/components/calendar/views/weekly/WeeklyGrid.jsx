@@ -1,59 +1,72 @@
-import {Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
+import {Divider, Table, TableBody, TableCell, TableHead, TableRow, Typography} from "@mui/material";
 import dayjs from "dayjs";
+import { forwardRef } from "react";
 
 import WeeklyActivityBox from "./WeeklyActivityBox";
 import {useCalendarContext} from "../../../../context/CalendarContext";
 
 
-const WeeklyGrid = ({ weekdays = [], timeSlots = [], }) => {
+const WeeklyGrid = forwardRef(({ weekdays= [] }, timeColumnRef) => {
     const {
         filteredActivities,
-        openViewDialog,
         categories,
         handleCellClick,
+        timeSlots,
+        handleActivityClick,
     } = useCalendarContext();
+
     return (
-        <Table>
+        <Table stickyHeader>
             {/* TableHead for all the weekdays */}
             <TableHead>
                 <TableRow>
-                    {/* Empty cell, only for the time-column */}
-                    <TableCell sx={{ verticalAlign:"top", borderRight:"1px solid #ccc", borderTop:"1px solid #ccc" }}/>
+                    {/* Empty corner cell */}
+                    <TableCell
+                        ref={timeColumnRef}
+                        sx={{
+                            position: 'sticky',
+                            top: 0,
+                            backgroundColor: 'background.paper',
+                            zIndex: 2,
+                            borderRight: '1px solid rgba(224,224,224,1)'
+                        }}
+                    />
 
-                    {/* Weekdays as titles */}
+                    {/* Weekday headers */}
                     {weekdays.map((day) => {
-                      const isToday = dayjs(day.date).isSame(dayjs(), "day");
-                      return (
-                        <TableCell
-                          key={day.name}
-                          align="center"
-                          sx={{
-                            height: "30px",
-                            verticalAlign: "top",
-                            borderRight: "1px solid #ccc",
-                            borderTop: "1px solid #ccc",
-                            backgroundColor: isToday ? "primary.light" : "inherit",
-                          }}
-                        >
-                          <Typography variant="subtitle1">
-                            {day.name} {dayjs(day.date).format("DD/MM")}
-                          </Typography>
-                        </TableCell>
-                      );
+                        const isToday = dayjs(day.date).isSame(dayjs(), "day");
+                        return (
+                            <TableCell
+                                key={day.date}
+                                align="center"
+                                sx={{
+                                    position: 'sticky',
+                                    top: 0,
+                                    backgroundColor: isToday ? 'lightblue' : 'background.paper',
+                                    zIndex: 2,
+                                    borderRight: '1px solid rgba(224,224,224,1)'
+                                }}
+                            >
+                                <Typography variant="subtitle1">
+                                    {day.name} {dayjs(day.date).format("DD/MM")}
+                                </Typography>
+                            </TableCell>
+                        );
                     })}
                 </TableRow>
             </TableHead>
 
             {/* TableBody for the time and cells */}
             <TableBody>
-                {/* Maps out times from 08:00 - 20:00 for every row in the first column */ }
+                {/* Maps out times from 00:00 - 23:00 for every row in the first column */ }
                 {timeSlots.map((time) => (
                     <TableRow key={time} sx={{ height:"60px" }}>
                         <TableCell sx={{  borderRight:"1px solid #ccc", padding:"15px"}}>
                             {time}
                         </TableCell>
 
-                        {weekdays.map((day) => {
+
+                        {weekdays.map((day, idx) => {
                             const isToday = dayjs(day.date).isSame(dayjs(), "day");
                             // Filters and sets every date & time for each
                             const cellStart = dayjs(`1970-01-01T${time}`);
@@ -72,15 +85,17 @@ const WeeklyGrid = ({ weekdays = [], timeSlots = [], }) => {
                                 );
                             });
                             return(
-                                    <TableCell 
-                                        key={`${day.name}-${time}`} 
+                                    <TableCell
+                                        key={`${day.name}-${time}`}
                                         sx={{
                                             position:"relative",
                                             padding:"0",
-
                                             cursor: "pointer",
                                             backgroundColor: isToday ? "grey.200" : "inherit",
-
+                                            borderLeft: idx > 0 ? "1px solid #ccc" : "none",
+                                            "&:hover": {
+                                                backgroundColor: isToday ? "grey.300" : "grey.100",
+                                            },
                                         }}
                                         onClick={() => {
                                             if (hits.length === 0) {
@@ -88,11 +103,11 @@ const WeeklyGrid = ({ weekdays = [], timeSlots = [], }) => {
                                             }
 
                                         }}
-                                    > 
+                                    >
                                         {hits.length>0 && (
                                             <WeeklyActivityBox
                                                 filteredActivities={hits}
-                                                onClick={() => openViewDialog(hits[0])} // Pass the first activity to the click handler
+                                                onClick={(e) => handleActivityClick(e, hits[0], idx)} // Pass the first activity to the click handler
                                                 categories={categories}
                                             />
                                         )}
@@ -104,6 +119,6 @@ const WeeklyGrid = ({ weekdays = [], timeSlots = [], }) => {
             </TableBody>
         </Table>
     );
-};
+});
 
 export default WeeklyGrid;

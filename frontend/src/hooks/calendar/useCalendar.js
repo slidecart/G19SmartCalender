@@ -2,6 +2,9 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import dayjs from "dayjs";
 import {fetchData} from "../FetchData";
 
+import customParseFormat from "dayjs/plugin/customParseFormat";
+dayjs.extend(customParseFormat);
+
 export function useCalendar() {
     /* ---------- Dates ---------- */
     // Constant variables for dates
@@ -21,10 +24,10 @@ export function useCalendar() {
         [startOfWeek]
     );
 
-    // Array with time from 08:00 to 20:00
+    // Array with time from 00:00 to 23:00
     const timeSlots = useMemo(
-        () => Array.from({ length: 13 }, (_, i) =>
-            `${8 + i}:00`.padStart(5, "0")),
+        () => Array.from({ length: 24 }, (_, i) =>
+            `${i}:00`.padStart(5, "0")),
         []
     );
 
@@ -40,29 +43,47 @@ export function useCalendar() {
         categoryId:"",
     });
 
+    const [currentView, setCurrentView] = useState("week"); // Weekly or monthly
     const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
     const [isAddEditDialogOpen, setIsAddEditDialogOpen] = useState(false);
     const [isViewDialogOpen, setIsViewDialogOpen]       = useState(false);
     const [dialogMode, setDialogMode]                   = useState("add"); // or "edit"
 
-    const [selectedActivity, setSelectedActivity]       = useState(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedActivity, setSelectedActivity] = useState(null);
+    const [placement, setPlacement] = useState("right");
+
+    const [taskID, setTaskID] = useState(null);
+
+    const handleActivityClick = useCallback((event, activity, index) => {
+        const newPlacement = index < 4 ? "right" : "left";
+        setPlacement(newPlacement);
+        setSelectedActivity(activity);
+        setAnchorEl(event.currentTarget);
+    }, []);
+
 
     const handleCloseDialog = useCallback(() => {
         setIsAddEditDialogOpen(false);
-        setIsViewDialogOpen(false);
+        setSelectedActivity(null);
         setFormData({});
     }, []);
 
+    const handleClosePopover = useCallback(() => {
+        setAnchorEl(null);
+    } , []);
+
     // Function to open the add dialog
-    const openAddDialog = useCallback((preFill = {}) => {
+    const openAddDialog = useCallback((preFill = {}, taskID) => {
         setDialogMode("add");
+        setTaskID(taskID || null);
         setFormData({
             name:        preFill.name        || "",
             description: preFill.description || "",
             location:    preFill.location    || "",
             date:        preFill.date        || today.format("YYYY-MM-DD"),
-            startTime:   preFill.startTime   || "",
-            endTime:     preFill.endTime     || "",
+            startTime:   preFill.startTime   || "12:00",
+            endTime:     preFill.endTime     || "13:00",
             categoryId:  preFill.categoryId  || ""
         });
         setIsViewDialogOpen(false);
@@ -76,17 +97,10 @@ export function useCalendar() {
         setIsViewDialogOpen(true);
     }, []);
 
-    useEffect(() => {
-        if (selectedActivity) {
-            console.log("Selected activity:", selectedActivity);
-        }
-    }, [selectedActivity]);
 
     // Function to open the edit dialog
     const openEditDialog = useCallback((selectedActivity) => {
         setDialogMode("edit");
-        // *here’s the critical bit*—you must _fill_ the formData
-        // from the activity you passed in, instead of leaving it blank:
         setFormData({
             name:        selectedActivity.name,
             description: selectedActivity.description,
@@ -96,9 +110,10 @@ export function useCalendar() {
             endTime:     selectedActivity.endTime,
             categoryId:  selectedActivity.categoryId
         });
+
         setIsViewDialogOpen(false);
         setIsAddEditDialogOpen(true);
-    }, []);
+    }, [selectedActivity]);
 
     /* ----------  Activities ---------- */
     const [activities, setActivities] = useState([]);
@@ -107,12 +122,14 @@ export function useCalendar() {
     const loadActivities = useCallback(async () => {
         try {
             const response = await fetchData("activities/all", "GET", ""); // Tar emot aktiviteter från backend
-            setActivities(response); // Användarens aktiviteter
+            setActivities(response || []); // Användarens aktiviteter
         } catch (error) {
             console.error("Fel vid hämtning: ", error.message);
             setError(error.message); // Visar eventuella fel
+            setActivities([])
         }
     }, []);
+
 
     const createOrUpdateActivity = useCallback(
         async (formData, mode, ) => {
@@ -139,6 +156,20 @@ export function useCalendar() {
         handleCloseDialog();
     }, []);
 
+    const convertTaskToActivity = useCallback(
+        async (formData, taskID) => {
+            console.log("taskID", taskID);
+            const path = `tasks/convert/${taskID}`;
+            const method = "POST";
+            const saved = await fetchData(path, method, formData);
+
+            setActivities((prev) => [...prev, saved]);
+            return saved;
+        },
+        []
+    );
+
+
     useEffect(() => {
         loadActivities();
     }, []);
@@ -146,11 +177,17 @@ export function useCalendar() {
 
     /* ----------  Categories + UI filters ---------- */
     const [categories, setCategories] = useState([]);
-    const [selectedCategories, setSelectedCategories] = useState([]);
+    const [selectedCategories, setSelectedCategories] = useState(categories || []);
 
     const loadCategories = useCallback(async () => {
-        const cats = await fetchData("categories/all", "GET", "");
-        setCategories(cats);
+        try {
+            const cats = await fetchData("categories/all", "GET", "");
+            // Set default empty array if no categories are fetched
+            setCategories(cats || []);
+        } catch (error) {
+            console.error("Error fetching categories:", error.message);
+            setCategories([]);
+        }
     }, []);
 
     // Function to create a new category
@@ -173,37 +210,65 @@ export function useCalendar() {
         );
     }, []);
 
+    const resetFilter = useCallback(() => {
+        setSelectedCategories(categories.map(cat => cat.id));
+    }, [categories])
+
     useEffect(() => {
         loadCategories();
     }, []);
 
     useEffect(() => {
-        setSelectedCategories(prev =>
-            prev.filter(id => categories.some(cat => cat.id === id))
-        );
+        // Default state: all categories are selected.
+        setSelectedCategories(categories.map(cat => cat.id));
     }, [categories]);
 
-    const filteredActivities =
-        selectedCategories.length === 0
-            ? activities
-            : activities.filter((a) => selectedCategories.includes(a.categoryId));
-
+    const filteredActivities = activities.filter((a) =>
+        // Always show activities with no category
+        !a.categoryId || selectedCategories.includes(a.categoryId)
+    );
 
     /* ---------- Form data and handlers ---------- */
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData((prev) => ({
-            ...prev,
-            [name]:value,
-        }));
-    }
+        setFormData((prev) => {
+            const updated = { ...prev, [name]: value };
+            // When startTime changes, set default endTime to one hour later.
+            if (name === "startTime") {
+                updated.endTime = dayjs(value, "HH:mm").add(1, "hour").format("HH:mm");
+            }
+            return updated;
+        });
+    };
 
     const handleCellClick = (date, time) => {
-        openAddDialog({date, startTime: time});
+        const defaultEndTime = dayjs(time, "HH:mm").add(1, "hour").format("HH:mm");
+        openAddDialog({ date, startTime: time, endTime: defaultEndTime });
     }
 
-    const [currentView, setCurrentView] = useState("week");
+    /* ----------  Timeline ---------- */
+    const [currentTime, setCurrentTime] = useState(dayjs());
+
+    // Håll koll på nuvarande tid och uppdatera varje minut
+    useEffect(() => {
+        const timer = setInterval(() => setCurrentTime(dayjs()), 60000);
+        return () => clearInterval(timer);
+    }, []);
+
+    // Beräkna antal minuter sedan midnatt
+    const currentMinutes = useMemo(
+        () => currentTime.hour() * 60 + currentTime.minute(),
+        [currentTime]
+    );
+
+    // Beräkna linjens position som procentandel av dygnets totala höjd
+    const currentTimePosition = useMemo(
+        () => (currentMinutes / (24 * 60)) * 100,
+        [currentMinutes]
+    );
+
+
 
     // —————— expose everything ——————
     return {
@@ -232,6 +297,12 @@ export function useCalendar() {
         confirmDeleteOpen,
         setConfirmDeleteOpen,
         handleCloseDialog,
+        handleClosePopover,
+        handleActivityClick,
+        anchorEl,
+        placement,
+        taskID,
+        convertTaskToActivity,
 
         // categories & filter
         categories,
@@ -240,6 +311,7 @@ export function useCalendar() {
         toggleCategory,
         createCategory,
         filteredActivities,
+        resetFilter,
 
         // form data
         handleChange,
@@ -249,6 +321,11 @@ export function useCalendar() {
         // view
         currentView,
         setCurrentView,
+
+
+        // timeline
+        currentTime,
+        currentTimePosition,
 
     };
 }
