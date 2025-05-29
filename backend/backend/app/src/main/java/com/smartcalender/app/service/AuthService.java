@@ -7,7 +7,7 @@ import com.smartcalender.app.dto.UserDTO;
 import com.smartcalender.app.entity.PasswordResetToken;
 import com.smartcalender.app.entity.RefreshToken;
 import com.smartcalender.app.entity.User;
-import com.smartcalender.app.exception.UserNotFoundException;
+import com.smartcalender.app.exception.*;
 import com.smartcalender.app.repository.PasswordResetTokenRepository;
 import com.smartcalender.app.repository.RefreshTokenRepository;
 import com.smartcalender.app.repository.UserRepository;
@@ -61,10 +61,10 @@ public class AuthService {
         );
 
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (emailVerificationRequired && !user.isEmailVerified()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Email not verified");
+            throw new EmailNotVerifiedException("Email not verified");
         }
 
         UserDetails userDetails = org.springframework.security.core.userdetails.User
@@ -90,7 +90,7 @@ public class AuthService {
     @Transactional
     public void forgotPassword(String email) {
         User user = userRepository.findByEmailAddress(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         // Generate a unique token
         String token = UUID.randomUUID().toString();
@@ -134,18 +134,18 @@ public class AuthService {
     @Transactional
     public void changePassword(String currentPassword, String newPassword, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (currentPassword == null || currentPassword.trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password cannot be empty");
+            throw new InvalidInputException("Current password cannot be empty");
         }
         if (newPassword == null || newPassword.trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "New password cannot be empty");
+            throw new InvalidInputException("New password cannot be empty");
         }
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Current password is incorrect");
+            throw new PermissionDeniedException("Current password is incorrect");
         }
 
         if (newPassword.length() < 8 || !newPassword.matches(".*[A-Z].*") || !newPassword.matches(".*[0-9].*")) {
@@ -161,11 +161,10 @@ public class AuthService {
     @Transactional
     public UserDTO registerUser(RegisterRequest request) {
         userRepository.findByUsername(request.getUsername())
-                .ifPresent(user -> {throw new IllegalArgumentException("Username already exists.");
-                });
+                .ifPresent(user -> {throw new AlreadyExistsException("Username already exists");});
 
         userRepository.findByEmailAddress(request.getEmailAddress())
-                .ifPresent(user -> {throw new IllegalArgumentException("Email address already exists.");
+                .ifPresent(user -> {throw new AlreadyExistsException("Email address already exists.");
                 });
 
         if (request.getPassword() == null || request.getPassword().length() < 8 || !request.getPassword().matches(".*[A-Z].*") || !request.getPassword().matches(".*[0-9].*")) {
@@ -191,14 +190,14 @@ public class AuthService {
     @Transactional
     public String verifyEmail(Long userId, String otp) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (user.isEmailVerified()) {
-            throw new RuntimeException("E-postadressen är redan verifierad");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-postadressen är redan verifierad");
         }
 
         if (!otpService.isOtpValid(userId, otp)) {
-            throw new RuntimeException("Ogiltigt otp");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ogiltigt otp");
         }
 
             user.setEmailVerified(true);
@@ -209,15 +208,15 @@ public class AuthService {
 
     public void changeEmail(String newEmail, String password, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is incorrect");
+            throw new PermissionDeniedException("Incorrect password");
         }
 
         if (userRepository.existsByEmailAddress(newEmail)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email address already exists");
+            throw new AlreadyExistsException("Email address already exists");
         }
 
         user.setEmail(newEmail);
@@ -231,11 +230,11 @@ public class AuthService {
 
     public void deleteAccount(String password, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("Incorrect password");
+            throw new PermissionDeniedException("Incorrect password");
         }
 
         userRepository.delete(user);
@@ -244,14 +243,14 @@ public class AuthService {
     @Transactional
     public void resendVerification(String emailAddress) {
         User user = userRepository.findByEmailAddress(emailAddress)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
 
         if (!user.isEmailVerified()) {
             String otp = otpService.generateAndStoreOtp(user.getId());
             String verificationUrl = "http://localhost:3000/verify-email?uid=" + user.getId() + "&otp=" + otp;
             emailService.sendVerificationEmail(user.getEmailAddress(), "Verify Your SmartCalendar Account", verificationUrl, otp);
         } else {
-            throw new RuntimeException("Email already verified");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already verified");
         }
     }
 

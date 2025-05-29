@@ -8,7 +8,9 @@ import com.smartcalender.app.entity.Activity;
 import com.smartcalender.app.entity.Category;
 import com.smartcalender.app.entity.Task;
 import com.smartcalender.app.entity.User;
-import com.smartcalender.app.exception.UserNotFoundException;
+import com.smartcalender.app.exception.InvalidDateException;
+import com.smartcalender.app.exception.InvalidTimeRangeException;
+import com.smartcalender.app.exception.NotFoundException;
 import com.smartcalender.app.repository.ActivityRepository;
 import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.TaskRepository;
@@ -69,7 +71,7 @@ public class TaskService {
 
         if (newTask.getCategoryId() != null) {
             Category category = categoryRepository.findByIdAndUser(newTask.getCategoryId(), user)
-                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                    .orElseThrow(() -> new NotFoundException("Category not found"));
             task.setCategory(category);
         }
 
@@ -101,7 +103,7 @@ public class TaskService {
 
         if (newTask.getCategoryId() != null) {
             Category category = categoryRepository.findByIdAndUser(newTask.getCategoryId(), user)
-                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                    .orElseThrow(() -> new NotFoundException("Category not found"));
             taskToEdit.setCategory(category);
         }
 
@@ -121,7 +123,7 @@ public class TaskService {
     @Transactional
     public ResponseEntity<Boolean> deleteTask(Long id, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
         Optional<Task> taskOptional = taskRepository.findByIdAndUser(id, user);
         if (taskOptional.isPresent()) {
             taskRepository.delete(taskOptional.get());
@@ -170,14 +172,14 @@ public class TaskService {
         Task task = getTask(id, user);
 
         if (taskRequest.getStartTime() == null || taskRequest.getEndTime() == null) {
-            throw new IllegalArgumentException("Start time and end time must be provided");
+            throw new InvalidTimeRangeException("Start time and end time must be provided");
         }
         if (taskRequest.getStartTime().isAfter(taskRequest.getEndTime())) {
-            throw new IllegalArgumentException("Start time must be before or equal to end time");
+            throw new InvalidTimeRangeException("Start time must be before or equal to end time");
         }
         if (taskRequest.getDate() == null) {
             if (task.getDate() == null) {
-                throw new IllegalArgumentException("Date must be provided");
+                throw new InvalidDateException("Date must be provided");
             } else {
                 taskRequest.setDate(task.getDate());
             }
@@ -194,7 +196,7 @@ public class TaskService {
 
         if (task.getCategory() != null) {
             Category category = categoryRepository.findByIdAndUser(task.getCategory().getId(), user)
-                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                    .orElseThrow(() -> new NotFoundException("Category not found"));
             activity.setCategory(category);
         }
 
@@ -245,7 +247,7 @@ public class TaskService {
         User user = getUser(currentUser);
 
         Category category = categoryRepository.findByIdAndUser(categoryId, user)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new NotFoundException("Category not found"));
 
         List<Task> tasks = taskRepository.findByUserAndCategory(user, category);
         return tasks.stream().map(TaskDTO::new).collect(Collectors.toList());
@@ -262,7 +264,7 @@ public class TaskService {
      */
     private Task getTask(Long id, User currentUser) {
         return taskRepository.findByIdAndUser(id, currentUser)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+                .orElseThrow(() -> new NotFoundException("Task not found"));
     }
 
     /**
@@ -270,11 +272,11 @@ public class TaskService {
      *
      * @param currentUser the UserDetails object containing the required information to retrieve the user
      * @return the User entity associated with the provided username
-     * @throws UserNotFoundException if no user is found with the specified username
+     * @throws NotFoundException if no user is found with the specified username
      * @author Carl Lundholm, David Lexe, Isaac Löwenthaal Carter
      */
     private User getUser(UserDetails currentUser) {
         return userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 }

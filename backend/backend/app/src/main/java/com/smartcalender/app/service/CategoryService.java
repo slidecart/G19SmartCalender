@@ -4,7 +4,8 @@ import com.smartcalender.app.dto.CategoryDTO;
 import com.smartcalender.app.dto.CreateCategoryRequest;
 import com.smartcalender.app.entity.Category;
 import com.smartcalender.app.entity.User;
-import com.smartcalender.app.exception.UserNotFoundException;
+import com.smartcalender.app.exception.AlreadyExistsException;
+import com.smartcalender.app.exception.NotFoundException;
 import com.smartcalender.app.repository.CategoryRepository;
 import com.smartcalender.app.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -45,7 +46,7 @@ public class CategoryService {
         User user = getUser(currentUser);
 
         if (categoryRepository.findByName(categoryRequest.getName()).isPresent()) {
-            throw new IllegalArgumentException("Category already exists");
+            throw new AlreadyExistsException("Category already exists");
         } else {
             Category category = new Category();
             category.setName(categoryRequest.getName());
@@ -139,21 +140,21 @@ public class CategoryService {
      */
     private Category getTask(Long id, User currentUser) {
         return categoryRepository.findByIdAndUser(id, currentUser)
-                .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                .orElseThrow(() -> new NotFoundException("Category not found"));
     }
 
     /**
      * Retrieves the {@code User} entity associated with the provided {@code UserDetails}.
      * This method fetches the user based on the username from the {@code UserDetails}.
-     * If the user is not found, a {@code UserNotFoundException} is thrown.
+     * If the user is not found, a {@code NotFoundException} is thrown.
      *
      * @param currentUser the authenticated user details containing the username
      * @return the {@code User} entity associated with the provided {@code UserDetails}
-     * @throws UserNotFoundException if the user is not found in the repository
+     * @throws NotFoundException if the user is not found in the repository
      */
     private User getUser(UserDetails currentUser) {
         return userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found"));
     }
 
 }
