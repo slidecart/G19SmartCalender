@@ -1,6 +1,8 @@
 import { Box, Container, Paper, Typography } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import dayjs from "dayjs";
 import { useCalendarContext } from "../../context/CalendarContext";
+
 
 
 
@@ -44,6 +46,7 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, title }) => {
                     activitiesForDay.map((activity, i) => {
                     const category = categories?.find(cat => cat.id === activity.categoryId);
                     const borderLeftColor = category ? category.color : "#60f085";
+                    const backgroundColor = category ? alpha(category.color, 0.1) : alpha("#60f085", 0.1);
                     return(
                         <Paper
                             key={i}
@@ -56,8 +59,12 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, title }) => {
                                 m: 1,
                                 borderLeft: '5px solid',
                                 borderLeftColor,
-                                backgroundColor: 'white',
+                                backgroundColor,
                                 maxWidth:"95%",
+                                transition: "background-color 0.3s ease",
+                                    "&:hover":{
+                                        backgroundColor: category ? alpha(category.color, 0.4) : alpha("#60f085", 0.2),
+                                    },
                             }}
                         >
                             <Typography variant="h7">
