@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
     Box,
     ToggleButtonGroup,
@@ -31,6 +31,8 @@ import {useTodoContext} from "../../context/TodoContext";
 export default function TopBar() {
     const theme = useTheme();
     const navigate = useNavigate();
+    const location = useLocation();
+    const isCalendarPage = location.pathname === "/calendar";
 
     const {
         categories,
@@ -82,81 +84,86 @@ export default function TopBar() {
                 overflowX: 'auto'
             }}
         >
-            {/* View toggle */}
-            <ToggleButtonGroup
-                value={currentView}
-                exclusive
-                onChange={handleViewChange}
-                size="small"
-            >
-                <ToggleButton value="week" aria-label="Veckovy">
-                    <CalendarTodayOutlinedIcon fontSize="small" />
-                    <Box component="span" sx={{ ml: 0.5 }}>Veckovy</Box>
-                </ToggleButton>
-                <ToggleButton value="month" aria-label="Månadsvy">
-                    <CalendarMonthOutlinedIcon fontSize="small" />
-                    <Box component="span" sx={{ ml: 0.5 }}>Månadsvy</Box>
-                </ToggleButton>
-            </ToggleButtonGroup>
-
-            <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
-
-            {/* Categories filter menu */}
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Tooltip title="Filter Categories" arrow>
-                    <IconButton onClick={handleFilterOpen}>
-                        <FilterListOutlinedIcon />
-                    </IconButton>
-                </Tooltip>
-                <Menu
-                    anchorEl={filterAnchorEl}
-                    open={Boolean(filterAnchorEl)}
-                    onClose={handleFilterClose}
-                >
-                    <MenuItem
-                        onClick={resetFilter}
-                        sx={{
-                            color: grey[600],
-                        }}>
-                        <ListItemIcon>
-                            <CancelOutlinedIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Rensa filter" />
-                    </MenuItem>
-                    <Divider />
-                    {categories.map((cat) => (
-                        <MenuItem key={cat.id} onClick={() => toggleCategory(cat.id)}>
-                            <IconButton sx={{ p: 0 }}>
-                                <Checkbox
-                                    icon={<RadioButtonUncheckedOutlinedIcon sx={{ color: cat.color }} />}
-                                    checkedIcon={<CheckCircleOutlinedIcon sx={{ color: cat.color }} />}
-                                    checked={selectedCategories.includes(cat.id)}
-                                    size="small"
-                                    sx={{
-                                        pl: 0,
-                                        justifyContent: "flex-start",
-                                        alignItems: "center",
-                                        display: "flex",
-                                    }}
-                                />
-                            </IconButton>
-                            <ListItemText primary={cat.name} />
-                        </MenuItem>
-                    ))}
-                    <MenuItem
-                        onClick={() => {
-                            setOpenCreateCategoryDialog(true);
-                            handleFilterClose();
-                        }}
+            {isCalendarPage && (
+                <>
+                    {/* View toggle */}
+                    <ToggleButtonGroup
+                        value={currentView}
+                        exclusive
+                        onChange={handleViewChange}
+                        size="small"
                     >
-                        <ListItemIcon>
-                            <AddCircleOutlineOutlinedIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="Skapa kategori" />
-                    </MenuItem>
-                </Menu>
-                Filter
-            </Box>
+                        <ToggleButton value="week" aria-label="Veckovy">
+                            <CalendarTodayOutlinedIcon fontSize="small" />
+                            <Box component="span" sx={{ ml: 0.5 }}>Veckovy</Box>
+                        </ToggleButton>
+                        <ToggleButton value="month" aria-label="Månadsvy">
+                            <CalendarMonthOutlinedIcon fontSize="small" />
+                            <Box component="span" sx={{ ml: 0.5 }}>Månadsvy</Box>
+                        </ToggleButton>
+                    </ToggleButtonGroup>
+
+                    <Divider orientation="vertical" flexItem sx={{ mx: 1 }} />
+
+                    {/* Categories filter menu */}
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <Tooltip title="Filter Categories" arrow>
+                            <IconButton onClick={handleFilterOpen}>
+                                <FilterListOutlinedIcon />
+                            </IconButton>
+                        </Tooltip>
+                        <Menu
+                            anchorEl={filterAnchorEl}
+                            open={Boolean(filterAnchorEl)}
+                            onClose={handleFilterClose}
+                        >
+                            <MenuItem
+                                onClick={resetFilter}
+                                sx={{
+                                    color: grey[600],
+                                }}>
+                                <ListItemIcon>
+                                    <CancelOutlinedIcon fontSize="small" />
+                                </ListItemIcon>
+                                <ListItemText primary="Rensa filter" />
+                            </MenuItem>
+                            <Divider />
+                            {categories.map((cat) => (
+                                <MenuItem key={cat.id} onClick={() => toggleCategory(cat.id)}>
+                                    <IconButton sx={{ p: 0 }}>
+                                        <Checkbox
+                                            icon={<RadioButtonUncheckedOutlinedIcon sx={{ color: cat.color }} />}
+                                            checkedIcon={<CheckCircleOutlinedIcon sx={{ color: cat.color }} />}
+                                            checked={selectedCategories.includes(cat.id)}
+                                            size="small"
+                                            sx={{
+                                                pl: 0,
+                                                justifyContent: "flex-start",
+                                                alignItems: "center",
+                                                display: "flex",
+                                            }}
+                                        />
+                                    </IconButton>
+                                    <ListItemText primary={cat.name} />
+                                </MenuItem>
+                            ))}
+                            <MenuItem
+                                onClick={() => {
+                                    setOpenCreateCategoryDialog(true);
+                                    handleFilterClose();
+                                }}
+                            >
+                                <ListItemIcon>
+                                    <AddCircleOutlineOutlinedIcon fontSize="small" />
+                                </ListItemIcon>
+                                <ListItemText primary="Skapa kategori" />
+                            </MenuItem>
+                        </Menu>
+                        Filter
+                    </Box>
+                </>
+            )}
+
 
             <Box sx={{ flexGrow: 1 }} />
 
