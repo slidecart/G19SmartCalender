@@ -61,10 +61,10 @@ public class AuthService {
         );
 
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Användaren kunde inte hittas."));
 
         if (emailVerificationRequired && !user.isEmailVerified()) {
-            throw new EmailNotVerifiedException("Email not verified");
+            throw new EmailNotVerifiedException("E-postadressen är inte verifierad.");
         }
 
         UserDetails userDetails = org.springframework.security.core.userdetails.User
@@ -90,7 +90,7 @@ public class AuthService {
     @Transactional
     public void forgotPassword(String email) {
         User user = userRepository.findByEmailAddress(email)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Användaren kunde inte hittas."));
 
         // Generate a unique token
         String token = UUID.randomUUID().toString();
@@ -113,12 +113,12 @@ public class AuthService {
     public void resetPassword(String token, String newPassword) {
         // Find the reset token
         PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(token)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid or expired token"));
+                .orElseThrow(() -> new ValidationException("Ogiltig eller utgånge återställningstoken"));
 
         // Check if the token has expired
         if (resetToken.getExpiryDate().isBefore(Instant.now())) {
             passwordResetTokenRepository.delete(resetToken);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token has expired");
+            throw new ValidationException("Token för lösenordsåterstlääning har gått ut");
         }
 
         // Get the user and update the password
@@ -134,22 +134,22 @@ public class AuthService {
     @Transactional
     public void changePassword(String currentPassword, String newPassword, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Användaren kunde inte hittas."));
 
         if (currentPassword == null || currentPassword.trim().isEmpty()) {
-            throw new InvalidInputException("Current password cannot be empty");
+            throw new InvalidInputException("Nuvarande lösenord kan inte vara tomt");
         }
         if (newPassword == null || newPassword.trim().isEmpty()) {
-            throw new InvalidInputException("New password cannot be empty");
+            throw new InvalidInputException("Nytt lösenord kan inte vara tomt");
         }
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
-            throw new PermissionDeniedException("Current password is incorrect");
+            throw new PermissionDeniedException("Felaktigt nuvarande lösenord");
         }
 
         if (newPassword.length() < 8 || !newPassword.matches(".*[A-Z].*") || !newPassword.matches(".*[0-9].*")) {
-            throw new ValidationException("New password must be at least 8 characters long, contain at least one uppercase letter, and one number.");
+            throw new InvalidInputException("Nytt lösenord måste vara minst 8 tecken långt, innehålla minst en versal och en siffra.");
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
@@ -161,14 +161,14 @@ public class AuthService {
     @Transactional
     public UserDTO registerUser(RegisterRequest request) {
         userRepository.findByUsername(request.getUsername())
-                .ifPresent(user -> {throw new AlreadyExistsException("Username already exists");});
+                .ifPresent(user -> {throw new AlreadyExistsException("Användarnamnet är upptaget.");});
 
         userRepository.findByEmailAddress(request.getEmailAddress())
-                .ifPresent(user -> {throw new AlreadyExistsException("Email address already exists.");
+                .ifPresent(user -> {throw new AlreadyExistsException("E-postadressen är redan registrerad.");
                 });
 
         if (request.getPassword() == null || request.getPassword().length() < 8 || !request.getPassword().matches(".*[A-Z].*") || !request.getPassword().matches(".*[0-9].*")) {
-            throw new ValidationException("Password must be at least 8 characters long, contain at least one uppercase letter and one number.");
+            throw new InvalidInputException("Lösenordet måste vara minst 8 tecken långt, innehålla minst en versal och en siffra.");
         }
 
         User user = new User();
@@ -190,14 +190,14 @@ public class AuthService {
     @Transactional
     public String verifyEmail(Long userId, String otp) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Användaren kunde inte hittas."));
 
         if (user.isEmailVerified()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-postadressen är redan verifierad");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-postadressen är redan verifierad.");
         }
 
         if (!otpService.isOtpValid(userId, otp)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Ogiltigt otp");
+            throw new ValidationException("Ogiltigt otp token.");
         }
 
         user.setEmailVerified(true);
@@ -208,15 +208,15 @@ public class AuthService {
 
     public void changeEmail(String newEmail, String password, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Användaren kunde inte hittas."));
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new PermissionDeniedException("Incorrect password");
+            throw new PermissionDeniedException("Felaktigt lösenord");
         }
 
         if (userRepository.existsByEmailAddress(newEmail)) {
-            throw new AlreadyExistsException("Email address already exists");
+            throw new AlreadyExistsException("E-postadressen är redan registrerad.");
         }
 
         user.setEmail(newEmail);
@@ -230,11 +230,11 @@ public class AuthService {
 
     public void deleteAccount(String password, UserDetails currentUser) {
         User user = userRepository.findByUsername(currentUser.getUsername())
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Användaren kunde inte hittas."));
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new PermissionDeniedException("Incorrect password");
+            throw new PermissionDeniedException("Felaktigt lösenord");
         }
 
         userRepository.delete(user);
@@ -243,21 +243,21 @@ public class AuthService {
     @Transactional
     public void resendVerification(String emailAddress) {
         User user = userRepository.findByEmailAddress(emailAddress)
-                .orElseThrow(() -> new NotFoundException("User not found"));
+                .orElseThrow(() -> new NotFoundException("Användaren kunde inte hittas."));
 
         if (!user.isEmailVerified()) {
             String otp = otpService.generateAndStoreOtp(user.getId());
             String verificationUrl = "https://smartcalendar.se/verify-email?uid=" + user.getId() + "&otp=" + otp;
             emailService.sendVerificationEmail(user.getEmailAddress(), "Verifiera din e-postadress | SmartCalendar", verificationUrl, otp);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email already verified");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "E-postadressen är redan verifierad.");
         }
     }
 
     public LoginResponseDTO refreshToken(UUID refreshToken) {
         final var refreshTokenEntity = refreshTokenRepository
                 .findByIdAndExpiresAtAfter(refreshToken, Instant.now())
-                .orElseThrow(() -> new ValidationException("Invalid or expired refresh token"));
+                .orElseThrow(() -> new ValidationException("Ogiltig eller utgången uppdateringstoken"));
 
         User user = refreshTokenEntity.getUser();
 

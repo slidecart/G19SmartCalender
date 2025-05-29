@@ -26,6 +26,23 @@ public class ActivityDTO {
     private Boolean validTimeRange;
     private List<String> warnings;
 
+    public ActivityDTO(Activity activity) {
+        this.id = activity.getId();
+        this.name = activity.getName();
+        this.description = activity.getDescription();
+        this.location = activity.getLocation();
+        this.date = activity.getDate();
+        this.startTime = activity.getStartTime();
+        this.endTime = activity.getEndTime();
+        this.categoryId = activity.getCategory() != null ? activity.getCategory().getId() : null;
+        this.userId = activity.getUser() != null ? activity.getUser().getId() : null;
+        this.duration = activity.getDuration();
+        this.onGoing = activity.isOnGoing();
+        this.future = activity.isFuture();
+        this.validTimeRange = activity.isValidTimeRange();
+        this.warnings = new ArrayList<>();
+    }
+
     public ActivityDTO(Activity activity, List <String> warnings) {
         this.id = activity.getId();
         this.name = activity.getName();
