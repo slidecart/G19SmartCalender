@@ -57,7 +57,7 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, title }) => {
                                 m: 1,
                                 borderLeft: '5px solid',
                                 borderLeftColor,
-                                backgroundColor: '#f9f9f9',
+                                backgroundColor: 'white',
                                 maxWidth:"95%",
                             }}
                         >
