@@ -97,17 +97,33 @@ function AgendaView() {
                         </Box>
                     </Box>
 
+                    <Box sx={{ height: '40%', display: 'flex' }}>
                     {/* REMAINING HEIGHT BOTTOM ROW (scrollable NextDay) */}
-                    <Box
-                        sx={{
-                            overflowY: 'auto',
-                            backgroundColor: '#fafafa',
-                            m:1,
-                            height:"300px"
-                        }}
-                    >
-                        <NextDay startOfDay={startOfWeek} />
+                        <Box
+                            sx={{
+                                overflowY: 'auto',
+                                backgroundColor: '#fafafa',
+                                flex: 1,
+                                p: 2,
+                                m:1,
+                                height:"300px"
+                            }}
+                        >
+                            <NextDay startOfDay={startOfWeek} />
 
+                        </Box>
+                        <Box
+                            sx={{
+                                overflowY: 'auto',
+                                backgroundColor: '#fafafa',
+                                flex: 1,
+                                p: 2,
+                                m:1,
+                                height:"300px"
+                            }}
+                        >
+                            <NextDay startOfDay={startOfWeek} />
+                        </Box>
                     </Box>
                 </Box>
             </Paper>
