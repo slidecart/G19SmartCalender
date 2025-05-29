@@ -22,6 +22,7 @@ function AgendaView() {
         targetDate,
         timeSlots,
         setDay,
+        currentYear,
         handleCloseDialog,
         handleClosePopover,
         dialogMode,
@@ -40,8 +41,15 @@ function AgendaView() {
         dayjs().subtract(1, 'day')
     );
 
-    const selectedDayIndex = (startOfWeek.day() + 7) % 7;
+    const selectedDayIndex = startOfWeek.day();
     const selectedDayName = weekdays[selectedDayIndex].name;
+    const currentDay = dayjs(startOfWeek).add(1, "day");
+    const selectedDate = currentDay.format("DD/MM");
+
+    const nextDayIndex = (selectedDayIndex + 1) % 7;
+    const nextDayName = weekdays[nextDayIndex].name;
+    const nextDay = currentDay.add(1, "day");
+    const nextDate = nextDay.format("DD/MM");
 
 
 
@@ -70,7 +78,7 @@ function AgendaView() {
 
                 {/* Headtitle for agenda */}
                 <Typography variant="h6">
-                    Vecka {startOfWeek.week()}, {selectedDayName}
+                    Vecka {startOfWeek.week()} - {currentYear}
                 </Typography>
 
                 {/* Button changing visible day to next */}
@@ -81,7 +89,7 @@ function AgendaView() {
             <Paper sx={{ height: '76vh', display: 'flex', overflow: 'hidden' }}>
                 {/* LEFT COLUMN */}
                 <Box sx={{ width: '40%', overflowY: 'auto', backgroundColor: '#f5f5f5', height:"510px", m:1 }}>
-                    <CurrentDay startOfDay={startOfWeek} title="Dagens aktiviteter" />
+                    <CurrentDay startOfDay={startOfWeek} title={`${selectedDayName} ${selectedDate}`} />
                 </Box>
 
                 {/* RIGHT COLUMN */}
@@ -106,10 +114,10 @@ function AgendaView() {
                                 flex: 1,
                                 p: 2,
                                 m:1,
-                                height:"300px"
+                                height:"267px"
                             }}
                         >
-                            <NextDay startOfDay={startOfWeek} />
+                            <NextDay startOfDay={startOfWeek} title={`${nextDayName} ${nextDate}`} />
 
                         </Box>
                         <Box
@@ -119,7 +127,7 @@ function AgendaView() {
                                 flex: 1,
                                 p: 2,
                                 m:1,
-                                height:"300px"
+                                height:"267px"
                             }}
                         >
                             <NextDay startOfDay={startOfWeek} />

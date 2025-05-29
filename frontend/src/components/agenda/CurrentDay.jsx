@@ -29,16 +29,15 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, title }) => {
                 position: 'sticky',
                 top: 0,
                 m:0.5
-
             }}
         >
 
         <Container disableGutters>
-            <Typography variant="title" align="center">
+            <Typography variant="h6" align="center" p={0.5}>
                 {title}
             </Typography>
                 {activitiesForDay.length === 0 ? (
-                    <Typography variant="body2" color="text.secondary" p={2}>
+                    <Typography variant="body2" color="text.secondary" p={2} align="center">
                         Inga aktiviteter för denna dag.
                     </Typography>
                 ) : (

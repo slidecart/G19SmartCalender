@@ -4,15 +4,23 @@ import {useState} from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import MonthlyGrid from "./MonthlyGrid";
+import { useCalendarContext } from "../../../../context/CalendarContext";
 
 const daysInWeek =["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
 
 function MonthlyCalendar({ chromeHeight }) {
+    const {
+        currentMonth,
+        setCurrentMonth,
+        months, 
+        currentYear
+    } = useCalendarContext()
+
     const totalAvailable = `calc(100vh - ${chromeHeight}px - 56px)`;
     // Dates
     const today = dayjs();
-    const currentYear = today.year();
-    const [currentMonth, setCurrentMonth] = useState(dayjs().startOf("month"));
+    const selectedMonthIndex = today.month();
+    const selectedMonth = months[selectedMonthIndex].name;
 
     // Dates when month start
     const startOfMonth = currentMonth.startOf("month");
@@ -25,13 +33,16 @@ function MonthlyCalendar({ chromeHeight }) {
     const totalDays = endDate.diff(startDate, "day") +1;
     const weeks = Math.ceil(totalDays/7);
 
-    // Array over 
+    // Array over weeks
     const calendar = Array.from({length:weeks}, (_, weekIndex) => {
         return Array.from({ length:7 }, (_, dayIndex) => {
             const date = startDate.add(weekIndex * 7 + dayIndex, "day");
             return date;
         });
     });
+
+    // Calendar title
+    const title = `${selectedMonth} ${currentYear}`;
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, height: totalAvailable }}>
@@ -44,7 +55,7 @@ function MonthlyCalendar({ chromeHeight }) {
 
                 {/* Headtitle for calendar */}
                 <Typography variant="h6" textAlign={"center"}>
-                    {currentMonth.format("MMMM YYYY")}
+                    {title}
                 </Typography>
 
                 {/* Button changing visible month to next */}
@@ -56,14 +67,14 @@ function MonthlyCalendar({ chromeHeight }) {
 
             {/* Shows calendar */}
             <TableContainer component={Paper}
-                            elevation={2}
-                            sx={{
-                                flexGrow: 1,
-                                display: "flex",
-                                flexDirection: "column",
-                                overflow: "hidden",
-                                p: 0,
-                            }}>
+                elevation={2}
+                sx={{
+                    flexGrow: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    overflow: "hidden",
+                    p: 0,
+                }}>
                 <MonthlyGrid
                     weeks={calendar}
                 />

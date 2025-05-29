@@ -25,6 +25,17 @@ export function useCalendar() {
         [startOfWeek]
     );
 
+    // Monthly dates
+    const [currentMonth, setCurrentMonth] = useState(dayjs().startOf("month"));
+    const months = useMemo(
+        () =>
+            Array.from({ length: 12 }, (_, i) => ({
+                name: ["Januari", "Februari", "Mars", "April", "Maj", "Juni", "Juli", "Augusti", "September", "Oktober", "November", "December"][i],
+                date: dayjs().startOf("year").add(i, "month").format("YYYY-MM-DD")
+            })),
+        [currentMonth]
+    );
+
     
 
     // Array with time from 00:00 to 23:00
@@ -280,6 +291,10 @@ export function useCalendar() {
         setStartOfWeek,
         weekdays,
         timeSlots,
+        currentMonth,
+        setCurrentMonth,
+        months,
+        currentYear,
 
         // activities
         activities,
