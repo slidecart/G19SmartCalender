@@ -20,7 +20,9 @@ const AuthProvider = ({ children }) => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || "Invalid credentials");
+                const error = new Error(errorData.message || "Ett fel inträffade.");
+                error.responseData = errorData;
+                throw error;
             }
 
             const res = await response.json();

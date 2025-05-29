@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { Box, Container, Snackbar, Alert } from '@mui/material';
+import {
+    Box,
+    Container,
+    Snackbar,
+    Alert
+} from '@mui/material';
 import UserInput from '../components/userInput';
 import { Link } from 'react-router-dom';
+import { fetchData } from '../hooks/FetchData';
 
 function Register() {
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const formData = new FormData(e.target);
@@ -40,50 +46,19 @@ function Register() {
             password
         };
 
-        fetch(`${process.env.REACT_APP_BACKEND_URL}auth/register`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(registerRequest)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    if (response.status === 409) {
-                        setSnackbar({
-                            open: true,
-                            message: "Användarnamn eller email finns redan.",
-                            severity: "error"
-                        });
-                    } else {
-                        setSnackbar({
-                            open: true,
-                            message: "Registreringen misslyckades. Försök igen.",
-                            severity: "error"
-                        });
-                    }
-                    throw new Error("Registration failed");
-                }
-                return response.json();
-            })
-            .then(data => {
-                setSnackbar({
-                    open: true,
-                    message: `Registrering lyckades! Välkommen, ${data.username}`,
-                    severity: "success"
-                });
-                setTimeout(() => {
-                    window.location.href = "/login";
-                }, 2000);
-            })
-            .catch(error => {
-                console.error("Fel vid registrering:", error);
-                setSnackbar({
-                    open: true,
-                    message: "Ett fel uppstod. Kunde inte kontakta servern.",
-                    severity: "error"
-                });
+        try {
+            const data = await fetchData('auth/register', 'POST', registerRequest, true);
+            setSnackbar({
+                open: true,
+                message: `Registrering lyckades! Välkommen, ${data.username}`,
+                severity: 'success'
             });
+            setTimeout(() => { window.location.href = '/login'; }, 2000);
+        } catch (err) {
+            const errorResponse = await err.response.json();
+            const msg = errorResponse.message || 'Ett fel uppstod.';
+            setSnackbar({ open: true, message: msg, severity: 'error' });
+        }
     };
 
     return (
