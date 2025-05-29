@@ -33,7 +33,7 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, title }) => {
         >
 
         <Container disableGutters>
-            <Typography variant="h6" align="center" p={0.5}>
+            <Typography fontSize={"18px"} align="center" p={0.5}>
                 {title}
             </Typography>
                 {activitiesForDay.length === 0 ? (

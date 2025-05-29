@@ -88,7 +88,7 @@ function AgendaView() {
             </Box>
             <Paper sx={{ height: '76vh', display: 'flex', overflow: 'hidden' }}>
                 {/* LEFT COLUMN */}
-                <Box sx={{ width: '40%', overflowY: 'auto', backgroundColor: '#f5f5f5', height:"510px", m:1 }}>
+                <Box sx={{ width: '35%', overflowY: 'auto', backgroundColor: '#fcfcfc', height:"510px", m:1, borderRadius:"3px" }}>
                     <CurrentDay startOfDay={startOfWeek} title={`${selectedDayName} ${selectedDate}`} />
                 </Box>
 
@@ -105,16 +105,16 @@ function AgendaView() {
                         </Box>
                     </Box>
 
-                    <Box sx={{ height: '40%', display: 'flex' }}>
+                    <Box sx={{ height: '40%', display: 'flex', justifyContent:"space-evenly"}}>
                     {/* REMAINING HEIGHT BOTTOM ROW (scrollable NextDay) */}
                         <Box
                             sx={{
                                 overflowY: 'auto',
-                                backgroundColor: '#fafafa',
+                                backgroundColor: '#fcfcfc',
                                 flex: 1,
-                                p: 2,
                                 m:1,
-                                height:"267px"
+                                height:"297px",
+                                borderRadius:"3px" 
                             }}
                         >
                             <NextDay startOfDay={startOfWeek} title={`${nextDayName} ${nextDate}`} />
@@ -123,14 +123,16 @@ function AgendaView() {
                         <Box
                             sx={{
                                 overflowY: 'auto',
-                                backgroundColor: '#fafafa',
+                                backgroundColor: '#fcfcfc',
                                 flex: 1,
-                                p: 2,
                                 m:1,
-                                height:"267px"
+                                height:"297px",
+                                borderRadius:"3px" 
                             }}
                         >
-                            <NextDay startOfDay={startOfWeek} />
+                            <Typography>
+                                inkommande
+                            </Typography>
                         </Box>
                     </Box>
                 </Box>
