@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
-dayjs.extend(isoWeek)
 import {
     Box,
     Button,
@@ -16,6 +15,7 @@ import {
 import WeeklyGrid from './WeeklyGrid';
 import { useCalendarContext } from '../../../../context/CalendarContext';
 import isoWeek from "dayjs/plugin/isoWeek";
+dayjs.extend(isoWeek)
 
 const ROW_HEIGHT_PX = 60;
 const PRE_HOURS = 3;
