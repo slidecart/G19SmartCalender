@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box, Container, Snackbar, Alert } from '@mui/material';
 import UserInput from '../components/userInput';
 import { Link } from 'react-router-dom';
-// TODO: "Vänligen verifiera din e-postadress innan du loggar in." - this should be handled in the backend and shown here
+
 function Register() {
     const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
 
@@ -102,7 +102,17 @@ function Register() {
                     fields={[
                         { label: "Användarnamn", name: "username", required: true },
                         { label: "Email", name: "emailAdress", required: true },
-                        { label: "Lösenord", name: "password", type: "password", required: true },
+                        {
+                            label: "Lösenord",
+                            name: "password",
+                            type: "password",
+                            required: true,
+                            infoTooltip: [
+                                "• Minimum 8 bokstäver",
+                                "• Minst en versal bokstav",
+                                "• Minst ett nummer"
+                            ]
+                        },
                         { label: "Upprepa lösenord", name: "checkPassword", type: "password", required: true }
                     ]}
                     buttonText="Registrera"

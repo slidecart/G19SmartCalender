@@ -1,4 +1,15 @@
-import {Box, Button, Container, FormControl, TextField, Typography} from "@mui/material";
+import {
+    Box,
+    Button,
+    Container,
+    FormControl,
+    TextField,
+    Typography,
+    InputAdornment,
+    IconButton,
+    Tooltip
+} from "@mui/material";
+import { InfoOutlined } from "@mui/icons-material";
 
 {/* Denna ska skicka tillbaka formuläret för att logga in och registera
     ex, boxarna för att skriva in användarnamn, lösernord etc. Registrera kanske 
@@ -29,6 +40,30 @@ function UserInput({title, fields = [], buttonText, onSubmit, children}){
                             variant="outlined"
                             fullWidth
                             required={field.required ?? true}
+                            InputProps={
+                                field.infoTooltip
+                                    ? {
+                                        endAdornment: (
+                                            <InputAdornment position="end">
+                                                <Tooltip
+                                                    title={
+                                                        <Box>
+                                                            {field.infoTooltip.map((line, i) => (
+                                                                <div key={i}>{line}</div>
+                                                            ))}
+                                                        </Box>
+                                                    }
+                                                    arrow
+                                                >
+                                                    <IconButton edge="end">
+                                                        <InfoOutlined />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </InputAdornment>
+                                        )
+                                    }
+                                    : undefined
+                            }
                         />
                     </FormControl>
                 ))}
