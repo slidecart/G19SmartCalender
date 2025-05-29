@@ -125,19 +125,20 @@ export default function ToDoPage() {
    * ---------------------------------------------------------- */
   return (
     <Body>
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Container maxWidth="lg" sx={{ mt: 1 }}>
         <Box display="flex" gap={4}>
           {/* ----------------------------------------------------------------
            * LEFT — list view
            * -------------------------------------------------------------- */}
-          <Box flex={1} sx={{ display: "flex", flexDirection: "column", flexGrow: 1, overflowY: "auto", minHeight: 0,}}>
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+          <Box flex={1} sx={{ display: "flex", flexDirection: "column", flexGrow: 1, maxHeight:"525px", minHeight: 0, overflowY:"auto"}}>
+            <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
               <Typography variant="h1">ToDo</Typography>
             </Box>
 
             {/* quick‑add */}
             <Box mb={2}>
               <TextField
+                size="small"
                 label="Lägg till en ny ToDo"
                 placeholder="Titel"
                 value={newTodoName}
@@ -165,7 +166,7 @@ export default function ToDoPage() {
 
               {newTodoName.trim() !== "" && (
                 <Box
-                  sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1, ml: 2 }}
+                  sx={{ display: "flex", alignItems: "center", gap: 1, mt: 1, ml: 2, overflowY:"auto"}}
                 >
                   {/* description */}
                   <TextField
@@ -289,9 +290,13 @@ export default function ToDoPage() {
                 .map((task) => {
                   const cat = categories.find((c) => c.id === task.categoryId) || null;
                   return (
-                    <Card key={task.id}>
+                    <Card key={task.id} maxHeight="500px">
                       <CardContent
                         sx={{
+                          maxHeight:"90px",
+                          minHeight:"50px",
+                          display:"flex",
+                          alignItems:"center",
                           position: "relative",
                           borderLeft: cat?.color ? `4px solid ${cat.color}` : "4px solid #ccc",
                           backgroundColor: cat?.color ? alpha(cat.color, 0.1) : "background.paper",
@@ -319,13 +324,12 @@ export default function ToDoPage() {
                         <Checkbox
                           checked={task.completed}
                           onChange={() => handleToggleCompleted(task)}
-                          sx={{ position: "absolute", bottom: 2, right: 2 }}
+                          sx={{ position: "absolute", bottom: 2, right: 2}}
                         />
                         <Box
                           onClick={() => handleTaskClick(task)}
                           sx={{
                             cursor: "pointer",
-                            p: 1.5,
                             textDecoration: task.completed ? "line-through" : "none",
                             color: task.completed ? "text.disabled" : "text.primary",
                             whiteSpace: "pre-wrap",
@@ -355,9 +359,13 @@ export default function ToDoPage() {
                     {completedTasks.map((task) => {
                       const cat = categories.find((c) => c.id === task.categoryId) || null;
                       return (
-                        <Card key={task.id} variant="outlined">
+                        <Card key={task.id} variant="outlined" sx={{ overflowY:"auto"}}>
                           <CardContent
                             sx={{
+                              maxHeight:"90px",
+                              minHeight:"50px",
+                              display:"flex",
+                              alignItems:"center",
                               opacity: 0.7,
                               textDecoration: "line-through",
                               position: "relative",
