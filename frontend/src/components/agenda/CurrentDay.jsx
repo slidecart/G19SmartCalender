@@ -42,9 +42,12 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, title }) => {
                         Inga aktiviteter för denna dag.
                     </Typography>
                 ) : (
-                    activitiesForDay.map(activity => (
+                    activitiesForDay.map((activity, i) => {
+                    const category = categories?.find(cat => cat.id === activity.categoryId);
+                    const borderLeftColor = category ? category.color : "#60f085";
+                    return(
                         <Paper
-                            key={activity.id}
+                            key={i}
                             elevation={2}
                             sx={{
                                 display: 'flex',
@@ -53,7 +56,7 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, title }) => {
                                 p:1,
                                 m: 1,
                                 borderLeft: '5px solid',
-                                borderLeftColor:"primary",
+                                borderLeftColor,
                                 backgroundColor: '#f9f9f9',
                                 maxWidth:"95%",
                             }}
@@ -71,7 +74,8 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, title }) => {
                                 {dayjs(`2000-01-01T${activity.endTime}`).format("HH:mm")}
                             </Typography>
                         </Paper>
-                    ))
+                        )
+                    })
                 )}
             </Container>
         </Box>
