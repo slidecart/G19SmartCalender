@@ -122,7 +122,7 @@ export function useCalendar() {
     const loadActivities = useCallback(async () => {
         try {
             const response = await fetchData("activities/all", "GET", ""); // Tar emot aktiviteter från backend
-            setActivities(response || []); // Användarens aktiviteter
+            setActivities(response.body || []); // Användarens aktiviteter
         } catch (error) {
             console.error("Fel vid hämtning: ", error.message);
             setError(error.message); // Visar eventuella fel

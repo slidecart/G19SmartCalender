@@ -5,26 +5,28 @@
  * toggles for all-day/recurring events, location and notes. It also shows a preview area.
  */
 
-import React from "react";
+import React, {useState} from "react";
 import {
     Dialog,
-    DialogTitle,
     DialogContent,
     DialogActions,
     AppBar,
     Toolbar,
     IconButton,
     Button,
-    Grid,
     TextField,
     Box,
-    Link,
     Switch,
     FormControlLabel,
     Divider,
     Menu,
     MenuItem,
-    Tooltip, Paper, Icon, Typography, Collapse,
+    Tooltip,
+    Paper,
+    Icon,
+    Typography,
+    Collapse,
+    Snackbar, Alert,
 } from "@mui/material";
 import {
   Save as SaveIcon,
@@ -51,6 +53,9 @@ import dayjs from "dayjs";
 
 
 export default function AddActivity({ open, onClose, mode }) {
+
+    const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "info" });
+
     // Destructure necessary context values and handlers from the calendar context
     const {
         formData,
@@ -93,6 +98,15 @@ export default function AddActivity({ open, onClose, mode }) {
 
     // Handler for saving activity data (both add and edit)
     const handleSave = async () => {
+
+        if (formData.name === "") {
+            setSnackbar({ open: true, message: "Titel är obligatorisk", severity: "error" });
+            return;
+        } else if (formData.date === "") {
+            setSnackbar({ open: true, message: "Datum är obligatorisk", severity: "error" });
+            return;
+        }
+
         try {
             if (taskID) {
                 // If taskID is present, convert the task to an activity
@@ -103,7 +117,7 @@ export default function AddActivity({ open, onClose, mode }) {
             onClose();           // only close after success
         } catch (err) {
             console.error("Couldn’t save:", err);
-            alert("Något gick fel vid sparandet");
+            setSnackbar({ open: true, message: "Kunde inte spara aktiviteten. Kontrollera alla obligatoriska fält.", severity: "error" });
         }
     };
 
@@ -124,21 +138,12 @@ export default function AddActivity({ open, onClose, mode }) {
       onClose={onClose}
       maxWidth="lg"
       fullWidth
-      PaperProps={{ sx: { height: "90vh", display: "flex", flexDirection: "column" } }}
+      PaperProps={{ sx: { height: "75vh", display: "flex", flexDirection: "column" } }}
     >
       {/* Toolbar section including save button, icon buttons for other actions, and close button */}
       <AppBar position="static" color="inherit" elevation={1}>
         <Toolbar variant="dense" sx={{ justifyContent: "space-between", px: 2 }}>
           <Box>
-            {/* Save button */}
-            <Button
-              variant="contained"
-              startIcon={<SaveIcon />}
-              onClick={handleSave}
-              sx={{ mr: 2 }}
-            >
-              Spara
-            </Button>
             {/* Appbar */}
             <Tooltip title="Kategorier">
               <IconButton
@@ -219,7 +224,7 @@ export default function AddActivity({ open, onClose, mode }) {
             {/* === LEFT: FORM PANEL  === */}
             <Box
                 sx={{
-                    flex: 7,
+                    flex: 6,
                     display: "flex",
                     flexDirection: "column",
                     borderRight: 1,
@@ -227,16 +232,19 @@ export default function AddActivity({ open, onClose, mode }) {
                 }}
             >
                 <Paper
+                    elevation={0}
                     sx={{
                         p: 2,
                         flex: 1,             // fill remaining height
                         overflowY: "auto",   // scroll if it overflows
+                        border: "none",
+                        boxShadow: "none",
                     }}
                 >
                     <TextField
                         name="name"
                         fullWidth
-                        placeholder="Lägg till en rubrik"
+                        placeholder="Lägg till en rubrik*"
                         variant="standard"
                         value={formData.name}
                         onChange={handleChange}
@@ -266,7 +274,7 @@ export default function AddActivity({ open, onClose, mode }) {
                             value={formData.date}
                             onChange={handleChange}
                             required
-                            sx={{ width: 150 }}
+                            sx={{ width: "18%" }}
                         />
                         <Box>
                           <Collapse
@@ -285,7 +293,7 @@ export default function AddActivity({ open, onClose, mode }) {
                                 value={formData.startTime}
                                 onChange={handleChange}
                                 required
-                                sx={{ width: 100 }}
+                                sx={{ width: "50%" }}
                               />
                               <TextField
                                 name="endTime"
@@ -297,7 +305,7 @@ export default function AddActivity({ open, onClose, mode }) {
                                 value={formData.endTime}
                                 onChange={handleChange}
                                 required
-                                sx={{ width: 100 }}
+                                sx={{ width: "50%" }}
                               />
                             </Box>
                           </Collapse>
@@ -337,7 +345,7 @@ export default function AddActivity({ open, onClose, mode }) {
                         placeholder="Lägg till anteckningar"
                         variant="outlined"
                         multiline
-                        rows={10}
+                        rows={12.5}
                         value={formData.description}
                         onChange={handleChange}
                     />
@@ -348,23 +356,29 @@ export default function AddActivity({ open, onClose, mode }) {
             <Box
                 sx={{
                     flex: 3,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    p: 2,
+                    pt: 2,
+                    pr: 2,
+                    pl: 2,
                 }}
             >
                 <Paper
+                    elevation={0}
                     sx={{
-                        p: 2,
                         width: "100%",
-                        height: "100%",
+                        height: "auto",
                         display: "flex",
                         flexDirection: "column",
-                        justifyContent: "space-between",
+                        border: "none",
+                        boxShadow: "none",
                     }}
                 >
-                    <Box display="flex" alignItems="center" justifyContent="center" gap={1}>
+                    <Box
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        gap={1}
+                        mb={1}
+                    >
                       <IconButton size="small" onClick={() => setPreviewDate(prev => dayjs(prev).subtract(1, "day").format("YYYY-MM-DD"))}>
                         <ArrowBackIosNewOutlinedIcon />
                       </IconButton>
@@ -382,10 +396,12 @@ export default function AddActivity({ open, onClose, mode }) {
                         <ArrowForwardIosOutlinedIcon />
                       </IconButton>
                     </Box>
-                    <DailyCalendar
-                        date={previewDate}
-                        draftActivity={draftActivity}
-                    />
+                    <Box sx={{ mt: 2 }}>
+                        <DailyCalendar
+                            date={previewDate}
+                            draftActivity={draftActivity}
+                        />
+                    </Box>
                 </Paper>
             </Box>
         </DialogContent>
@@ -400,11 +416,32 @@ export default function AddActivity({ open, onClose, mode }) {
             </Tooltip>
           ))}
         </Box>
+          {/* Save button */}
+          <Button
+              variant="contained"
+              startIcon={<SaveIcon />}
+              onClick={handleSave}
+              sx={{ mr: 2 }}
+          >
+              Spara
+          </Button>
       </DialogActions>
         <CreateCategoryDialog
             open={openCreateCategoryDialog}
             onClose={() => setOpenCreateCategoryDialog(false)}
         />
+
+        <Snackbar
+            open={snackbar.open}
+            autoHideDuration={6000}
+            onClose={() => setSnackbar({ ...snackbar, open: false })}
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+            <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+                {snackbar.message}
+            </Alert>
+        </Snackbar>
+
     </Dialog>
   );
 }
