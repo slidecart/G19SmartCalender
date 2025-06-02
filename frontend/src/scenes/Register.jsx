@@ -50,13 +50,12 @@ function Register() {
             const data = await fetchData('auth/register', 'POST', registerRequest, true);
             setSnackbar({
                 open: true,
-                message: `Registrering lyckades! Välkommen, ${data.username}`,
+                message: `Registrering lyckades! Välkommen, ${data.username}!`,
                 severity: 'success'
             });
             setTimeout(() => { window.location.href = '/login'; }, 2000);
         } catch (err) {
-            const errorResponse = await err.response.json();
-            const msg = errorResponse.message || 'Ett fel uppstod.';
+            const msg = err.message || 'Ett fel uppstod.';
             setSnackbar({ open: true, message: msg, severity: 'error' });
         }
     };

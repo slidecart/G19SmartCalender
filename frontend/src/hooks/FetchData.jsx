@@ -62,8 +62,15 @@ export async function fetchData(path, method = "GET", body = null, isPublic = fa
 
     // 3) Final error check
     if (!res.ok) {
-        const msg = await res.text().catch(() => res.statusText);
-        throw new Error(`HTTP ${res.status}: ${msg}`);
+        const text = await res.text();
+        let errorMsg;
+        try {
+            const errorJson = JSON.parse(text);
+            errorMsg = errorJson.message || `HTTP ${res.status}: ${res.statusText}`;
+        } catch (e) {
+            errorMsg = text || res.statusText;
+        }
+        throw new Error(errorMsg);
     }
 
     // 4) Parse JSON and return

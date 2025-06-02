@@ -40,7 +40,7 @@ function LogIn() {
             await auth.loginAction(loginRequest);
             setShowResendVerification(false);
         } catch (error) {
-            const msg = error.responseData?.message || "Ett fel inträffade. Var vänlig försök igen.";
+            const msg = error.message || "Ett fel inträffade. Var vänlig försök igen.";
             setSnackbar({
                 open: true,
                 message: msg,
@@ -79,7 +79,7 @@ function LogIn() {
             console.error("Forgot password error:", error);
             setSnackbar({
                 open: true,
-                message: error.responseData?.message || "Ett fel inträffade. Var vänlig försök igen.",
+                message: error.message || "Ett fel inträffade. Var vänlig försök igen.",
                 severity: "error"
             });
         } finally {
@@ -115,7 +115,7 @@ function LogIn() {
             console.error("Resend verification error:", error);
             setSnackbar({
                 open: true,
-                message: error.responseData?.message || "Kunde inte skicka verifieringslänk. Försök igen.",
+                message: error.message || "Kunde inte skicka verifieringslänk. Försök igen.",
                 severity: "error"
             });
         } finally {
