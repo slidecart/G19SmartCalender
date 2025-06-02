@@ -232,6 +232,7 @@ export function useCalendar() {
     setStartOfWeek,
     weekdays,
     timeSlots,
+    currentYear,
 
     // activities
     activities,

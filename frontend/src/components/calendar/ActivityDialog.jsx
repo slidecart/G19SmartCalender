@@ -7,15 +7,15 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 
 function ActivityDialog({
-                            anchorEl,
-                            open,
-                            onClose,
-                            activity,
-                            placement = 'right',
-                            onEdit,
-                            onDelete
-                        }) {
-    if (!anchorEl || !activity) return null;
+  anchorEl,
+  open,
+  onClose,
+  activity,
+  placement = 'right',
+  onEdit,
+  onDelete
+  }) {
+  if (!anchorEl || !activity) return null;
 
     return (
         <Popover
@@ -53,13 +53,18 @@ function ActivityDialog({
         >
 
             {/* Content */}
-            <Box sx={{ mt: 1 }}>
+            <Box sx={{ mt: 1, flexDirection:"column", display:"flex"}}>
                 <Typography variant="subtitle1" fontWeight="bold">
                     {activity.name}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                     {activity.date} • {dayjs(`1970-01-01T${activity.startTime}`).format('HH:mm')} – {dayjs(`1970-01-01T${activity.endTime}`).format('HH:mm')}
                 </Typography>
+                {activity.location && (
+                  <Typography variant="caption" color="text.secondary">
+                    {activity.location}
+                  </Typography>
+                )}
                 <Typography variant="body2" sx={{ mt: 1 }} noWrap>
                     {activity.description || 'Ingen beskrivning'}
                 </Typography>

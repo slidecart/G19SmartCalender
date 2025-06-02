@@ -13,8 +13,8 @@ export default function Sidebar() {
 
     const items = [
         { label: "Hem", icon: <HomeOutlinedIcon />, path: "/today" },
-        { label: "Dagens agenda", icon: <CalendarTodayOutlinedIcon />, path: "/today" },
-        { label: "Att göra", icon: <ChecklistRtlOutlinedIcon />, path: "/taskTodoPage" },
+        { label: "Kalender", icon: <CalendarTodayOutlinedIcon />, path: "/calendar" },
+        { label: "ToDo", icon: <ChecklistRtlOutlinedIcon />, path: "/toDo" },
         { label: "Inställningar", icon: <SettingsOutlinedIcon />, path: "/account-settings" }
     ];
 
