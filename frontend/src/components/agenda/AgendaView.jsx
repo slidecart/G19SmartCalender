@@ -41,6 +41,9 @@ function AgendaView() {
         dayjs().subtract(1, 'day')
     );
 
+    const displayedWeekName = startOfWeek.add(1, 'day').week();
+    const displayedYear = startOfWeek.add(1, 'day').year();
+
     const selectedDayIndex = startOfWeek.day();
     const selectedDayName = weekdays[selectedDayIndex].name;
     const currentDay = dayjs(startOfWeek).add(1, "day");
@@ -78,7 +81,7 @@ function AgendaView() {
 
                 {/* Headtitle for agenda */}
                 <Typography variant="h6">
-                    Vecka {startOfWeek.week()} - {currentYear}
+                    Vecka {displayedWeekName} - {displayedYear}
                 </Typography>
 
                 {/* Button changing visible day to next */}

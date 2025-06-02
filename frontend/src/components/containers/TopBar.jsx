@@ -63,7 +63,7 @@ export default function TopBar() {
 
     const goAddActivity = () => {
         handleAddMenuClose();
-        navigate("/today");
+        navigate("/calendar");
         openAddDialog();
     };
 
@@ -71,7 +71,7 @@ export default function TopBar() {
 
     const goAddTask = () => {
         handleAddMenuClose();
-        navigate("/taskTodoPage");
+        navigate("/Todo");
         openTodoDialog();
     };
 
