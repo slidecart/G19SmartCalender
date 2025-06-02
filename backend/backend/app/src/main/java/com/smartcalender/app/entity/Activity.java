@@ -65,14 +65,6 @@ public class Activity {
         return Duration.between(startTime, endTime).toMinutes();
     }
 
-    public boolean overlaps(Activity otherActivity) {
-        if (!this.date.equals(otherActivity.date)) {
-            return false;
-        }
-        return this.startTime.isBefore(otherActivity.endTime) &&
-                this.endTime.isAfter(otherActivity.startTime);
-    }
-
     @AssertTrue(message = "Start time must be before end time")
     public boolean isValidTimeRange() {
         return startTime.isBefore(endTime);

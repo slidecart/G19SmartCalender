@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @Repository
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
-    Optional<Activity> findByNameAndDate(String name, LocalDate date);
 
     Optional<Activity> findByIdAndUser(Long id, User currentUser);
 

@@ -3,8 +3,6 @@ package com.smartcalender.app.controller;
 import com.smartcalender.app.auth.SecurityUtils;
 import com.smartcalender.app.dto.ActivityDTO;
 import com.smartcalender.app.dto.CreateActivityRequest;
-import com.smartcalender.app.repository.CategoryRepository;
-import com.smartcalender.app.repository.UserRepository;
 import com.smartcalender.app.service.ActivityService;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -14,8 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * ActivityController is a REST controller that provides endpoints for managing and retrieving activities.
@@ -48,8 +44,7 @@ public class ActivityController {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
 
         if (currentUser != null) {
-            ActivityDTO created = activityService.createActivity(activity, currentUser);
-            return ResponseEntity.status(HttpStatus.CREATED).body(created);
+            return ResponseEntity.status(HttpStatus.CREATED).body(activityService.createActivity(activity, currentUser));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -66,8 +61,7 @@ public class ActivityController {
     public ResponseEntity<?> getAllActivities() {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
-            List<ActivityDTO> activities = activityService.getAllActivities(currentUser);
-            return ResponseEntity.status(HttpStatus.OK).body(activities);
+            return ResponseEntity.status(HttpStatus.OK).body(activityService.getAllActivities(currentUser));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
@@ -87,9 +81,7 @@ public class ActivityController {
     public ResponseEntity<?> getActivity(@PathVariable Long id) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
-            return activityService.getActivity(id, currentUser)
-                    .map(activity -> ResponseEntity.status(HttpStatus.OK).body(activity))
-                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+            return ResponseEntity.status(HttpStatus.OK).body(activityService.getActivity(id, currentUser));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -109,10 +101,7 @@ public class ActivityController {
     public ResponseEntity<?> editActivity(@PathVariable Long id, @Valid @RequestBody ActivityDTO activityDTO) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
-            Optional<ActivityDTO> updatedActivity = activityService.editActivity(currentUser, id, activityDTO);
-            return updatedActivity
-                    .map(activity -> ResponseEntity.status(HttpStatus.OK).body(activity))
-                    .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+            return ResponseEntity.status(HttpStatus.OK).body(activityService.editActivity(currentUser, id, activityDTO));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -153,8 +142,7 @@ public class ActivityController {
     public ResponseEntity<?> getOngoingActivities() {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
-            List<ActivityDTO> ongoing = activityService.getOngoingActivities(currentUser);
-            return ResponseEntity.status(HttpStatus.OK).body(ongoing);
+            return ResponseEntity.status(HttpStatus.OK).body(activityService.getOngoingActivities(currentUser));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -173,8 +161,7 @@ public class ActivityController {
     public ResponseEntity<?> getFutureActivities() {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
-            List<ActivityDTO> ongoing = activityService.getFutureActivities(currentUser);
-            return ResponseEntity.status(HttpStatus.OK).body(ongoing);
+            return ResponseEntity.status(HttpStatus.OK).body(activityService.getFutureActivities(currentUser));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -194,8 +181,7 @@ public class ActivityController {
     public ResponseEntity<?> getActivitiesByCategory(@PathVariable Long categoryId) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
-            List<ActivityDTO> activities = activityService.getActivitiesByCategory(currentUser, categoryId);
-            return ResponseEntity.status(HttpStatus.OK).body(activities);
+            return ResponseEntity.status(HttpStatus.OK).body(activityService.getActivitiesByCategory(currentUser, categoryId));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
@@ -218,8 +204,7 @@ public class ActivityController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
         UserDetails currentUser = SecurityUtils.getCurrentUser();
         if (currentUser != null) {
-            List<ActivityDTO> activities = activityService.getActivitiesBetween(currentUser, start, end);
-            return ResponseEntity.status(HttpStatus.OK).body(activities);
+            return ResponseEntity.status(HttpStatus.OK).body(activityService.getActivitiesBetween(currentUser, start, end));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }

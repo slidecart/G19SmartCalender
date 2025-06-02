@@ -46,8 +46,8 @@ public class ActivityServiceTest {
         createRequest.setEndTime(LocalTime.now());
         createRequest.setLocation("Test Location");
 
-        when(activityRepository.findByNameAndDate(any(), any()))
-                .thenReturn(Optional.empty());
+//        when(activityRepository.findByNameAndDate(any(), any()))
+//                .thenReturn(Optional.empty());
 
         when(userRepository.findByUsername(any()))
                 .thenReturn(Optional.of(new com.smartcalender.app.entity.User()));
@@ -55,12 +55,12 @@ public class ActivityServiceTest {
         when(activityRepository.save(any(Activity.class)))
                 .thenAnswer(i -> i.getArguments()[0]);
 
-        ActivityDTO activity = activityService.createActivity(createRequest, currentUser);
+        ActivityDTO activity = activityService.createActivity(createRequest, currentUser).getBody();
 
         assertNotNull(activity);
         assertEquals(createRequest.getName(), activity.getName());
-        verify(activityRepository, times(1))
-                .findByNameAndDate(createRequest.getName(), createRequest.getDate());
+//        verify(activityRepository, times(1))
+//                .findByNameAndDate(createRequest.getName(), createRequest.getDate());
         verify(userRepository, times(1)).findByUsername(currentUser.getUsername());
         verify(activityRepository, times(1)).save(any(Activity.class));
     }
@@ -77,8 +77,8 @@ public class ActivityServiceTest {
         createRequest.setEndTime(LocalTime.now());
         createRequest.setLocation("Test Location");
 
-        when(activityRepository.findByNameAndDate(any(), any()))
-                .thenReturn(Optional.of(new Activity()));
+//        when(activityRepository.findByNameAndDate(any(), any()))
+//                .thenReturn(Optional.of(new Activity()));
 
         assertThrows(IllegalArgumentException.class, () ->
                         activityService.createActivity(createRequest, currentUser),

@@ -3,6 +3,7 @@ import {Alert, Box, Button, CircularProgress, Snackbar, TextField, Typography} f
 import {Link} from "react-router-dom";
 import UserInput from "../components/userInput";
 import {useAuth} from "../context/AuthContext";
+import { fetchData } from "../hooks/FetchData";
 
 function LogIn() {
     const auth = useAuth();
@@ -39,22 +40,13 @@ function LogIn() {
             await auth.loginAction(loginRequest);
             setShowResendVerification(false);
         } catch (error) {
-            console.error("Login error:", error);
-            if (error.message.toLowerCase().includes("email not verified")) {
-                setSnackbar({
-                    open: true,
-                    message: "Vänligen verifiera din e-postadress innan du loggar in.",
-                    severity: "error"
-                });
-                setShowResendVerification(true);
-            } else {
-                setSnackbar({
-                    open: true,
-                    message: "Inloggning misslyckades: Fel användarnamn eller lösenord.",
-                    severity: "error"
-                });
-                setShowResendVerification(false);
-            }
+            const msg = error.message || "Ett fel inträffade. Var vänlig försök igen.";
+            setSnackbar({
+                open: true,
+                message: msg,
+                severity: "error"
+            });
+            setShowResendVerification(msg.toLowerCase().includes("e-postadressen är inte verifierad"));
         } finally {
             setIsLoading(false);
         }
@@ -73,31 +65,7 @@ function LogIn() {
 
         setIsLoading(true);
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}auth/forgot-password?email=${encodeURIComponent(emailInput)}`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              }
-            });
-            const data = await response.json();
-
-            if (!response.ok) {
-                if (data.message.includes("User not found")) {
-                    setSnackbar({
-                        open: true,
-                        message: "Användaren hittades inte. Var vänlig kontrollera din e-postadress.",
-                        severity: "error"
-                    });
-                } else {
-                    setSnackbar({
-                        open: true,
-                        message: data.message || "Ett fel inträffade. Var vänlig försök igen.",
-                        severity: "error"
-                    });
-                }
-                setEmailInput("");
-                return;
-            }
+            const data = await fetchData(`auth/forgot-password?email=${encodeURIComponent(emailInput)}`, 'POST', null, true);
 
             setSnackbar({
                 open: true,
@@ -111,7 +79,7 @@ function LogIn() {
             console.error("Forgot password error:", error);
             setSnackbar({
                 open: true,
-                message: error.message || "Meddelande kunde inte skickas. Var vänlig försök igen.",
+                message: error.message || "Ett fel inträffade. Var vänlig försök igen.",
                 severity: "error"
             });
         } finally {
@@ -131,14 +99,8 @@ function LogIn() {
 
         setIsLoading(true);
         try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}auth/resend-verification?email=${encodeURIComponent(emailInput)}`, {
-            method: 'POST',
-                headers: {
-                'Content-Type': 'application/json'
-                }
-             });
-        const data = await response.json();
-            console.error("fetchData response:", data);
+            const data = await fetchData(`auth/resend-verification?email=${encodeURIComponent(emailInput)}`, 'POST', null, true);
+
             setSnackbar({
                 open: true,
                 message: data.message || "Verifieringslänk skickad till din e-post.",
@@ -149,8 +111,7 @@ function LogIn() {
             if (data.message === "Verifieringslänk skickad till din e-post.") {
                 setShowResendVerification(false);
             }
-
-            } catch (error) {
+        } catch (error) {
             console.error("Resend verification error:", error);
             setSnackbar({
                 open: true,
