@@ -130,7 +130,10 @@ export function useCalendar() {
   const loadActivities = useCallback(async () => {
     try {
       const response = await fetchData("activities/all", "GET", "");
-      setActivities(response || []);
+      console.log("Response: ", response);
+      console.log("Response body: ", response.body);
+      const activitiesArray = Array.isArray(response) ? response : response.body || [];
+      setActivities(activitiesArray);
     } catch (err) {
       console.error("Fel vid hämtning: ", err.message);
       setError(err.message);
