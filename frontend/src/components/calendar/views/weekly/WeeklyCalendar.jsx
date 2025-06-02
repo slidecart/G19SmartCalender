@@ -14,6 +14,8 @@ import {
 
 import WeeklyGrid from './WeeklyGrid';
 import { useCalendarContext } from '../../../../context/CalendarContext';
+import isoWeek from "dayjs/plugin/isoWeek";
+dayjs.extend(isoWeek)
 
 const ROW_HEIGHT_PX = 60;
 const PRE_HOURS = 3;
@@ -82,9 +84,9 @@ function WeeklyCalendar() {
     // whenever someone calls navigateToDate(date), jump the week
     useEffect(() => {
         if (targetDate) {
-            setStartOfWeek(dayjs(targetDate).startOf("week").add(1, "day"));
+            setStartOfWeek(targetDate.startOf("isoWeek"));
         }
-    }, [targetDate]);
+    }, [targetDate, setStartOfWeek]);
 
 
     return(

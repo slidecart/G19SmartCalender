@@ -1,87 +1,106 @@
 import {Box, Button, Container, Paper, TableContainer, Typography} from "@mui/material";
 import dayjs from "dayjs";
-import {useState} from "react";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import isoWeek from "dayjs/plugin/isoWeek";
+import ArrowBackIcon  from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import MonthlyGrid from "./MonthlyGrid";
 import { useCalendarContext } from "../../../../context/CalendarContext";
 
-const daysInWeek =["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
+dayjs.extend(isoWeek);
 
 function MonthlyCalendar({ chromeHeight }) {
-    const {
-        currentMonth,
-        setCurrentMonth,
-        months, 
-        currentYear
-    } = useCalendarContext()
+    /* ------------------------------------------------------------------ */
+    /* 1) Local month state + navigation tie-in                            */
+    /* ------------------------------------------------------------------ */
+    const [currentMonth, setCurrentMonth] = useState(dayjs().startOf("month"));
 
+    // read the targetDate that Navbar sets via navigateToDate()
+    const { targetDate } = useCalendarContext();
+
+    // whenever somebody calls navigateToDate(), jump to that month
+    useEffect(() => {
+        if (targetDate) {
+            setCurrentMonth(targetDate.startOf("month"));
+        }
+    }, [targetDate]);
+
+    /* ------------------------------------------------------------------ */
+    /* 2) Derived data – recomputed only when currentMonth changes         */
+    /* ------------------------------------------------------------------ */
+    const { calendarMatrix, monthLabel } = useMemo(() => {
+        const startOfMonth = currentMonth.startOf("month");
+        const endOfMonth   = currentMonth.endOf("month");
+
+        const startDate = startOfMonth.startOf("isoWeek");
+        const endDate   = endOfMonth.endOf("isoWeek");
+
+        const totalDays = endDate.diff(startDate, "day") + 1;
+        const weeks     = Math.ceil(totalDays / 7);
+
+        const matrix = Array.from({ length: weeks }, (_, weekIndex) =>
+            Array.from({ length: 7 }, (_, dayIndex) => startDate.add(weekIndex * 7 + dayIndex, "day"))
+        );
+
+        return {
+            calendarMatrix: matrix,
+            monthLabel:     currentMonth.format("MMMM YYYY")
+        };
+    }, [currentMonth]);
+
+    /* ------------------------------------------------------------------ */
+    /* 3) Layout helpers                                                  */
+    /* ------------------------------------------------------------------ */
     const totalAvailable = `calc(100vh - ${chromeHeight}px - 56px)`;
-    // Dates
-    const today = dayjs();
-    const selectedMonthIndex = today.month();
-    const selectedMonth = months[selectedMonthIndex].name;
 
-    // Dates when month start
-    const startOfMonth = currentMonth.startOf("month");
-    const endOfMonth = currentMonth.endOf("month");
+    /* ------------------------------------------------------------------ */
+    /* 4) Handlers                                                        */
+    /* ------------------------------------------------------------------ */
+    const prevMonth = () => setCurrentMonth(m => m.subtract(1, "month"));
+    const nextMonth = () => setCurrentMonth(m => m.add(1, "month"));
 
-    // Day when month start
-    const startDate = startOfMonth.startOf("week").add(1, "day"); // Starts on a monday
-    const endDate = endOfMonth.endOf("week").add(1, "day"); // Ends on a sunday
-
-    const totalDays = endDate.diff(startDate, "day") +1;
-    const weeks = Math.ceil(totalDays/7);
-
-    // Array over weeks
-    const calendar = Array.from({length:weeks}, (_, weekIndex) => {
-        return Array.from({ length:7 }, (_, dayIndex) => {
-            const date = startDate.add(weekIndex * 7 + dayIndex, "day");
-            return date;
-        });
-    });
-
-    // Calendar title
-    const title = `${selectedMonth} ${currentYear}`;
-
+    /* ------------------------------------------------------------------ */
+    /* 5) Render                                                          */
+    /* ------------------------------------------------------------------ */
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, height: totalAvailable }}>
-            <Box display="flex" justifyContent={"space-between"} mb={0}>
-
-                {/* Button changing visible month to previous */}
-                <Button variant="contained" size="small" onClick={() => setCurrentMonth(prev => prev.subtract(1, "month"))}>
-                    <ArrowBackIcon fontSize="small"/>
-                </Button> 
-
-                {/* Headtitle for calendar */}
-                <Typography variant="h6" textAlign={"center"}>
-                    {title}
-                </Typography>
-
-                {/* Button changing visible month to next */}
-                <Button variant="contained" size="small" onClick={() => setCurrentMonth(prev => prev.add(1, "month"))}>
-                    <ArrowForwardIcon fontSize="small"/>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                flexGrow: 1,
+                height: totalAvailable
+            }}
+        >
+            {/* Header --------------------------------------------------- */}
+            <Box display="flex" justifyContent="space-between" mb={0}>
+                <Button variant="contained" size="small" onClick={prevMonth}>
+                    <ArrowBackIcon fontSize="small" />
                 </Button>
 
+                <Typography variant="h6" textAlign="center">
+                    {monthLabel}
+                </Typography>
+
+                <Button variant="contained" size="small" onClick={nextMonth}>
+                    <ArrowForwardIcon fontSize="small" />
+                </Button>
             </Box>
 
-            {/* Shows calendar */}
-            <TableContainer component={Paper}
+            {/* Grid ------------------------------------------------------ */}
+            <TableContainer
+                component={Paper}
                 elevation={2}
                 sx={{
                     flexGrow: 1,
                     display: "flex",
                     flexDirection: "column",
                     overflow: "hidden",
-                    p: 0,
-                }}>
-                <MonthlyGrid
-                    weeks={calendar}
-                />
-            </TableContainer>   
-
+                    p: 0
+                }}
+            >
+                <MonthlyGrid weeks={calendarMatrix} />
+            </TableContainer>
         </Box>
-    )
+    );
 }
 
 export default MonthlyCalendar;

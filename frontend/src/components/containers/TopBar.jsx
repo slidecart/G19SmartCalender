@@ -21,6 +21,7 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import FilterListOutlinedIcon from '@mui/icons-material/FilterListOutlined';
 import { useCalendarContext } from "../../context/CalendarContext";
+import { useCategoryContext} from "../../context/CategoryContext";
 import CreateCategoryDialog from "../CreateCategoryDialog";
 import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
 import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUncheckedOutlined';
@@ -35,14 +36,18 @@ export default function TopBar() {
     const isCalendarPage = location.pathname === "/calendar";
 
     const {
-        categories,
-        selectedCategories,
-        toggleCategory,
         currentView,
         setCurrentView,
         openAddDialog,
-        resetFilter,
     } = useCalendarContext();
+
+    const {
+        categories,
+        selectedCategories,
+        toggleCategory,
+        resetFilter,
+        createCategory,
+    } = useCategoryContext();
 
     const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
     const [filterAnchorEl, setFilterAnchorEl] = useState(null);
@@ -193,6 +198,11 @@ export default function TopBar() {
             <CreateCategoryDialog
                 open={openCreateCategoryDialog}
                 onClose={() => setOpenCreateCategoryDialog(false)}
+                onCreate={async ({ name, color }) => {
+                    const newCat = await createCategory(name, color);
+                    toggleCategory(newCat.id);
+                    setOpenCreateCategoryDialog(false);
+                }}
             />
         </Box>
     );

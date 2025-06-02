@@ -10,7 +10,7 @@ import Register from "./scenes/Register";
 import AccountSettings from "./scenes/AccountSettings";
 import {CalendarProvider} from "./context/CalendarContext";
 import {TodoProvider} from "./context/TodoContext";
-import CalendarPage from "./scenes/CalendarPage";
+import {CategoryProvider} from "./context/CategoryContext";
 
 function App() {
   return (
@@ -25,17 +25,19 @@ function App() {
                   {/* Now wrap *all* calendar-backed routes in CalendarProvider */}
                   <Route
                       element={
-                          <CalendarProvider>
-                              <TodoProvider>
-                                {/* Outlet will render matching child route */}
-                                <Outlet />
-                              </TodoProvider>
-                          </CalendarProvider>
+                          <CategoryProvider>
+                            <CalendarProvider>
+                                <TodoProvider>
+                                    {/* Outlet will render matching child route */}
+                                    <Outlet />
+                                </TodoProvider>
+                            </CalendarProvider>
+                          </CategoryProvider>
+
                       }
                   >
                       <Route path="/today" element={<TodaysAgenda />} />
-                      <Route path="/calendar" element={<CalendarPage/>} />
-                      <Route path="/toDo" element={<ToDoPage />} />
+                      <Route path="/taskTodoPage" element={<ToDoPage />} />
                       <Route path="/account-settings" element={<AccountSettings />} />
                   </Route>
                 </Route>
