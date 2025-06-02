@@ -21,7 +21,7 @@ import {fetchData} from "../../hooks/FetchData";
 
 export default function Navbar({ onNavigate }) {
     const theme = useTheme();
-    const { navigateToDate } = useCalendarContext();
+    const { navigateToDate, currentView } = useCalendarContext();
 
     const [searchText, setSearchText] = useState("");
     const [results, setResults] = useState(null);
@@ -44,8 +44,6 @@ export default function Navbar({ onNavigate }) {
         debounceRef.current = setTimeout(() => {
             fetchData(`user/search?query=${encodeURIComponent(searchText)}`)
                 .then(data => {
-                    // your backend returns either { searchText, activity, task }
-                    // or { message: "Search results not found" }
                     if (data.searchText) {
                         setResults(data);
                     } else {
@@ -64,12 +62,9 @@ export default function Navbar({ onNavigate }) {
     }, [searchText]);
 
     const handleSelect = (item) => {
-        // item might be { name, date, ... }
-        // assume date is an ISO string: "YYYY-MM-DD"
         if (item.date) {
-            navigateToDate(item.date);
+            navigateToDate(item.date, currentView);
         }
-        // close dropdown & clear
         setOpenPopper(false);
         setSearchText("");
     };
