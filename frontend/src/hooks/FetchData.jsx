@@ -9,8 +9,15 @@ const API_BASE = process.env.REACT_APP_BACKEND_URL;
 async function makeRequest(path, method, body, token) {
     const cleanPath = path.startsWith('/') ? path.slice(1) : path;
     const url = `${API_BASE}${cleanPath}`;
+    console.log("Access token:", localStorage.getItem("accessToken"));
 
-    const headers = { "Content-Type": "application/json" };
+
+    const headers = {
+        "Content-Type": method === "POST" && typeof body === "string"
+            ? "text/plain"
+            : "application/json"
+    };
+
     if (token) headers.Authorization = `Bearer ${token}`;
 
     const opts = { method, headers };

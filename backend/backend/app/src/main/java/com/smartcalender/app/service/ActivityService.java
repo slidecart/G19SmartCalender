@@ -295,4 +295,37 @@ public class ActivityService {
         }
         return warnings;
     }
+
+    @Transactional
+    public List<ActivityDTO> createActivitiesBatch(List<CreateActivityRequest> requests, UserDetails currentUser) {
+        User user = userRepository.findByUsername(currentUser.getUsername())
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        List<ActivityDTO> created = new ArrayList<>();
+
+        for (CreateActivityRequest request : requests) {
+            Activity activity = new Activity();
+            activity.setName(request.getName());
+            activity.setDescription(request.getDescription());
+            activity.setDate(request.getDate());
+            activity.setStartTime(request.getStartTime());
+            activity.setEndTime(request.getEndTime());
+            activity.setLocation(request.getLocation());
+            activity.setUser(user);
+
+            if (request.getCategoryId() != null) {
+                Category category = categoryRepository.findById(request.getCategoryId())
+                        .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+                activity.setCategory(category);
+            }
+
+            Activity saved = activityRepository.save(activity);
+            ActivityDTO dto = activityMapper.toDto(saved);
+            dto.setWarnings(checkForOverlaps(saved, user, saved.getId()));
+            created.add(dto);
+        }
+
+        return created;
+    }
+
 }

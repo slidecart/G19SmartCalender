@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import { useCalendarContext } from '../context/CalendarContext';
 import {useAuth} from '../context/AuthContext';
 import {fetchData} from '../hooks/FetchData';
 import {
@@ -34,6 +35,7 @@ const ProfileIcon = styled('img')(({ selected }) => ({
 }));
 
 function AccountSettings() {
+    const { createOrUpdateActivity } = useCalendarContext();
     const { logoutAction } = useAuth();
     const [user, setUser] = useState(null);
     const [currentPassword, setCurrentPassword] = useState('');
@@ -199,6 +201,21 @@ function AccountSettings() {
             setDeleteMessage('Fel vid radering av konto: ' + error.message);
         } finally {
             setIsLoadingDelete(false);
+        }
+    };
+
+    const [kronoxUrl, setKronoxUrl] = useState('');
+    const [importMessage, setImportMessage] = useState('');
+
+    const handleKronoxImport = async () => {
+        try {
+            const res = await fetchData("user/import/kronox", "POST", { url: kronoxUrl });
+
+            if (!res) throw new Error("Tomt svar från servern");
+            setImportMessage(`Importerat ${res.length} aktiviteter`);
+        } catch (err) {
+            console.error("Fel vid import:", err);
+            setImportMessage("Fel vid import");
         }
     };
 
@@ -416,6 +433,34 @@ function AccountSettings() {
                             </Dialog>
                         </Box>
                     </Grid>
+                    <Grid item xs={12}>
+                        <Box sx={{ p: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
+                            <Typography variant="h6" gutterBottom>
+                                Importera från KronoX
+                            </Typography>
+                            <TextField
+                                label="KronoX-länk"
+                                value={kronoxUrl}
+                                onChange={(e) => setKronoxUrl(e.target.value)}
+                                fullWidth
+                                margin="normal"
+                            />
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleKronoxImport}
+                                sx={{ mt: 2 }}
+                            >
+                                Importera schema
+                            </Button>
+                            {importMessage && (
+                                <Typography sx={{ mt: 2 }} color="text.secondary">
+                                    {importMessage}
+                                </Typography>
+                            )}
+                        </Box>
+                    </Grid>
+
                 </Grid>
             </Box>
             <Sidebar />
