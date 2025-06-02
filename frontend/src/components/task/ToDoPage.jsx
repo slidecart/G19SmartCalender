@@ -66,6 +66,7 @@ export default function ToDoPage() {
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [sweepingTaskId, setSweepingTaskId] = useState(null);
 
   // quick‑add inputs
   const [newTodoName, setNewTodoName] = useState("");
@@ -112,7 +113,12 @@ export default function ToDoPage() {
   };
 
   const handleToggleCompleted = async (task) => {
-    await toggleComplete(task);
+    setSweepingTaskId(task.id);
+
+    setTimeout(async () => {
+        await toggleComplete(task);
+        setSweepingTaskId(null);
+    }, 300);
   };
 
   const incompleteTasks = tasks.filter((t) => !t.completed);
@@ -291,7 +297,7 @@ export default function ToDoPage() {
                             animate: { opacity: 1, x: 0 },
                             exit: { opacity: 0, x: 50 },
                           }}
-                          transition={{ duration: 0.3 }}
+                          transition={{ duration: 0.3, delay: task.id === sweepingTaskId ? 0.5 : 0 }}
                         >
                           <Card maxHeight="500px">
                             <CardContent
@@ -301,6 +307,7 @@ export default function ToDoPage() {
                                   display: "flex",
                                   alignItems:"center",
                                   position: "relative",
+                                  overflow: "hidden",
                                   borderLeft: cat?.color ? `4px solid ${cat.color}` : "4px solid #ccc",
                                   backgroundColor: cat?.color ? alpha(cat.color, 0.1) : "background.paper",
                                   transition: "background-color 0.3s ease",
@@ -311,6 +318,28 @@ export default function ToDoPage() {
                                   },
                                 }}
                             >
+                              {sweepingTaskId === task.id && (
+                                  <Box
+                                      sx={{
+                                        position: "absolute",
+                                        top: 0,
+                                        left: "-100%",
+                                        width: "100%",
+                                        height: "100%",
+                                        bgcolor: cat?.color ? alpha(cat.color, 0.5) : alpha("#4BB543", 0.7 ),
+                                        animation: "sweep 0.5s ease-in forwards",
+                                        zIndex: 0,
+                                        "@keyframes sweep": {
+                                          "0%": {
+                                            left: "-100%",
+                                          },
+                                          "100%": {
+                                            left: 0,
+                                          },
+                                        },
+                                      }}
+                                  />
+                              )}
                               <IconButton
                                   onClick={() => {
                                     if (task.completed) {
@@ -320,14 +349,14 @@ export default function ToDoPage() {
                                       setConfirmDeleteOpen(true);
                                     }
                                   }}
-                                  sx={{ position: "absolute", top: 2, right: 2, color: "error.main" }}
+                                  sx={{ position: "absolute", top: 2, right: 2, color: "error.main", zIndex: 1 }}
                               >
                                 <DeleteOutlineOutlinedIcon />
                               </IconButton>
                               <Checkbox
                                   checked={task.completed}
                                   onChange={() => handleToggleCompleted(task)}
-                                  sx={{ position: "absolute", bottom: 2, right: 2}}
+                                  sx={{ position: "absolute", bottom: 2, right: 2, zIndex: 1 }}
                               />
                               <Box
                                   onClick={() => handleTaskClick(task)}
@@ -337,6 +366,7 @@ export default function ToDoPage() {
                                     color: task.completed ? "text.disabled" : "text.primary",
                                     whiteSpace: "pre-wrap",
                                     wordBreak: "break-word",
+                                    zIndex: 1,
                                   }}
                               >
                                 <Typography variant="h6">{task.name}</Typography>
