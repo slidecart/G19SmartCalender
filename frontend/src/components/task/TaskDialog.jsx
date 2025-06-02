@@ -1,20 +1,9 @@
-import React from "react";
-import {
-    Box,
-    Button,
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    Typography
-} from "@mui/material";
-import { useCategoryContext } from "../../context/CategoryContext";
+import {Box, Button, Dialog, DialogContent, DialogTitle, Typography} from "@mui/material";
 import dayjs from "dayjs";
+import React from "react";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 
 function TaskDialog({ open, onClose, task, onEdit, onDelete, onConvert}){
-    const { categories } = useCategoryContext();
-    const category = categories.find((c) => c.id === task?.categoryId);
-
     return (
         <Dialog
             open={open}
@@ -88,11 +77,7 @@ function TaskDialog({ open, onClose, task, onEdit, onDelete, onConvert}){
                         </Typography>
 
                         <Typography variant="body1" sx={{ color: "text.secondary" }}>
-                            <strong>Kategori:</strong> {category ? category.name : "Ingen kategori angiven."}
-                        </Typography>
-
-                        <Typography variant="body1" sx={{ color: "text.secondary" }}>
-                            <strong>Datum:</strong> {task?.date ? dayjs(task.date).format("YYYY-MM-DD") : "Ingen deadline."}
+                            <strong>Datum:</strong> {task?.date ? dayjs(task.date).format("YYYY-MM-DD") : "Inget datum angivet."}
                         </Typography>
                     </Box>
                 </DialogContent>
@@ -123,6 +108,7 @@ function TaskDialog({ open, onClose, task, onEdit, onDelete, onConvert}){
                     >
                         Stäng
                     </Button>
+
                 </Box>
             </Box>
         </Dialog>

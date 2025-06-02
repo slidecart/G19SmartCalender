@@ -61,10 +61,6 @@ export function useTodos() {
         []
     );
 
-    const removeTaskFromState = useCallback((taskId) => {
-        setTasks(prev => prev.filter(task => task.id !== taskId));
-    }, []);
-
     useEffect(() => {
         loadTasks();
     }, [loadTasks]);
@@ -78,6 +74,5 @@ export function useTodos() {
         updateTask,
         deleteTask,
         toggleComplete,
-        removeTaskFromState
     };
 }

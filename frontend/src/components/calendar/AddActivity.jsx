@@ -5,36 +5,38 @@
  * toggles for all-day/recurring events, location and notes. It also shows a preview area.
  */
 
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {
     Dialog,
+    DialogTitle,
     DialogContent,
     DialogActions,
     AppBar,
     Toolbar,
     IconButton,
     Button,
+    Grid,
     TextField,
     Box,
+    Link,
     Switch,
     FormControlLabel,
     Divider,
     Menu,
     MenuItem,
-    Tooltip,
-    Paper,
-    Icon,
-    Typography,
-    Collapse,
+    Tooltip, Paper, Icon, Typography, Collapse,
 } from "@mui/material";
 import {
   Save as SaveIcon,
   Close as CloseIcon,
+  ReplyAll as ReplyAllIcon,
+  EventBusy as BusyIcon,
+  Repeat as RecurringIcon,
+  Lock as PrivateIcon,
   AttachFile as AttachIcon,
   InsertEmoticon as EmoticonIcon,
 } from "@mui/icons-material";
 import { useCalendarContext } from "../../context/CalendarContext";
-import {  useCategoryContext} from "../../context/CategoryContext";
 import AutorenewOutlinedIcon from '@mui/icons-material/AutorenewOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutlined';
@@ -44,7 +46,9 @@ import ArrowCircleUpOutlinedIcon from '@mui/icons-material/ArrowCircleUpOutlined
 import {DailyCalendar} from "./views/daily/DailyCalendar";
 import CreateCategoryDialog from "../CreateCategoryDialog";
 import dayjs from "dayjs";
-import { useTodoContext } from "../../context/TodoContext";
+
+
+
 
 export default function AddActivity({ open, onClose, mode }) {
     // Destructure necessary context values and handlers from the calendar context
@@ -52,14 +56,12 @@ export default function AddActivity({ open, onClose, mode }) {
         formData,
         handleChange,
         createOrUpdateActivity,
+        categories,
         taskID,
         convertTaskToActivity,
     } = useCalendarContext();
-
-    const { removeTaskFromState } = useTodoContext();
-
-    const { categories, createCategory } = useCategoryContext();
     const { date, startTime, endTime } = formData;
+    console.log(taskID);
 
     const draftActivity =
         formData.name || formData.startTime
@@ -67,13 +69,13 @@ export default function AddActivity({ open, onClose, mode }) {
             : null;
 
     // State for managing the category menu
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [anchorEl, setAnchorEl] = React.useState(null);
     const handleMenuClick = (event) => setAnchorEl(event.currentTarget);
     const handleMenuClose = () => setAnchorEl(null);
-    const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = useState(false);
+    const [openCreateCategoryDialog, setOpenCreateCategoryDialog] = React.useState(false);
 
     // Local state for handling "all day"
-    const [allDay, setAllDay] = useState(false);
+    const [allDay, setAllDay] = React.useState(false);
     const handleAllDayChange = (event) => {
         setAllDay(!allDay);
         if (!allDay) {
@@ -87,7 +89,7 @@ export default function AddActivity({ open, onClose, mode }) {
         }
     }
 
-    const [recurring, setRecurring] = useState(false);
+    const [recurring, setRecurring] = React.useState(false);
 
     // Handler for saving activity data (both add and edit)
     const handleSave = async () => {
@@ -95,20 +97,19 @@ export default function AddActivity({ open, onClose, mode }) {
             if (taskID) {
                 // If taskID is present, convert the task to an activity
                 await convertTaskToActivity(formData, taskID);
-                removeTaskFromState(taskID); // Remove task from state after conversion
             } else {
                 await createOrUpdateActivity(formData, mode, );
             }
             onClose();           // only close after success
         } catch (err) {
             console.error("Couldn’t save:", err);
-            alert("Något gick fel vid sparandet av aktiviteten. Försök igen.");
+            alert("Något gick fel vid sparandet");
         }
     };
 
     // Handlers for navigating through dates in the preview area
-    const [previewDate, setPreviewDate] = useState(date);
-    useEffect(() => {
+    const [previewDate, setPreviewDate] = React.useState(date);
+    React.useEffect(() => {
         setPreviewDate(date);
     }, [date, open]);
 
@@ -116,16 +117,6 @@ export default function AddActivity({ open, onClose, mode }) {
         const todayDate = dayjs().format("YYYY-MM-DD");
         setPreviewDate(todayDate);
     }
-
-    const handleCategoryCreated = async ({ name, color }) => {
-        const newCat = await createCategory(name, color);
-        setOpenCreateCategoryDialog(false);
-        // immediately select it in your form
-        handleChange({
-            target: { name: "categoryId", value: newCat.id },
-        });
-    };
-
 
     return (
     <Dialog
@@ -178,7 +169,7 @@ export default function AddActivity({ open, onClose, mode }) {
                   key={cat.id}
                   onClick={() => {
                     handleChange({ target: { name: "categoryId", value: cat.id } });
-                    setAnchorEl(null);
+                    handleMenuClose();
                   }}
                 >
                   <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -199,7 +190,7 @@ export default function AddActivity({ open, onClose, mode }) {
               <MenuItem
                 onClick={() => {
                   setOpenCreateCategoryDialog(true);
-                  setAnchorEl(null);
+                  handleMenuClose();
                 }}
               >
                 <Box display="flex" justifyContent="center" alignItems="center" width="100%">
@@ -413,7 +404,6 @@ export default function AddActivity({ open, onClose, mode }) {
         <CreateCategoryDialog
             open={openCreateCategoryDialog}
             onClose={() => setOpenCreateCategoryDialog(false)}
-            onCreate={handleCategoryCreated}
         />
     </Dialog>
   );
