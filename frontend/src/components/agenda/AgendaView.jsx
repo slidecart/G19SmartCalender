@@ -7,10 +7,9 @@ import ActivityDialog from "../calendar/ActivityDialog";
 import ConfirmationDialog from "../ConfirmationDialog";
 import dayjs from "dayjs";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import {timeSlots} from "../../data/calendar/CalendarData";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import {useCalendar} from "../../hooks/calendar/useCalendar";
-import {useState} from "react";
+import {useState, useEffect, useRef} from "react";
+import ToDoList from "../task/ToDoList";
 
 function AgendaView() {
     const {
@@ -35,7 +34,6 @@ function AgendaView() {
         placement,
         formData,
     } = useCalendarContext();
-
 
     const [startOfWeek, setStartOfWeek] = useState(
         dayjs().subtract(1, 'day')
@@ -63,6 +61,20 @@ function AgendaView() {
         setStartOfWeek(prev => dayjs(prev).add(1, 'day'));
     }
 
+    const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const panelRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (panelRef.current && !panelRef.current.contains(event.target)) {
+                setIsPanelOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
 
     return(
@@ -91,7 +103,7 @@ function AgendaView() {
             </Box>
             <Paper sx={{ height: '76vh', display: 'flex', overflow: 'hidden' }}>
                 {/* LEFT COLUMN */}
-                <Box sx={{ width: '35%', overflowY: 'auto', backgroundColor: '#fcfcfc', height:"510px", m:1, borderRadius:"3px" }}>
+                <Box sx={{ width: '40%', overflowY: 'auto', backgroundColor: '#fcfcfc', height:"510px", m:1, borderRadius:"3px" }}>
                     <CurrentDay startOfDay={startOfWeek} title={`${selectedDayName} ${selectedDate}`} />
                 </Box>
 
@@ -99,45 +111,45 @@ function AgendaView() {
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
 
                     {/* FIXED HEIGHT TOP ROW (two boxes) */}
-                    <Box sx={{ height: '40%', display: 'flex' }}>
-                        <Box sx={{ flex: 1, p: 2 }}>
-                            <Typography variant="h6">Top Left</Typography>
-                        </Box>
-                        <Box sx={{ flex: 1, p: 2 }}>
-                            <Typography variant="h6">Top Right</Typography>
+                    <Box sx={{ height: '100vh', display: 'flex' }}>
+                        <Box
+                            sx={{
+                                flex: 1,
+                                p: 2,
+                                height:"297px",
+                                borderRadius:"3px"
+                            }}
+                        >
+                            <ToDoList />
                         </Box>
                     </Box>
 
-                    <Box sx={{ height: '40%', display: 'flex', justifyContent:"space-evenly"}}>
-                    {/* REMAINING HEIGHT BOTTOM ROW (scrollable NextDay) */}
-                        <Box
-                            sx={{
-                                overflowY: 'auto',
-                                backgroundColor: '#fcfcfc',
-                                flex: 1,
-                                m:1,
-                                height:"297px",
-                                borderRadius:"3px" 
-                            }}
-                        >
-                            <NextDay startOfDay={startOfWeek} title={`${nextDayName} ${nextDate}`} />
-
+                    <Box
+                        ref={panelRef}
+                        sx={{
+                            position: 'fixed',
+                            bottom: 0,
+                            right: 0,
+                            width: 320,
+                            maxHeight: isPanelOpen ? 400 : 48,
+                            transition: 'max-height 0.3s ease',
+                            overflow: 'hidden',
+                            backgroundColor: '#fcfcfc',
+                            borderTopLeftRadius: '12px',
+                            borderTopRightRadius: '12px',
+                            boxShadow: 3,
+                            zIndex: 1300,
+                        }}
+                        onClick={() => setIsPanelOpen(true)}
+                    >
+                        <Box sx={{ p: 1, cursor: 'pointer', fontWeight: 'bold' , color: 'white', backgroundColor: 'primary.main'}}>
+                            {nextDayName} {nextDate}
                         </Box>
-                        <Box
-                            sx={{
-                                overflowY: 'auto',
-                                backgroundColor: '#fcfcfc',
-                                flex: 1,
-                                m:1,
-                                height:"297px",
-                                borderRadius:"3px" 
-                            }}
-                        >
-                            <Typography>
-                                inkommande
-                            </Typography>
+                        <Box sx={{ p: 2, overflowY: 'auto', maxHeight: 340 }}>
+                            <NextDay startOfDay={startOfWeek} title="" />
                         </Box>
                     </Box>
+
                 </Box>
             </Paper>
 
@@ -173,7 +185,6 @@ function AgendaView() {
                 }}
             />
         </Paper>
-
     )
 }
 
