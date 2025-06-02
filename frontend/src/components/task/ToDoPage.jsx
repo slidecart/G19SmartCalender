@@ -1,6 +1,8 @@
 // frontend/src/components/task/ToDoPage.jsx
 import React, { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Lottie from 'lottie-react';
+import confettiAnimation from '../../animations/Confetti.json';
 import {
   Checkbox,
   Container,
@@ -67,6 +69,7 @@ export default function ToDoPage() {
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
   const [sweepingTaskId, setSweepingTaskId] = useState(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   // quick‑add inputs
   const [newTodoName, setNewTodoName] = useState("");
@@ -115,10 +118,15 @@ export default function ToDoPage() {
   const handleToggleCompleted = async (task) => {
     setSweepingTaskId(task.id);
 
+    if (!task.completed) {
+    setShowConfetti(true);
+    }
+
     setTimeout(async () => {
         await toggleComplete(task);
         setSweepingTaskId(null);
-    }, 300);
+        setShowConfetti(false);
+    }, 1000);
   };
 
   const incompleteTasks = tasks.filter((t) => !t.completed);
@@ -339,6 +347,27 @@ export default function ToDoPage() {
                                         },
                                       }}
                                   />
+                              )}
+                              {showConfetti && sweepingTaskId === task.id && (
+                                  <Box
+                                      sx={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        width: 200,
+                                        height: 200,
+                                        pointerEvents: 'none',
+                                        zIndex: 10,
+                                      }}
+                                  >
+                                    <Lottie
+                                        animationData={confettiAnimation}
+                                        loop={false}
+                                        autoplay
+                                        style={{ width: '100%', height: '100%' }}
+                                    />
+                                  </Box>
                               )}
                               <IconButton
                                   onClick={() => {
