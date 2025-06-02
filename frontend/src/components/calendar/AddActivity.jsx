@@ -44,6 +44,7 @@ import ArrowCircleUpOutlinedIcon from '@mui/icons-material/ArrowCircleUpOutlined
 import {DailyCalendar} from "./views/daily/DailyCalendar";
 import CreateCategoryDialog from "../CreateCategoryDialog";
 import dayjs from "dayjs";
+import { useTodoContext } from "../../context/TodoContext";
 
 export default function AddActivity({ open, onClose, mode }) {
     // Destructure necessary context values and handlers from the calendar context
@@ -54,9 +55,11 @@ export default function AddActivity({ open, onClose, mode }) {
         taskID,
         convertTaskToActivity,
     } = useCalendarContext();
+
+    const { removeTaskFromState } = useTodoContext();
+
     const { categories, createCategory } = useCategoryContext();
     const { date, startTime, endTime } = formData;
-    console.log(taskID);
 
     const draftActivity =
         formData.name || formData.startTime
@@ -92,13 +95,14 @@ export default function AddActivity({ open, onClose, mode }) {
             if (taskID) {
                 // If taskID is present, convert the task to an activity
                 await convertTaskToActivity(formData, taskID);
+                removeTaskFromState(taskID); // Remove task from state after conversion
             } else {
                 await createOrUpdateActivity(formData, mode, );
             }
             onClose();           // only close after success
         } catch (err) {
             console.error("Couldn’t save:", err);
-            alert("Något gick fel vid sparandet");
+            alert("Något gick fel vid sparandet av aktiviteten. Försök igen.");
         }
     };
 

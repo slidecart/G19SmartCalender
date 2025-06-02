@@ -129,8 +129,18 @@ export default function ToDoPage() {
     }, 1000);
   };
 
+  const handleConvert = async (task) => {
+    openAddDialog(task, task.id);
+  };
+
   const incompleteTasks = tasks.filter((t) => !t.completed);
   const completedTasks = tasks.filter((t) => t.completed);
+
+  const variants = {
+    initial: { opacity: 0, x: -50 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: 50 },
+  };
 
   /* ------------------------------------------------------------
    * render
@@ -300,16 +310,14 @@ export default function ToDoPage() {
                           initial="initial"
                           animate="animate"
                           exit="exit"
-                          variants={{
-                            initial: { opacity: 0, x: -50 },
-                            animate: { opacity: 1, x: 0 },
-                            exit: { opacity: 0, x: 50 },
-                          }}
+                          variants={variants}
                           transition={{ duration: 0.3, delay: task.id === sweepingTaskId ? 0.5 : 0 }}
                         >
                           <Card maxHeight="500px">
                             <CardContent
+                                onClick={() => handleTaskClick(task)}
                                 sx={{
+                                  cursor: "pointer",
                                   maxHeight:"90px",
                                   minHeight:"50px",
                                   display: "flex",
@@ -348,6 +356,46 @@ export default function ToDoPage() {
                                       }}
                                   />
                               )}
+                              <IconButton
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (task.completed) {
+                                      deleteTask(task.id);
+                                    } else {
+                                      setTaskToDelete(task);
+                                      setConfirmDeleteOpen(true);
+                                    }
+                                  }}
+                                  sx={{ position: "absolute", top: 2, right: 2, color: "error.main", zIndex: 1 }}
+                              >
+                                <DeleteOutlineOutlinedIcon />
+                              </IconButton>
+                              <Checkbox
+                                  checked={task.completed}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                  onChange={() => handleToggleCompleted(task)}
+                                  sx={{ position: "absolute", bottom: 2, right: 2, zIndex: 1 }}
+                              />
+                              <Box
+                                  sx={{
+                                    cursor: "pointer",
+                                    textDecoration: task.completed ? "line-through" : "none",
+                                    color: task.completed ? "text.disabled" : "text.primary",
+                                    whiteSpace: "pre-wrap",
+                                    wordBreak: "break-word",
+                                    zIndex: 1,
+                                  }}
+                              >
+                                <Typography variant="h6">{task.name}</Typography>
+                                <Typography variant="body2">{task.description}</Typography>
+                                {task.date && (
+                                    <Typography variant="caption">
+                                      Ska utföras innan: {task.date}
+                                    </Typography>
+                                )}
+                              </Box>
                               {showConfetti && sweepingTaskId === task.id && (
                                   <Box
                                       sx={{
@@ -369,43 +417,6 @@ export default function ToDoPage() {
                                     />
                                   </Box>
                               )}
-                              <IconButton
-                                  onClick={() => {
-                                    if (task.completed) {
-                                      deleteTask(task.id);
-                                    } else {
-                                      setTaskToDelete(task);
-                                      setConfirmDeleteOpen(true);
-                                    }
-                                  }}
-                                  sx={{ position: "absolute", top: 2, right: 2, color: "error.main", zIndex: 1 }}
-                              >
-                                <DeleteOutlineOutlinedIcon />
-                              </IconButton>
-                              <Checkbox
-                                  checked={task.completed}
-                                  onChange={() => handleToggleCompleted(task)}
-                                  sx={{ position: "absolute", bottom: 2, right: 2, zIndex: 1 }}
-                              />
-                              <Box
-                                  onClick={() => handleTaskClick(task)}
-                                  sx={{
-                                    cursor: "pointer",
-                                    textDecoration: task.completed ? "line-through" : "none",
-                                    color: task.completed ? "text.disabled" : "text.primary",
-                                    whiteSpace: "pre-wrap",
-                                    wordBreak: "break-word",
-                                    zIndex: 1,
-                                  }}
-                              >
-                                <Typography variant="h6">{task.name}</Typography>
-                                <Typography variant="body2">{task.description}</Typography>
-                                {task.date && (
-                                    <Typography variant="caption">
-                                      Ska utföras innan: {task.date}
-                                    </Typography>
-                                )}
-                              </Box>
                             </CardContent>
                           </Card>
                         </motion.div>
@@ -429,11 +440,7 @@ export default function ToDoPage() {
                               initial="initial"
                               animate="animate"
                               exit="exit"
-                              variants={{
-                                initial: { opacity: 0, x: -50 },
-                                animate: { opacity: 1, x: 0 },
-                                exit: { opacity: 0, x: 50 },
-                              }}
+                              variants={variants}
                               transition={{ duration: 0.3 }}
                             >
                               <Card variant="outlined" sx={{ overflowY:"auto"}}>
@@ -513,7 +520,7 @@ export default function ToDoPage() {
               }}
               onConvert={() => {
                 setTaskDialogOpen(false);
-                openAddDialog(selectedTask, selectedTask.id);
+                handleConvert(selectedTask);
               }}
           />
 
