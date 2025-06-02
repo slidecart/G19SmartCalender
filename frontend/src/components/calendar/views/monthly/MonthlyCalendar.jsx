@@ -13,13 +13,13 @@ function MonthlyCalendar({ chromeHeight }) {
         currentMonth,
         setCurrentMonth,
         months, 
-        currentYear
     } = useCalendarContext()
 
     const totalAvailable = `calc(100vh - ${chromeHeight}px - 56px)`;
     // Dates
     const today = dayjs();
-    const selectedMonthIndex = today.month();
+    const selectedMonthIndex = currentMonth.month();
+    const selectedYear = currentMonth.year();
     const selectedMonth = months[selectedMonthIndex].name;
 
     // Dates when month start
@@ -42,7 +42,7 @@ function MonthlyCalendar({ chromeHeight }) {
     });
 
     // Calendar title
-    const title = `${selectedMonth} ${currentYear}`;
+    const title = `${selectedMonth} ${selectedYear}`;
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", flexGrow: 1, height: totalAvailable }}>
