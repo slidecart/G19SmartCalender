@@ -78,7 +78,7 @@ function AgendaView() {
 
 
     return(
-        <Paper>
+        <Box>
             <Box
                 sx={{
                     display: 'flex',
@@ -101,7 +101,7 @@ function AgendaView() {
                     <ArrowForwardIcon fontSize="small"/>
                 </Button>
             </Box>
-            <Paper sx={{ height: '76vh', display: 'flex', overflow: 'hidden' }}>
+            <Box sx={{ height: '76vh', display: 'flex', overflowY: 'hidden' }}>
                 {/* LEFT COLUMN */}
                 <Box sx={{ width: '40%', overflowY: 'auto', backgroundColor: '#fcfcfc', height:"510px", m:1, borderRadius:"3px" }}>
                     <CurrentDay startOfDay={startOfWeek} title={`${selectedDayName} ${selectedDate}`} />
@@ -110,14 +110,10 @@ function AgendaView() {
                 {/* RIGHT COLUMN */}
                 <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
 
-                    {/* FIXED HEIGHT TOP ROW (two boxes) */}
-                    <Box sx={{ height: '100vh', display: 'flex' }}>
+                    <Box sx={{ height: '100vh', display: 'flex', overflowY: 'auto' }}>
                         <Box
                             sx={{
                                 flex: 1,
-                                p: 2,
-                                height:"297px",
-                                borderRadius:"3px"
                             }}
                         >
                             <ToDoList />
@@ -129,9 +125,9 @@ function AgendaView() {
                         sx={{
                             position: 'fixed',
                             bottom: 0,
-                            right: 0,
+                            right: 60,
                             width: 320,
-                            maxHeight: isPanelOpen ? 400 : 48,
+                            maxHeight: isPanelOpen ? 400 : 30,
                             transition: 'max-height 0.3s ease',
                             overflow: 'hidden',
                             backgroundColor: '#fcfcfc',
@@ -151,7 +147,7 @@ function AgendaView() {
                     </Box>
 
                 </Box>
-            </Paper>
+            </Box>
 
 
 
@@ -184,7 +180,7 @@ function AgendaView() {
                     setSelectedActivity(null);
                 }}
             />
-        </Paper>
+        </Box>
     )
 }
 
