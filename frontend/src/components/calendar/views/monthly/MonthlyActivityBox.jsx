@@ -20,7 +20,7 @@ const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
     return (
         <Box sx={{ display:"flex", flexDirection:"column", gap:0.5 }}>
             {filteredActivities.sort((a, b) => toMinutes(a.startTime) - toMinutes(b.startTime)).map((activity, i, arr) => {
-                if (i > 2) return null;
+                if (i > 2) return null; {/* This and following, the arr above included, added as an experiment */}
                 if (i === 2 && arr.length > 3) {
                     const hiddenCount = arr.length - 2;
                     return (
