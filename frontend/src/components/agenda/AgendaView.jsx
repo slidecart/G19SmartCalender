@@ -101,7 +101,7 @@ function AgendaView() {
                     <ArrowForwardIcon fontSize="small"/>
                 </Button>
             </Box>
-            <Box sx={{ height: '76vh', display: 'flex', overflowY: 'hidden' }}>
+            <Box sx={{ height: '73vh', display: 'flex', overflowY: 'hidden' }}>
                 {/* LEFT COLUMN */}
                 <Box sx={{ width: '40%', overflowY: 'auto', backgroundColor: '#fcfcfc', height:"510px", m:1, borderRadius:"3px" }}>
                     <CurrentDay startOfDay={startOfWeek} title={`${selectedDayName} ${selectedDate}`} />
@@ -114,9 +114,10 @@ function AgendaView() {
                         <Box
                             sx={{
                                 flex: 1,
+                                mb:1,
                             }}
                         >
-                            <ToDoList />
+                            <ToDoList height={"520px"}/>
                         </Box>
                     </Box>
 
