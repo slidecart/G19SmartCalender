@@ -19,7 +19,26 @@ const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
 
     return (
         <Box sx={{ display:"flex", flexDirection:"column", gap:0.5 }}>
-            {filteredActivities.sort((a, b) => toMinutes(a.startTime) - toMinutes(b.startTime)).map((activity, i) => {
+            {filteredActivities.sort((a, b) => toMinutes(a.startTime) - toMinutes(b.startTime)).map((activity, i, arr) => {
+                if (i > 2) return null;
+                if (i === 2 && arr.length > 3) {
+                    const hiddenCount = arr.length - 2;
+                    return (
+                        <Paper
+                            key="more"
+                            elevation={1}
+                            sx={{
+                                p: 0.5,
+                                backgroundColor: "grey.200",
+                                cursor: "pointer",
+                                zIndex: 1,
+                                textAlign: "center",
+                            }}
+                        >
+                            +{hiddenCount}
+                        </Paper>
+                    );
+                }
                 const category = categories?.find(cat => cat.id === activity.categoryId);
                 const tempBackgroundColor = category ? category.color : "#60f085";
                 const combinedDateTime = new Date(`${activity.date}T${activity.endTime}`);
