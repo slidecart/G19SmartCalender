@@ -1,5 +1,6 @@
 import {Box, Paper, Typography} from "@mui/material";
 import {useCalendarContext} from "../../../../context/CalendarContext";
+import dayjs from "dayjs";
 
 const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
     const {
@@ -14,7 +15,11 @@ const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
         <Box sx={{ display:"flex", flexDirection:"column", gap:0.5 }}>
             {filteredActivities.map((activity, i) => {
                 const category = categories?.find(cat => cat.id === activity.categoryId);
-                const backgroundColor = category ? category.color : "#60f085";
+                const tempBackgroundColor = category ? category.color : "#60f085";
+                const combinedDateTime = new Date(`${activity.date}T${activity.endTime}`);
+                const past = combinedDateTime.getTime() < Date.now();
+                const backgroundColor = past ? "grey.300" : tempBackgroundColor;
+
 
                 return (
                 <Paper

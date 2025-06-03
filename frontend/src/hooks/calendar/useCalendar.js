@@ -56,6 +56,8 @@ export function useCalendar() {
     startTime: "",
     endTime: "",
     categoryId: "",
+    future: "",
+    onGoing: "",
   });
   const [currentView, setCurrentView] = useState("week");
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -117,7 +119,9 @@ export function useCalendar() {
       date:        activity.date,
       startTime:   activity.startTime,
       endTime:     activity.endTime,
-      categoryId:  activity.categoryId
+      categoryId:  activity.categoryId,
+      future:      activity.future,
+      onGoing:     activity.onGoing,
     });
     setIsViewDialogOpen(false);
     setIsAddEditDialogOpen(true);
