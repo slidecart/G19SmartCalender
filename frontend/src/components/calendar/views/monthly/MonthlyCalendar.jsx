@@ -43,7 +43,7 @@ function MonthlyCalendar({ chromeHeight }) {
 
         return {
             calendarMatrix: matrix,
-            monthLabel:     currentMonth.format("MMMM YYYY"),
+            monthLabel: currentMonth.format("MMMM YYYY").replace(/^\w/, c => c.toUpperCase()),
             startOfMonth,
             endOfMonth
         };

@@ -121,14 +121,14 @@ const MonthlyGrid = ({ weeks=[], startOfMonth, endOfMonth })=> {
                                         backgroundColor: isToday
                                             ? "grey.200"
                                             :isOutsideOfMonth
-                                                ? "grey.500"
+                                                ? "grey.300"
                                                 : "inherit",
                                         cursor: "pointer",
                                         "&:hover": {
                                             backgroundColor: isToday
-                                                ? "grey.300"
+                                                ? "grey.400"
                                                 :isOutsideOfMonth
-                                                ? "grey.700"
+                                                ? "grey.500"
                                                 : "grey.100",
                                         },
                                     }}
