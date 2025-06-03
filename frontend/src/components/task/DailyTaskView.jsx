@@ -74,6 +74,7 @@ export default function DailyTaskView() {
                         size="large"
                         startIcon={<CalendarTodayIcon />}
                         sx={{
+                            border: 1,
                             textTransform: "none",
                             px: 2,
                             fontSize: "1rem"

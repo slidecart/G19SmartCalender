@@ -1,6 +1,8 @@
 import {Box, Typography} from "@mui/material";
 import dayjs from "dayjs";
 import {useCalendarContext} from "../../../../context/CalendarContext";
+import { alpha } from "@mui/material/styles";
+
 
 const WeeklyActivityBox = ({ filteredActivities, onClick }) => {
     const {
@@ -28,7 +30,7 @@ const WeeklyActivityBox = ({ filteredActivities, onClick }) => {
                 const duration = (endMinutes - startMinutes)*(cellHeight/60);
 
                 const category = categories?.find(cat => cat.id === activity.categoryId);
-                const backgroundColor = category ? category.color : "#60f085";
+                const backgroundColor = category ? category.color : "#013e87";
 
                 return (
                     <Box key={i}
@@ -38,14 +40,14 @@ const WeeklyActivityBox = ({ filteredActivities, onClick }) => {
                             top:`${startTime}px`,
                             height: `${duration}px`,
                             backgroundColor,
-                            boxShadow:1,
+                             color: "white",
+                            boxShadow: 1,
                             width:"80%",
                             cursor:"pointer",
                             zIndex:1,
                              transition: "background-color 0.3s ease",
                              "&:hover": {
-                                backgroundColor: "primary.main", // Slightly darkens the background
-                                color:"white"
+                                 backgroundColor: alpha(backgroundColor, 0.6), // 60% opacity
                              },
                         }}>
                             <Typography variant="subtitle2">

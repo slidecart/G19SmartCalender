@@ -64,11 +64,12 @@ function ProfilePopUpFrame({ open, onClose, anchorEl }) {
                             <ListItemText primary="Kontoinställningar" />
                         </ListItemButton>
                     </ListItem>
-                    <ListItem disablePadding>
+                    {/* <ListItem disablePadding>
                         <ListItemButton onClick={() => handleNavigation('/system-settings')}>
                             <ListItemText primary="Systeminställningar" />
                         </ListItemButton>
                     </ListItem>
+                    */}
                     <ListItem disablePadding>
                         <ListItemButton onClick={handleLogout}>
                             <ListItemText primary="Logga ut" />

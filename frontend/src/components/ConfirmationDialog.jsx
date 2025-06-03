@@ -1,7 +1,7 @@
 import React from "react";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography} from "@mui/material";
 
-function ConfirmationDialog({ open, onClose, onConfirm, title, content }) {
+function ConfirmationDialog({ open, onClose, onConfirm, title, content, buttonText }) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth PaperProps={{
       sx: {
@@ -21,7 +21,7 @@ function ConfirmationDialog({ open, onClose, onConfirm, title, content }) {
           Avbryt
         </Button>
         <Button onClick={onConfirm} variant="contained" color="error" sx={{ textTransform: "none" }}>
-          Ta bort
+          {buttonText}
         </Button>
       </DialogActions>
     </Dialog>
