@@ -18,9 +18,18 @@ const CurrentDay = ({ startOfDay, dayOffset = 1, title }) => {
 
     const currentDay = dayjs(startOfDay).add(dayOffset, 'day');
     const selectedDate = currentDay.format("YYYY-MM-DD");
+    const now = dayjs();
+
 
     const activitiesForDay = filteredActivities
-        .filter(activity => dayjs(activity.date).format("YYYY-MM-DD") === selectedDate)
+        .filter(activity => {
+            const isSameDay = dayjs(activity.date).format("YYYY-MM-DD") === selectedDate;
+
+            const activityEndDateTime = dayjs(`${activity.date}T${activity.endTime}`);
+
+            const isFuture = activityEndDateTime.isAfter(now);
+            return isSameDay && isFuture;
+        })
         .sort((a, b) => toMinutes(a.startTime) - toMinutes(b.startTime));
 
     return (
