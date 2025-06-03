@@ -74,7 +74,7 @@ function WeeklyCalendar() {
             const offSet = (index - PRE_HOURS) * ROW_HEIGHT_PX;
             scrollRef.current.scrollTop = offSet > 0 ? offSet : 0;
         }
-    }, [timeSlots, today]);
+    }, []);
 
     const handlePrevWeek = () =>
         setStartOfWeek((prev) => prev.subtract(1, 'week'));
