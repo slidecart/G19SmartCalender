@@ -19,10 +19,12 @@ const weekdays = ["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
  * MonthlyGrid renders the month as a full-height, non-scrolling grid
  * where the last row sits flush at the bottom.
  */
-const MonthlyGrid = ({ weeks = [] }) => {
+const MonthlyGrid = ({ weeks=[], startOfMonth, endOfMonth })=> {
     const { filteredActivities, handleActivityClick, categories, handleCellClick} = useCalendarContext();
     // compute each row's height as a percentage of container
     const rowHeight = `${100 / weeks.length}%`;
+    console.log(startOfMonth);
+    console.log(endOfMonth);
 
     return (
         <Table
@@ -104,6 +106,7 @@ const MonthlyGrid = ({ weeks = [] }) => {
                                 (a) => dayjs(a.date).format("YYYY-MM-DD") === formattedDate
                             );
                             const isToday = dayjs(day.date).isSame(dayjs(), "day");
+                            const isOutsideOfMonth = day.isBefore(startOfMonth, 'day') || day.isAfter(endOfMonth, 'day');
 
                             return (
                                 <TableCell
@@ -115,10 +118,18 @@ const MonthlyGrid = ({ weeks = [] }) => {
                                         display: "flex",
                                         flexDirection: "column",
                                         boxSizing: "border-box",
-                                        backgroundColor: isToday ? "grey.200" : "inherit",
+                                        backgroundColor: isToday
+                                            ? "grey.200"
+                                            :isOutsideOfMonth
+                                                ? "grey.500"
+                                                : "inherit",
                                         cursor: "pointer",
                                         "&:hover": {
-                                            backgroundColor: isToday ? "grey.300" : "grey.100",
+                                            backgroundColor: isToday
+                                                ? "grey.300"
+                                                :isOutsideOfMonth
+                                                ? "grey.700"
+                                                : "grey.100",
                                         },
                                     }}
                                     onClick={() => {
