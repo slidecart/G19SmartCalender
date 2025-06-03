@@ -28,7 +28,10 @@ const WeeklyActivityBox = ({ filteredActivities, onClick }) => {
                 const duration = (endMinutes - startMinutes)*(cellHeight/60);
 
                 const category = categories?.find(cat => cat.id === activity.categoryId);
-                const backgroundColor = category ? category.color : "#60f085";
+                const tempBackgroundColor = category ? category.color : "#60f085";
+                const combinedDateTime = new Date(`${activity.date}T${activity.endTime}`);
+                const past = combinedDateTime.getTime() < Date.now();
+                const backgroundColor = past ? "grey.300" : tempBackgroundColor;
 
                 return (
                     <Box key={i}
