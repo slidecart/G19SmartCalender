@@ -55,7 +55,7 @@ const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
                             color: "white",
                             zIndex: 1,
                             "&:hover": {
-                                backgroundColor: alpha(backgroundColor, 0.6), // 60% opacity
+                                backgroundColor: alpha("#013e87", 0.9), // 60% opacity
                             },
                         }}
                         onClick={e => {
