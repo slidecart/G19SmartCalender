@@ -1,5 +1,6 @@
 import {Box, Paper, Typography} from "@mui/material";
 import {useCalendarContext} from "../../../../context/CalendarContext";
+import {alpha} from "@mui/material/styles";
 import dayjs from "dayjs";
 
 const toMinutes = (timeStr) => {
@@ -9,9 +10,7 @@ const toMinutes = (timeStr) => {
 };
 
 const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
-    const {
-        categories,
-    } = useCalendarContext();
+    const { categories } = useCalendarContext();
 
     if (!filteredActivities || filteredActivities.length === 0 ) return null;
 
@@ -40,36 +39,35 @@ const MonthlyActivityBox = ({ filteredActivities, onClick }) => {
                     );
                 }
                 const category = categories?.find(cat => cat.id === activity.categoryId);
-                const tempBackgroundColor = category ? category.color : "#60f085";
+                const tempBackgroundColor = category ? category.color : "#013e87";
                 const combinedDateTime = new Date(`${activity.date}T${activity.endTime}`);
                 const past = combinedDateTime.getTime() < Date.now();
                 const backgroundColor = past ? "grey.300" : tempBackgroundColor;
 
-
                 return (
-                <Paper
-                    key={i}
-                    elevation={1}
-                    sx={{
-                        p: 0.5,
-                        backgroundColor,
-                        cursor: "pointer",
-                        zIndex: 1,
-                        "&:hover": {
-                            backgroundColor: "primary.main",
-                            color: "white"
-                        }
-                    }}
-                    onClick={e => {
-                        e.stopPropagation();
-                        onClick(e, activity);
-                    }}
+                    <Paper
+                        key={i}
+                        elevation={1}
+                        sx={{
+                            p: 0.5,
+                            backgroundColor,
+                            cursor: "pointer",
+                            color: "white",
+                            zIndex: 1,
+                            "&:hover": {
+                                backgroundColor: alpha(backgroundColor, 0.6), // 60% opacity
+                            },
+                        }}
+                        onClick={e => {
+                            e.stopPropagation();
+                            onClick(e, activity);
+                        }}
 
-                >
-                    <Typography variant="subtitle2">
-                        {activity.name}
-                    </Typography>
-                </Paper>
+                    >
+                        <Typography variant="subtitle2">
+                            {activity.name}
+                        </Typography>
+                    </Paper>
                 )
             })}
         </Box>

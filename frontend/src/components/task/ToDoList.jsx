@@ -29,6 +29,7 @@ import Lottie from 'lottie-react';
 import confettiAnimation from '../../animations/Confetti.json';
 import { alpha } from "@mui/material/styles";
 import { useTodoContext } from "../../context/TodoContext";
+import { useCalendarContext } from "../../context/CalendarContext";
 import { useCategoryContext } from "../../context/CategoryContext";
 import AddTask from "./AddTask";
 import ConfirmationDialog from "../ConfirmationDialog";
@@ -57,7 +58,7 @@ export default function ToDoList() {
         isAddEditDialogOpen,
         handleCloseDialog,
         dialogMode: calendarDialogMode,
-    } = useCategoryContext();
+    } = useCalendarContext();
 
     const { categories } = useCategoryContext();
 
@@ -471,6 +472,7 @@ export default function ToDoList() {
                     }}
                     title="Ta bort ToDo"
                     content="Är du säker på att du vill radera denna ToDo?"
+                    buttonText="Radera"
                 />
 
                 <AddActivity
@@ -478,6 +480,7 @@ export default function ToDoList() {
                     mode={calendarDialogMode}
                     onClose={handleCloseDialog}
                 />
+
             </Box>
 
             {/* Completed Tasks */}

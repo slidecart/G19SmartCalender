@@ -150,7 +150,7 @@ function WeeklyCalendar() {
                                     width: `${dayColWidth}px`,
                                     borderTop: "1.5px dashed",
                                     borderColor: "error.main",
-                                    zIndex: 1,
+                                    zIndex: 2,
                                     transform: "translateY(-50%)",
                                 }}
                             />

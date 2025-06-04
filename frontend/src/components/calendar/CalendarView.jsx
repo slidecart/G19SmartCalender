@@ -75,6 +75,7 @@ function CalendarView(){
                 open={confirmDeleteOpen}
                 title="Bekräfta borttagning"
                 content="Är du säker på att du vill ta bort aktiviteten?"
+                buttonText="Ta bort"
                 onClose={() => setConfirmDeleteOpen(false)}
                 onConfirm={() => {
                     deleteActivity(selectedActivity.id);
