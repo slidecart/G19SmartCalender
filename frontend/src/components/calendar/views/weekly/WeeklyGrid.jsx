@@ -92,10 +92,10 @@ const WeeklyGrid = forwardRef(({ weekdays= [] }, timeColumnRef) => {
                                             position:"relative",
                                             padding:"0",
                                             cursor: "pointer",
-                                            backgroundColor: isToday ? "grey.200" : (isPast ? '#ddd' : "inherit"),
+                                            backgroundColor: isToday ? "grey.200" : (isPast ? 'grey.200' : "inherit"),
                                             borderLeft: idx > 0 ? "1px solid #ccc" : "none",
                                             "&:hover": {
-                                                backgroundColor: isToday ? "grey.300" : (isPast ? "grey.600" : "grey.100"),
+                                                backgroundColor: isToday ? "grey.300" : (isPast ? "grey.300" : "grey.100"),
                                             },
                                         }}
                                         onClick={() => {
