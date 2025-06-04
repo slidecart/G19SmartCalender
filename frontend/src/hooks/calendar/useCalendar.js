@@ -56,6 +56,8 @@ export function useCalendar() {
     startTime: "",
     endTime: "",
     categoryId: "",
+    future: "",
+    onGoing: "",
   });
   const [currentView, setCurrentView] = useState("week");
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -110,14 +112,18 @@ export function useCalendar() {
 
   const openEditDialog = useCallback(activity => {
     setDialogMode("edit");
+    setSelectedActivity(activity);
     setFormData({
+      id:          activity.id,
       name:        activity.name,
       description: activity.description,
       location:    activity.location,
       date:        activity.date,
       startTime:   activity.startTime,
       endTime:     activity.endTime,
-      categoryId:  activity.categoryId
+      categoryId:  activity.categoryId,
+      future:      activity.future,
+      onGoing:     activity.onGoing,
     });
     setIsViewDialogOpen(false);
     setIsAddEditDialogOpen(true);
@@ -130,8 +136,6 @@ export function useCalendar() {
   const loadActivities = useCallback(async () => {
     try {
       const response = await fetchData("activities/all", "GET", "");
-      console.log("Response: ", response);
-      console.log("Response body: ", response.body);
       const activitiesArray = Array.isArray(response) ? response : response.body || [];
       setActivities(activitiesArray);
     } catch (err) {
@@ -143,8 +147,9 @@ export function useCalendar() {
 
   const createOrUpdateActivity = useCallback(
     async (formData, mode) => {
+
       const path   = mode === "edit"
-        ? `activities/edit/${selectedActivity.id}`
+        ? `activities/edit/${formData.id}`
         : "activities/create";
       const method = mode === "edit" ? "PUT" : "POST";
       const saved  = await fetchData(path, method, formData);
@@ -156,7 +161,7 @@ export function useCalendar() {
       );
       return saved;
     },
-    [selectedActivity]
+    []
   );
 
   const deleteActivity = useCallback(async id => {
@@ -261,6 +266,7 @@ export function useCalendar() {
     anchorEl,
     placement,
     taskID,
+    dialogMode,
 
     // categories
     categories,

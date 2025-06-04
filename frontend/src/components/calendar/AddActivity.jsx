@@ -114,6 +114,7 @@ export default function AddActivity({ open, onClose, mode }) {
             } else {
                 await createOrUpdateActivity(formData, mode, );
             }
+            setSnackbar({ open: true, message: "Aktiviteten är uppdaterad! ✅", severity: "success" });
             onClose();           // only close after success
         } catch (err) {
             console.error("Couldn’t save:", err);
