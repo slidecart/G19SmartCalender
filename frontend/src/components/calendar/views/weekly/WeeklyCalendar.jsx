@@ -38,8 +38,7 @@ function WeeklyCalendar() {
     const scrollRef = useRef(null);
     const timeColumnRef = useRef(null);
 
-    const today = dayjs();
-    const todayDate = today.format("YYYY-MM-DD");
+    const todayDate = dayjs().format("YYYY-MM-DD");
     const todayIndex = weekdays.findIndex(w => w.date === todayDate);
 
     // Set visible hours
@@ -67,14 +66,20 @@ function WeeklyCalendar() {
     }, [weekdays]);
 
     // On mount, scroll so current hour row is PRE_HOURS rows from the top
+    const hasScrolledInitially = useRef(false);
+
     useEffect(() => {
-        const nowHour = today.hour();
-        const index = timeSlots.findIndex(time => parseInt(time, 10) === nowHour);
-        if (index > 0 && scrollRef.current) {
-            const offSet = (index - PRE_HOURS) * ROW_HEIGHT_PX;
-            scrollRef.current.scrollTop = offSet > 0 ? offSet : 0;
+        if (!hasScrolledInitially.current) {
+            const nowHour = dayjs().hour();
+            const index = timeSlots.findIndex(time => parseInt(time, 10) === nowHour);
+            if (index > 0 && scrollRef.current) {
+                const offSet = (index - PRE_HOURS) * ROW_HEIGHT_PX;
+                scrollRef.current.scrollTop = offSet > 0 ? offSet : 0;
+            }
+            hasScrolledInitially.current = true;
         }
-    }, []);
+    }, [timeSlots]);
+
 
     const handlePrevWeek = () =>
         setStartOfWeek((prev) => prev.subtract(1, 'week'));

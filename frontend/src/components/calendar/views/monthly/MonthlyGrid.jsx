@@ -118,25 +118,31 @@ const MonthlyGrid = ({ weeks=[], startOfMonth, endOfMonth })=> {
                                         display: "flex",
                                         flexDirection: "column",
                                         boxSizing: "border-box",
-                                        backgroundColor: isToday
-                                            ? "grey.200"
-                                            :isOutsideOfMonth
-                                                ? "grey.300"
+                                        backgroundColor: isOutsideOfMonth
+                                                ? "grey.200"
                                                 : "inherit",
                                         cursor: "pointer",
                                         "&:hover": {
-                                            backgroundColor: isToday
-                                                ? "grey.400"
-                                                :isOutsideOfMonth
-                                                ? "grey.500"
+                                            backgroundColor: isOutsideOfMonth
+                                                ? "grey.300"
                                                 : "grey.100",
+                                            "& .date-number": {
+                                                backgroundColor: "primary.main",
+                                                color: "white",
+                                                borderRadius: "50%",
+                                                width: 22,
+                                                height: 22,
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                            }
                                         },
                                     }}
                                     onClick={() => {
                                             handleCellClick(day.format("YYYY-MM-DD"), "12:00");
                                     }}
                                 >
-                                    <Typography variant="caption" sx={{ mb: 0.5 }}>
+                                    <Typography variant="caption" className="date-number" sx={{ mb: 0.5 }}>
                                         {day.format("DD")}
                                     </Typography>
 
