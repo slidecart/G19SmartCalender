@@ -71,6 +71,7 @@ const WeeklyGrid = forwardRef(({ weekdays= [] }, timeColumnRef) => {
                             // Filters and sets every date & time for each
                             const cellStart = dayjs(`1970-01-01T${time}`);
                             const cellEnd = cellStart.add(1, "hour");
+                            const isPast = dayjs(day.date).isBefore(dayjs(), 'day');
 
 
                             const hits = filteredActivities.filter((a) => {
@@ -91,10 +92,10 @@ const WeeklyGrid = forwardRef(({ weekdays= [] }, timeColumnRef) => {
                                             position:"relative",
                                             padding:"0",
                                             cursor: "pointer",
-                                            backgroundColor: isToday ? "grey.200" : "inherit",
+                                            backgroundColor: isToday ? "grey.200" : (isPast ? 'grey.200' : "inherit"),
                                             borderLeft: idx > 0 ? "1px solid #ccc" : "none",
                                             "&:hover": {
-                                                backgroundColor: isToday ? "grey.300" : "grey.100",
+                                                backgroundColor: isToday ? "grey.300" : (isPast ? "grey.300" : "grey.100"),
                                             },
                                         }}
                                         onClick={() => {

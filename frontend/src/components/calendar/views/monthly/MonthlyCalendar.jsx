@@ -28,13 +28,12 @@ function MonthlyCalendar({ chromeHeight }) {
     /* ------------------------------------------------------------------ */
     /* 2) Derived data – recomputed only when currentMonth changes         */
     /* ------------------------------------------------------------------ */
-    const { calendarMatrix, monthLabel } = useMemo(() => {
+    const { calendarMatrix, monthLabel, startOfMonth, endOfMonth } = useMemo(() => {
         const startOfMonth = currentMonth.startOf("month");
         const endOfMonth   = currentMonth.endOf("month");
 
         const startDate = startOfMonth.startOf("isoWeek");
         const endDate   = endOfMonth.endOf("isoWeek");
-
         const totalDays = endDate.diff(startDate, "day") + 1;
         const weeks     = Math.ceil(totalDays / 7);
 
@@ -44,7 +43,9 @@ function MonthlyCalendar({ chromeHeight }) {
 
         return {
             calendarMatrix: matrix,
-            monthLabel:     currentMonth.format("MMMM YYYY")
+            monthLabel: currentMonth.format("MMMM YYYY").replace(/^\w/, c => c.toUpperCase()),
+            startOfMonth,
+            endOfMonth
         };
     }, [currentMonth]);
 
@@ -98,7 +99,10 @@ function MonthlyCalendar({ chromeHeight }) {
                     p: 0
                 }}
             >
-                <MonthlyGrid weeks={calendarMatrix} />
+                <MonthlyGrid
+                    weeks={calendarMatrix}
+                    startOfMonth={startOfMonth}
+                    endOfMonth={endOfMonth}/>
             </TableContainer>
         </Box>
     );

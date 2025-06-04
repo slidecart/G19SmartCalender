@@ -26,6 +26,9 @@ public class ActivityDTO {
     private Boolean validTimeRange;
     private List<String> warnings;
 
+    public ActivityDTO() {
+    }
+
     public ActivityDTO(Activity activity) {
         this.id = activity.getId();
         this.name = activity.getName();

@@ -18,6 +18,7 @@ import ProfileIcon from "./ProfilePopUpFrame";
 import SearchIcon from "@mui/icons-material/Search";
 import { useCalendarContext } from "../../context/CalendarContext";
 import {fetchData} from "../../hooks/FetchData";
+import { Link } from "react-router-dom";
 
 export default function Navbar({ onNavigate }) {
     const theme = useTheme();
@@ -84,17 +85,20 @@ export default function Navbar({ onNavigate }) {
             }}
         >
             {/* Title */}
-            <Typography
-                variant="h6"
-                noWrap
-                sx={{
-                    fontSize: "1rem",
-                    fontWeight: "600",
-                    letterSpacing: ".05rem"
-                }}
-            >
-                SmartCalendar
-            </Typography>
+            <Link to="/today" style={{ textDecoration: "none", color: "inherit" }}>
+                <Typography
+                    variant="h6"
+                    noWrap
+                    sx={{
+                        fontSize: "1rem",
+                        fontWeight: "600",
+                        letterSpacing: ".05rem",
+                        cursor: "pointer"
+                    }}
+                >
+                    SmartCalendar
+                </Typography>
+            </Link>
 
             {/* Search Bar */}
             <Box sx={{ mx: 2, position: "relative" }}>
