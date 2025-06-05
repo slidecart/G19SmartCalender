@@ -4,11 +4,11 @@ SmartCalendar är en kalenderapplikation utformad för att hjälpa användare at
 
 ## Ladda ner och köra projektet
 
-Versionen av koden som har lämnats för granskning är taggad som `v3.0-review`. För att ladda ner och använda denna version:
+För att ladda ner och använda denna applikationen:
 
 1. Gå till projektets GitHub-sida: https://github.com/slidecart/G19SmartCalender.
-2. Klicka på fliken "Releases" eller "Tags" och hitta taggen `v3.0-review`.
-3. Klicka på "Download ZIP" under `v3.0-review` för att ladda ner källkoden som en ZIP-fil.
+2. Klicka på den gröna knappen "<> Code" 
+3. Klicka på "Download ZIP" för att ladda ner källkoden som en ZIP-fil.
 4. Extrahera ZIP-filen till en mapp på din dator.
 5. Öppna projektet i din IDE:
    - **IntelliJ IDEA**: Välj "Open" och navigera till den extraherade mappen.
@@ -140,11 +140,11 @@ SmartCalendar is a calendar application designed to help users manage their even
 
 ## Downloading and running the project
 
-The version of the code submitted for review is tagged `v3.0-review`. To download and use this version:
+To download and use this application:
 
 1. Visit the project's GitHub page: https://github.com/slidecart/G19SmartCalender.
-2. Click the "Releases" or "Tags" tab and locate the tag `v3.0-review`.
-3. Click "Download ZIP" under `v3.0-review` to download the source code as a ZIP file.
+2. Click the green button "<> Code".
+3. Click "Download ZIP" to download the source code as a ZIP file.
 4. Extract the ZIP file to a folder on your computer.
 5. Open the project in your IDE:
    - **IntelliJ IDEA**: Choose "Open" and navigate to the extracted folder.
